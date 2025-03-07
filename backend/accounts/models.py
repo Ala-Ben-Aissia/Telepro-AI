@@ -45,9 +45,9 @@ class User(AbstractUser):
     phone_verified = models.BooleanField(default=False)
 
     # Additional security fields
-    failed_login_attempts = models.PositiveIntegerField(default=0)
-    last_login_ip = models.GenericIPAddressField(null=True, blank=True)
-    require_password_change = models.BooleanField(default=False)
+    # failed_login_attempts = models.PositiveIntegerField(default=0)
+    # last_login_ip = models.GenericIPAddressField(null=True, blank=True)
+    # require_password_change = models.BooleanField(default=False)
     last_password_change = models.DateTimeField(default=timezone.now)
 
     # Fix for the clash in reverse relations

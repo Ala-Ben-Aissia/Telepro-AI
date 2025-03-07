@@ -61,12 +61,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["user_type"] = self.user.user_type
 
         # Update login stats
-        self.user.failed_login_attempts = 0
+        # self.user.failed_login_attempts = 0
 
         # You could add the IP here if you extend the view later
         # self.user.last_login_ip = self.context['request'].META.get('REMOTE_ADDR')
 
-        self.user.save(update_fields=["failed_login_attempts"])
+        # self.user.save(update_fields=["failed_login_attempts"])
+        self.user.save()
 
         return data
 

@@ -23,7 +23,10 @@ class UserAdmin(admin.ModelAdmin):
                 )
             },
         ),
-        ("Important dates", {"fields": ("last_login", "date_joined")}),
+        (
+            "Important dates",
+            {"fields": ("last_login", "date_joined", "last_password_change")},
+        ),
         ("Custom fields", {"fields": ("user_type", "email_verified", "phone_number")}),
     )
     add_fieldsets = (

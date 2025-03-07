@@ -59,20 +59,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         # Standard token obtain logic
         response = super().post(request, *args, **kwargs)
-
-        # If login failed, we could track failed attempts here
-        if response.status_code != 200:
-            username = request.data.get("username", "")
-            try:
-                user = User.objects.get(username=username)
-                user.failed_login_attempts += 1
-                # Lock account after too many attempts (optional)
-                if user.failed_login_attempts >= 5:
-                    user.is_active = False
-                user.save(update_fields=["failed_login_attempts", "is_active"])
-            except User.DoesNotExist:
-                pass
-
         return response
 
 
