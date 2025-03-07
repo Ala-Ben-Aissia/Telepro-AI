@@ -5,18 +5,26 @@ from rest_framework.exceptions import AuthenticationFailed
 
 
 class CustomJWTAuthentication(JWTAuthentication):
-    # Overriding get_user to validate the token against the user's password change timestamp.
-    # The JWT token includes a custom claim "pwd_changed" that stores the timestamp (in seconds) when the token was issued (which reflects the user's last_password_change time at login).
-    # If the user changes their password after the token was issued, the user's last_password_change will be more recent than the token's pwd_changed value. In that case, we raise an AuthenticationFailed exception to invalidate the token.
+    """
+    Custom JWT authentication class that ensures token validity based on password changes.
+
+    This class overrides the get_user method to:
+    1. Extract the `pwd_changed` claim from the JWT token, which stores the timestamp of the user's last password change at login.
+    2. Compare this timestamp with the user's current `last_password_change` field.
+    3. Invalidate the token if the user has changed their password after the token was issued, ensuring security.
+
+    This prevents unauthorized access with outdated tokens after password changes.
+    """
+
     def get_user(self, validated_token):
         user = super().get_user(validated_token)
         pwd_changed_claim = validated_token.get("pwd_changed")
         if pwd_changed_claim:
-            # Convert the claim to a datetime object (assuming the claim is a timestamp)
+            # Convert the `pwd_changed` claim (timestamp in seconds) to a datetime object
             token_issue_time = timezone.datetime.fromtimestamp(
                 pwd_changed_claim, tz=tz.utc
             )
-            # If the password was changed after the issuance of the token, invalidate the token.
+            # user's password was changed after the token was issued
             if user.last_password_change > token_issue_time:
                 raise AuthenticationFailed(
                     "Token is no longer valid. Please log in again."

@@ -43,8 +43,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
 
     @classmethod
+    # called on each request made using the access token
     def get_token(cls, user):
         token = super().get_token(user)
+        # Add custom claims of the user's last password change timestamp
         token["pwd_changed"] = user.last_password_change.timestamp()
         return token
 
