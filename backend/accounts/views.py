@@ -6,6 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.contrib.auth.password_validation import validate_password
+from .permissions import IsNotAuthenticated
 
 from .serializers import (
     CustomTokenObtainPairSerializer,
@@ -20,9 +21,15 @@ User = get_user_model()
 class PatientRegistrationView(APIView):
     """Register a new patient user"""
 
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [IsNotAuthenticated]
+    # need a more explicit response messages for the frontend since permissions would return {detail: "You do not have permission to perform this action."} which is not very user-friendly.
 
     def post(self, request):
+        if (request.user and request.user.is_authenticated) or request.auth:
+            return Response(
+                {"detail": "You are already authenticated."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             # Create the user with patient type
@@ -46,6 +53,7 @@ class PatientRegistrationView(APIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     """Custom token view that uses our enhanced token serializer"""
 
+    permission_classes = [IsNotAuthenticated]
     serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
