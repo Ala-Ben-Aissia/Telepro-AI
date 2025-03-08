@@ -1,13 +1,15 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.core.exceptions import ValidationError as DjangoValidationError
-from django.contrib.auth.password_validation import validate_password
-from .permissions import IsNotAuthenticated
 
+from patients.signals import encrypt
+
+from .permissions import IsNotAuthenticated
 from .serializers import (
     CustomTokenObtainPairSerializer,
     PasswordChangeSerializer,
@@ -33,7 +35,11 @@ class PatientRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             # Create the user with patient type
-            user = serializer.save(user_type="PATIENT")
+            user = serializer.save(
+                user_type="PATIENT",
+                email=encrypt(serializer.validated_data.get("email")),
+                phone_number=encrypt(serializer.validated_data.get("phone_number")),
+            )
 
             # Generate JWT tokens for immediate login
             refresh = RefreshToken.for_user(user)

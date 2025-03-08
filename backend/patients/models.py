@@ -6,7 +6,6 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from encrypted_model_fields.fields import EncryptedCharField, EncryptedEmailField
 
 
 class Patient(models.Model):
@@ -37,7 +36,7 @@ class Patient(models.Model):
     )
 
     # Encrypted identifying information
-    medical_record_number = EncryptedCharField(
+    medical_record_number = models.CharField(
         max_length=100,
         null=True,
         blank=True,
@@ -45,20 +44,76 @@ class Patient(models.Model):
         help_text="Medical record number or other external identifier",
     )
 
-    # Basic demographic information (minimal)
-    date_of_birth = EncryptedCharField(
+    # Demographic information
+    date_of_birth = models.CharField(
         max_length=10, null=True, blank=True, help_text="Patient's date of birth"
+    )
+    # Demographic information for segmentation
+    gender = models.CharField(
+        max_length=10,
+        choices=[
+            ("M", "Male"),
+            ("F", "Female"),
+            ("O", "Other"),
+            ("N", "Prefer not to say"),
+        ],
+        null=True,
+        blank=True,
+        help_text="Patient's gender for demographic segmentation",
+    )
+    location = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text="General location for geographic targeting",
+    )
+    postal_code = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        help_text="Postal code for geographic segmentation",
+    )
+    age_group = models.CharField(
+        max_length=10,
+        choices=[
+            ("0-18", "0-18"),
+            ("19-35", "19-35"),
+            ("36-50", "36-50"),
+            ("51-65", "51-65"),
+            ("65+", "65+"),
+        ],
+        null=True,
+        blank=True,
+        help_text="Age group for demographic segmentation",
+    )
+    language_preference = models.CharField(
+        max_length=10,
+        choices=(
+            ("ar", "Arabic"),
+            ("fr", "French"),
+            ("en", "English"),
+            ("es", "Spanish"),
+            ("de", "German"),
+            ("it", "Italian"),
+        ),
+        default="fr",
+        null=True,
+        blank=True,
+        help_text="Preferred language for communications",
     )
 
     # Communication channels (essential for outreach)
-    email = EncryptedEmailField(
-        max_length=50, help_text="Primary email for communications"
+    email = models.EmailField(
+        unique=True,
+        max_length=50,
+        help_text="Primary email for communications",
     )
+
     email_verified = models.BooleanField(
         default=False, help_text="Whether the email has been verified"
     )
 
-    phone_number = EncryptedCharField(
+    phone_number = models.CharField(
         max_length=20,
         null=True,
         blank=True,
@@ -79,7 +134,7 @@ class Patient(models.Model):
     preferred_contact_method = models.CharField(
         max_length=10,
         choices=COMMUNICATION_PREFERENCES,
-        default="EMAIL",
+        default="NONE",
         help_text="Patient's preferred method of contact",
     )
 
@@ -301,3 +356,34 @@ class Patient(models.Model):
         if not self.scheduled_deletion_date:
             return False
         return self.scheduled_deletion_date <= timezone.now().date()
+
+    def update_age_group(self):
+        """Calculate and update age group based on date of birth"""
+        if not self.date_of_birth:
+            return None
+
+        try:
+            # Parse the date string (assuming format is YYYY-MM-DD)
+            dob = timezone.datetime.strptime(self.date_of_birth, "%Y-%m-%d").date()
+            today = timezone.now().date()
+            age = (
+                today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            )
+
+            # Determine age group
+            if age <= 18:
+                self.age_group = "0-18"
+            elif age <= 35:
+                self.age_group = "19-35"
+            elif age <= 50:
+                self.age_group = "36-50"
+            elif age <= 65:
+                self.age_group = "51-65"
+            else:
+                self.age_group = "65+"
+
+            self.save(update_fields=["age_group"])
+            return self.age_group
+        except (ValueError, TypeError):
+            # Handle invalid date format
+            return None

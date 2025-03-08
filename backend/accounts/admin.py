@@ -5,7 +5,12 @@ from .models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("username", "email", "user_type", "is_active")
+    def truncated_email(self, obj):
+        return "..." + obj.email[12:20] + "..."
+
+    truncated_email.short_description = "Email"
+
+    list_display = ("username", "truncated_email", "user_type", "is_active")
     search_fields = ("username", "email")
     list_filter = ("user_type", "is_active")
     fieldsets = (
