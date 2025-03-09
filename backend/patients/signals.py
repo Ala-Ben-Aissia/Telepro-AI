@@ -1,7 +1,5 @@
 import logging
 
-from config.settings import FIELD_ENCRYPTION_KEY
-from cryptography import fernet
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -9,16 +7,6 @@ from django.dispatch import receiver
 from .models import Patient
 
 logger = logging.getLogger(__name__)
-
-
-def encrypt(cleartext: str) -> str:
-    f = fernet.Fernet(FIELD_ENCRYPTION_KEY)
-    return f.encrypt(cleartext.encode()).decode()
-
-
-def decrypt(ciphertext: str) -> str:
-    f = fernet.Fernet(FIELD_ENCRYPTION_KEY)
-    return f.decrypt(ciphertext.encode()).decode()
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from patients.signals import encrypt
 
 from .permissions import IsNotAuthenticated
 from .serializers import (
@@ -23,23 +22,14 @@ User = get_user_model()
 class PatientRegistrationView(APIView):
     """Register a new patient user"""
 
-    # permission_classes = [IsNotAuthenticated]
+    permission_classes = [IsNotAuthenticated]
     # need a more explicit response messages for the frontend since permissions would return {detail: "You do not have permission to perform this action."} which is not very user-friendly.
 
     def post(self, request):
-        if (request.user and request.user.is_authenticated) or request.auth:
-            return Response(
-                {"detail": "You are already authenticated."},
-                status=status.HTTP_401_UNAUTHORIZED,
-            )
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             # Create the user with patient type
-            user = serializer.save(
-                user_type="PATIENT",
-                email=encrypt(serializer.validated_data.get("email")),
-                phone_number=encrypt(serializer.validated_data.get("phone_number")),
-            )
+            user = serializer.save(user_type="PATIENT")
 
             # Generate JWT tokens for immediate login
             refresh = RefreshToken.for_user(user)

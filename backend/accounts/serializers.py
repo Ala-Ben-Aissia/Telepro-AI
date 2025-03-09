@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from common.utils import encrypt
+
 User = get_user_model()
 
 
@@ -165,13 +167,17 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # Get the user_type from context or default to PATIENT
         user_type = validated_data.get("user_type", "PATIENT")
 
+        phone_number = validated_data.get("phone_number", "")
+        if phone_number != "":
+            phone_number = encrypt(phone_number)
+
         # Create the user instance
         user = User.objects.create(
             username=validated_data["username"],
-            email=validated_data["email"],
+            email=encrypt(validated_data["email"]),
             first_name=validated_data.get("first_name", ""),
             last_name=validated_data.get("last_name", ""),
-            phone_number=validated_data.get("phone_number", ""),
+            phone_number=phone_number,
             user_type=user_type,
         )
 
