@@ -143,6 +143,25 @@ class Patient(models.Model):
         default=dict, help_text="JSON containing preferred contact times"
     )
 
+    # Campaign and communication related fields
+    campaign_preferences = models.JSONField(
+        default=dict,
+        help_text="Patient preferences for different campaign types",
+    )
+
+    # Campaign segments (optional - can also be calculated dynamically)
+    segments = models.ManyToManyField(
+        "campaign.PatientSegment", blank=True, related_name="patients"
+    )
+
+    # Communication engagement metrics
+    engagement_score = models.FloatField(
+        default=0.0, help_text="Patient's engagement score based on communication history"
+    )
+    last_campaign_response = models.DateTimeField(
+        null=True, blank=True, help_text="When the patient last responded to a campaign"
+    )
+
     # Audit and lifecycle fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -387,3 +406,23 @@ class Patient(models.Model):
         except (ValueError, TypeError):
             # Handle invalid date format
             return None
+
+    def update_engagement_score(self):
+        """Calculate patient engagement score based on communication history"""
+        from campaign.models import CommunicationLog
+
+        recent_logs = CommunicationLog.objects.filter(
+            patient=self, sent_at__isnull=False
+        ).order_by("-sent_at")[:10]
+
+        # Simple scoring based on response rate
+        responses = sum(1 for log in recent_logs if log.status == "RESPONDED")
+        self.engagement_score = responses / len(recent_logs) if recent_logs else 0
+        self.save(update_fields=["engagement_score"])
+        return self.engagement_score
+
+    def get_campaign_preferences(self, campaign_type=None):
+        """Get patient's preferences for campaign types"""
+        if campaign_type:
+            return self.campaign_preferences.get(campaign_type, {})
+        return self.campaign_preferences
