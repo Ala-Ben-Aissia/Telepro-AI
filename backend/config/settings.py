@@ -142,12 +142,12 @@ REST_FRAMEWORK = {
         "accounts.authentication.CustomJWTAuthentication",
     ),
     "DEFAULT_THROTTLE_CLASSES": [
-        # "accounts.throttles.LoginThrottle",
-        # "rest_framework.throttling.AnonRateThrottle",
+        "accounts.throttles.LoginThrottle",
+        "rest_framework.throttling.AnonRateThrottle",
     ],
     "DEFAULT_THROTTLE_RATES": {
-        # "login": "5/hour",
-        # "anon": "5/hour",
+        "login": "5/hour",
+        "anon": "5/hour",
     },
 }
 
