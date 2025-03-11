@@ -52,26 +52,45 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
-        # Get client IP
-        client_ip = request.META.get("REMOTE_ADDR", None)
-        # Attempt to authenticate
-        response = super().post(request, *args, **kwargs)
+        username = request.data.get("username")
+        client_ip = request.META.get("REMOTE_ADDR")
 
-        # If successful login, update tracking fields
-        if response.status_code == 200 and hasattr(self, "user"):
-            self.user.failed_login_attempts = 0
-            self.user.last_login_ip = client_ip
-            self.user.save(update_fields=["failed_login_attempts", "last_login_ip"])
-        # Log failed attempts
-        elif response.status_code >= 400:
-            username = request.data.get("username", "")
-            if username:
-                try:
-                    user = User.objects.get(username=username)
+        try:
+            user = User.objects.get(username=username)
+            print("failed login attempts: ", user.failed_login_attempts)
+
+            # Check password change requirement before authentication
+            if user.require_password_change:
+                return Response(
+                    {"detail": "Password change required."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Attempt authentication
+            response = super().post(request, *args, **kwargs)
+
+            # Successful login
+            if response.status_code == 200:
+                user.failed_login_attempts = 0
+                user.last_login_ip = client_ip
+                user.save(update_fields=["failed_login_attempts", "last_login_ip"])
+
+            return response
+
+        except User.DoesNotExist:
+            # Don't reveal user existence
+            return Response(
+                {"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        except Exception:
+            # Handle failed login attempt
+            if user:
+                if user.failed_login_attempts < 5:
                     user.failed_login_attempts += 1
                     user.last_login_ip = client_ip
 
-                    # Force password reset after multiple failed attempts
+                    # Set password change requirement at 5 attempts
                     if user.failed_login_attempts >= 5:
                         user.require_password_change = True
 
@@ -82,10 +101,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                             "require_password_change",
                         ]
                     )
-                except User.DoesNotExist:
-                    pass  # Don't reveal user existence
 
-        return response
+            return Response(
+                {"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
