@@ -140,7 +140,10 @@ class Patient(models.Model):
 
     # Contact time preferences
     contact_time_preferences = models.JSONField(
-        default=dict, help_text="JSON containing preferred contact times"
+        default=dict,
+        help_text="JSON containing preferred contact times",
+        null=True,
+        blank=True,
     )
 
     # Campaign and communication related fields
@@ -151,7 +154,7 @@ class Patient(models.Model):
 
     # Campaign segments (optional - can also be calculated dynamically)
     segments = models.ManyToManyField(
-        "campaign.PatientSegment", blank=True, related_name="patients"
+        "campaigns.PatientSegment", blank=True, related_name="patients"
     )
 
     # Communication engagement metrics
@@ -169,6 +172,7 @@ class Patient(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="created_patients",
     )
 
@@ -183,6 +187,10 @@ class Patient(models.Model):
     )
     anonymized = models.BooleanField(
         default=False, help_text="Whether this record has been anonymized"
+    )
+
+    anonymized_at = models.DateTimeField(
+        null=True, blank=True, help_text="When the patient record was anonymized"
     )
 
     # Consent tracking field
@@ -343,6 +351,7 @@ class Patient(models.Model):
 
         # Update status flags
         self.anonymized = True
+        self.anonymized_at = timezone.now()
         self.has_active_consent = False
         self.email_verified = False
         self.phone_verified = False
@@ -354,6 +363,7 @@ class Patient(models.Model):
             "phone_number",
             "date_of_birth",
             "anonymized",
+            "anonymized_at",
             "has_active_consent",
             "email_verified",
             "phone_verified",
@@ -409,7 +419,7 @@ class Patient(models.Model):
 
     def update_engagement_score(self):
         """Calculate patient engagement score based on communication history"""
-        from campaign.models import CommunicationLog
+        from campaigns.models import CommunicationLog
 
         recent_logs = CommunicationLog.objects.filter(
             patient=self, sent_at__isnull=False

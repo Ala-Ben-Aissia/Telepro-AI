@@ -4,6 +4,11 @@ from .models import Patient
 
 
 class PatientAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        if not change:  # Only when creating a new patient
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+
     def trucated_id(self, obj):
         return str(obj.id)[:8]
 
@@ -14,7 +19,15 @@ class PatientAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Basic Information",
-            {"fields": ("user", "medical_record_number", "is_active", "anonymized")},
+            {
+                "fields": (
+                    "user",
+                    "medical_record_number",
+                    "is_active",
+                    "anonymized",
+                    "anonymized_at",
+                )
+            },
         ),
         (
             "Demographics",
@@ -33,6 +46,8 @@ class PatientAdmin(admin.ModelAdmin):
             "Contact Information",
             {
                 "fields": (
+                    "email",
+                    "phone_number",
                     "email_verified",
                     "phone_verified",
                     "preferred_contact_method",

@@ -53,6 +53,8 @@ class PatientViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def anonymize(self, request, pk=None):
         patient = self.get_object()
+        if patient.anonymized:
+            return Response({"status": "Patient data has already been anonymized"})
         patient.anonymize()
         return Response({"status": "Patient data has been anonymized"})
 
