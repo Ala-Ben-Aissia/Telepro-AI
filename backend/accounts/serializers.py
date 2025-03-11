@@ -20,8 +20,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "email",
-            "first_name",
-            "last_name",
             "phone_number",
             "email_verified",
             "phone_verified",
@@ -107,14 +105,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "password_confirm",
-            "first_name",
-            "last_name",
-            "phone_number",
         ]
         extra_kwargs = {
             "email": {"required": True},
-            "first_name": {"required": False},
-            "last_name": {"required": False},
             "phone_number": {"required": False},
         }
 
@@ -171,12 +164,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if phone_number != "":
             phone_number = encrypt(phone_number)
 
-        # Create the user instance
+        # Create the user instance with extra fields
         user = User.objects.create(
             username=validated_data["username"],
             email=encrypt(validated_data["email"]),
-            first_name=validated_data.get("first_name", ""),
-            last_name=validated_data.get("last_name", ""),
             phone_number=phone_number,
             user_type=user_type,
         )

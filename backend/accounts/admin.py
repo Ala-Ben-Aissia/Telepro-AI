@@ -15,7 +15,7 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = ("user_type", "is_active")
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        ("Personal info", {"fields": ("first_name", "last_name", "email")}),
+        ("Personal info", {"fields": ["email"]}),
         (
             "Permissions",
             {
