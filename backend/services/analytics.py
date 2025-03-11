@@ -1,5 +1,6 @@
-from campaign.models import CommunicationLog
 from django.db.models import Count
+
+from campaigns.models import CommunicationLog
 from patients.models import Patient
 
 

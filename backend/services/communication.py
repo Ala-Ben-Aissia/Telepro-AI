@@ -1,8 +1,9 @@
 import logging
 
-from campaign.models import CommunicationLog
 from django.conf import settings
 from django.core.mail import send_mail
+
+from campaigns.models import CommunicationLog
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ class CommunicationService:
             # Process template with patient context
             # This is a simplified implementation - you'll want to use a proper template engine
             message = campaign.email_template.replace(
-                "{patient_name}", patient.user.first_name
+                "{patient_name}", patient.user.username
             )
 
             # Send email

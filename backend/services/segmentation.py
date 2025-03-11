@@ -1,6 +1,7 @@
 import json
 
 from django.db.models import Q
+
 from patients.models import Patient
 
 

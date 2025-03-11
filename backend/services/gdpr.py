@@ -3,6 +3,7 @@ import io
 import json
 
 from django.utils import timezone
+
 from patients.models import Patient
 
 
@@ -63,7 +64,7 @@ class GDPRService:
         writer.writerow(["Campaign Communications"])
         writer.writerow(["Campaign", "Type", "Date", "Status"])
 
-        from campaign.models import CommunicationLog
+        from campaigns.models import CommunicationLog
 
         comms = CommunicationLog.objects.filter(patient=patient).order_by("-sent_at")
 
