@@ -90,7 +90,7 @@ class SegmentationService:
 
             # Language breakdown
             for lang in patients.values("language_preference").distinct():
-                l = lang["language_preference"] or "unknown"
+                l = lang["language_preference"] or "unknown"  # noqa: E741
                 count = patients.filter(
                     language_preference=lang["language_preference"]
                 ).count()
