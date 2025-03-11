@@ -46,11 +46,10 @@ INSTALLED_APPS = [
     # Third party apps
     "rest_framework",
     "rest_framework_simplejwt",
-    "encrypted_model_fields",
     # My apps
     "accounts",
     "patients",
-    "campaign",
+    "campaigns",
 ]
 
 MIDDLEWARE = [
