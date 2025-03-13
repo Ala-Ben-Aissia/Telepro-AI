@@ -340,6 +340,10 @@ class Patient(models.Model):
         Anonymize this patient record by removing all identifiable information
         while maintaining the record for statistical purposes.
         """
+        import uuid
+
+        from django.utils import timezone
+
         # Generate anonymous identifiers
         anonymous_id = f"ANON-{uuid.uuid4()}"
 
@@ -348,6 +352,14 @@ class Patient(models.Model):
         self.email = f"{anonymous_id}@anonymized.example"
         self.phone_number = None
         self.date_of_birth = None
+        self.gender = "N"  # Not specified
+        self.location = None
+
+        # Retain only the first two characters of postal code for regional statistics
+        if self.postal_code and len(self.postal_code) > 2:
+            self.postal_code = self.postal_code[:2] + "XXX"
+        else:
+            self.postal_code = None
 
         # Update status flags
         self.anonymized = True
@@ -356,20 +368,44 @@ class Patient(models.Model):
         self.email_verified = False
         self.phone_verified = False
 
+        # Clear communication preferences
+        self.preferred_contact_method = "NONE"
+        self.contact_time_preferences = {}
+
         # Save changes
         fields_to_update = [
             "medical_record_number",
             "email",
             "phone_number",
             "date_of_birth",
+            "gender",
+            "location",
+            "postal_code",
             "anonymized",
             "anonymized_at",
             "has_active_consent",
             "email_verified",
             "phone_verified",
+            "preferred_contact_method",
+            "contact_time_preferences",
             "updated_at",
         ]
         self.save(update_fields=fields_to_update)
+
+        # Create an audit log of the anonymization
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+
+        LogEntry.objects.log_action(
+            user_id=self.created_by_id
+            if self.created_by_id
+            else 1,  # Default to first admin if no creator
+            content_type_id=ContentType.objects.get_for_model(self).pk,
+            object_id=self.id,
+            object_repr=str(self),
+            action_flag=CHANGE,
+            change_message="Patient data anonymized",
+        )
 
         # Return true to confirm anonymization
         return True
