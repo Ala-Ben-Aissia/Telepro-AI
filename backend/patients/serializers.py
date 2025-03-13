@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Patient
+from .models import ConsentRecord, Patient
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -39,3 +39,10 @@ class PatientConsentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
         fields = ["has_active_consent"]
+
+
+class PatientConsentRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConsentRecord
+        fields = ["consent_type", "granted", "metadata"]
+        extra_kwargs = {"metadata": {"required": False}}
