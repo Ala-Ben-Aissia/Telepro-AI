@@ -1,6 +1,7 @@
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
 from services.analytics import AnalyticsService
 
 from .models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
@@ -37,6 +38,18 @@ class CampaignViewSet(viewsets.ModelViewSet):
         campaign = self.get_object()
         # Implementation details here...
         return Response({"status": "Campaign sending initiated"})
+
+    def perform_create(self, serializer):
+        """Track who created this campaign"""
+        campaign = serializer.save()
+        campaign._current_user_id = self.request.user.id
+        campaign.save()
+
+    def perform_update(self, serializer):
+        """Track who updated this campaign"""
+        campaign = serializer.save()
+        campaign._current_user_id = self.request.user.id
+        campaign.save()
 
 
 class PatientSegmentViewSet(viewsets.ModelViewSet):
