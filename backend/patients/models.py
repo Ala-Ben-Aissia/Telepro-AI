@@ -436,3 +436,55 @@ class Patient(models.Model):
         if campaign_type:
             return self.campaign_preferences.get(campaign_type, {})
         return self.campaign_preferences
+
+
+class ConsentRecord(models.Model):
+    """
+    Tracks patient consents for different types of data processing and communications.
+    Provides a comprehensive audit trail for GDPR compliance.
+    """
+
+    CONSENT_TYPES = [
+        ("GENERAL", "General Data Processing"),
+        ("MARKETING", "Marketing Communications"),
+        ("RESEARCH", "Research Usage"),
+        ("THIRD_PARTY", "Third Party Sharing"),
+        ("SENSITIVE_DATA", "Process Sensitive Data"),
+        ("AUTOMATED_DECISION", "Automated Decision Making"),
+    ]
+
+    patient = models.ForeignKey(
+        "Patient", on_delete=models.CASCADE, related_name="consent_records"
+    )
+    consent_type = models.CharField(max_length=20, choices=CONSENT_TYPES)
+    granted = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    # Who recorded this consent (staff user or self-service)
+    recorded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="recorded_consents",
+    )
+
+    # Additional metadata for the consent (e.g., form version, context)
+    metadata = models.JSONField(default=dict, blank=True)
+
+    # IP address from which consent was given/withdrawn
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    # Reference to any documents shown to the patient
+    document_version = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Consent Record")
+        verbose_name_plural = _("Consent Records")
+        indexes = [
+            models.Index(fields=["patient", "consent_type"]),
+            models.Index(fields=["timestamp"]),
+        ]
+
+    def __str__(self):
+        status = "Granted" if self.granted else "Withdrawn"
+        return f"{self.consent_type} - {status} ({self.timestamp.strftime('%Y-%m-%d')})"
