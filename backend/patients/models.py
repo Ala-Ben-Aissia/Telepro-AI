@@ -386,6 +386,54 @@ class Patient(models.Model):
             return False
         return self.scheduled_deletion_date <= timezone.now().date()
 
+    def get_active_consents(self):
+        """Get all active consents for this patient"""
+        from django.db.models import Max
+
+        # Get the latest consent record for each type
+        latest_consents = self.consent_records.values("consent_type").annotate(
+            latest_timestamp=Max("timestamp")
+        )
+
+        # Fetch the corresponding consent records
+        active_consents = {}
+        for consent in latest_consents:
+            record = self.consent_records.filter(
+                consent_type=consent["consent_type"],
+                timestamp=consent["latest_timestamp"],
+            ).first()
+
+            if record and record.granted:
+                active_consents[record.consent_type] = record
+
+        return active_consents
+
+    def has_consent_for(self, consent_type):
+        """Check if patient has given consent for a specific type"""
+        active_consents = self.get_active_consents()
+        return consent_type in active_consents
+
+    def record_consent(
+        self, consent_type, granted, user=None, ip_address=None, metadata=None
+    ):
+        """Record a new consent decision"""
+        from .models import ConsentRecord
+
+        # Update the has_active_consent field if this is the general consent
+        if consent_type == "GENERAL":
+            self.has_active_consent = granted
+            self.save(update_fields=["has_active_consent"])
+
+        # Create the consent record
+        ConsentRecord.objects.create(
+            patient=self,
+            consent_type=consent_type,
+            granted=granted,
+            recorded_by=user,
+            ip_address=ip_address,
+            metadata=metadata or {},
+        )
+
     def update_age_group(self):
         """Calculate and update age group based on date of birth"""
         if not self.date_of_birth:
