@@ -1,5 +1,10 @@
 from django.contrib import admin
-from django.urls import include, path, re_path
+from django.urls import include, path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 from drf_yasg import openapi, views
 from rest_framework import permissions
 
@@ -21,19 +26,11 @@ urlpatterns = [
     path("api/accounts/", include("accounts.urls")),
     path("api/patients/", include("patients.urls")),
     path("api/campaigns/", include("campaigns.urls")),
-    re_path(
-        r"^api/swagger(?P<format>\.json|\.yaml)$",
-        schema_view.without_ui(cache_timeout=0),
-        name="schema-json",
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path(
+        "api/swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
     ),
-    re_path(
-        r"^api/swagger/$",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
-    re_path(
-        r"^api/redoc/$",
-        schema_view.with_ui("redoc", cache_timeout=0),
-        name="schema-redoc",
-    ),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 ]
