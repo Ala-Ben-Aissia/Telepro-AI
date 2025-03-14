@@ -5,7 +5,7 @@ from . import views
 
 router = DefaultRouter()
 router.register(r"categories", views.CampaignCategoryViewSet)
-router.register(r"campaigns", views.CampaignViewSet)
+router.register(r"", views.CampaignViewSet)
 router.register(r"segments", views.PatientSegmentViewSet)
 router.register(r"communications", views.CommunicationLogViewSet)
 
