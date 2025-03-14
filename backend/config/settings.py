@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     # "drf_yasg"
+    "django_filters",
     # My apps
     "accounts",
     "patients",
@@ -182,6 +183,9 @@ REST_FRAMEWORK = {
         # "login": "5/hour",
         # "anon": "5/hour",
     },
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
 }
 
 

@@ -1,3 +1,4 @@
+import django_filters
 from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
@@ -12,10 +13,41 @@ from .serializers import (
 )
 
 
+class PatientFilter(django_filters.FilterSet):
+    """Filter for the Patient model"""
+
+    age_group = django_filters.CharFilter(lookup_expr="exact")
+    location = django_filters.CharFilter(lookup_expr="icontains")
+    gender = django_filters.CharFilter(lookup_expr="exact")
+    preferred_contact_method = django_filters.CharFilter(lookup_expr="exact")
+    has_active_consent = django_filters.BooleanFilter()
+    created_at_after = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
+    )
+    created_at_before = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
+    )
+    anonymized = django_filters.BooleanFilter(field_name="anonymized")
+
+    class Meta:
+        model = Patient
+        fields = [
+            "age_group",
+            "location",
+            "gender",
+            "preferred_contact_method",
+            "has_active_consent",
+            "created_at_after",
+            "created_at_before",
+            "anonymized",
+        ]
+
+
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = PatientFilter
 
     def get_queryset(self):
         user = self.request.user
