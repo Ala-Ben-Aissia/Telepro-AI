@@ -4,6 +4,8 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from services.ai.clustering import PatientClusteringService
+
 from .models import Patient
 from .serializers import (
     PatientConsentRecordSerializer,
@@ -171,3 +173,31 @@ class PatientViewSet(viewsets.ModelViewSet):
         )
 
         return Response({"data": data, "exported_at": timezone.now().isoformat()})
+
+    @action(detail=False, methods=["get"])
+    def clusters(self, request):
+        """Get patient clusters based on similarities"""
+        # Only staff can access clustering for all patients
+        if not request.user.is_staff and not request.user.is_superuser:
+            return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
+
+        n_clusters = int(request.query_params.get("n_clusters", 5))
+        consent_only = request.query_params.get("consent_only", "true").lower() == "true"
+
+        result = PatientClusteringService.cluster_patients(
+            n_clusters=n_clusters, include_only_with_consent=consent_only
+        )
+
+        return Response(result)
+
+    @action(detail=True, methods=["get"])
+    def cluster_info(self, request, pk=None):
+        """Get cluster information for a specific patient"""
+        patient = self.get_object()
+        n_clusters = int(request.query_params.get("n_clusters", 5))
+
+        result = PatientClusteringService.get_patient_cluster(
+            patient_id=str(patient.id), n_clusters=n_clusters
+        )
+
+        return Response(result)
