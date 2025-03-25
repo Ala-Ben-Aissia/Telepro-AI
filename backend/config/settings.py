@@ -220,3 +220,5 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+
+SITE_URL = os.getenv("BASE_URL", "http://localhost:8000")
