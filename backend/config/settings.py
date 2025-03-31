@@ -223,22 +223,22 @@ SPECTACULAR_SETTINGS = {
 
 SITE_URL = os.getenv("BASE_URL", "http://localhost:8000")
 
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True # Redirect all HTTP requests to HTTPS (commented to allow testing on localhost)
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True #disable random users (probably sniffers) from accessing the session cookie
+# CSRF_COOKIE_SECURE = True # disable users from accessing the CSRF cookie and sending CSRF attacks
 X_FRAME_OPTIONS = "DENY"
 
 # For SMS and email templates
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@teleproai.example.com")
 
 # Security settings
-PASSWORD_HASHERS = [
-    "django.contrib.auth.hashers.Argon2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
-]
+# PASSWORD_HASHERS = [
+#     "django.contrib.auth.hashers.Argon2PasswordHasher",
+#     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+#     "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+# ]
