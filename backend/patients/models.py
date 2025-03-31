@@ -340,6 +340,10 @@ class Patient(models.Model):
         Anonymize this patient record by removing all identifiable information
         while maintaining the record for statistical purposes.
         """
+        import uuid
+
+        from django.utils import timezone
+
         # Generate anonymous identifiers
         anonymous_id = f"ANON-{uuid.uuid4()}"
 
@@ -348,6 +352,14 @@ class Patient(models.Model):
         self.email = f"{anonymous_id}@anonymized.example"
         self.phone_number = None
         self.date_of_birth = None
+        self.gender = "N"  # Not specified
+        self.location = None
+
+        # Retain only the first two characters of postal code for regional statistics
+        if self.postal_code and len(self.postal_code) > 2:
+            self.postal_code = self.postal_code[:2] + "XXX"
+        else:
+            self.postal_code = None
 
         # Update status flags
         self.anonymized = True
@@ -356,20 +368,44 @@ class Patient(models.Model):
         self.email_verified = False
         self.phone_verified = False
 
+        # Clear communication preferences
+        self.preferred_contact_method = "NONE"
+        self.contact_time_preferences = {}
+
         # Save changes
         fields_to_update = [
             "medical_record_number",
             "email",
             "phone_number",
             "date_of_birth",
+            "gender",
+            "location",
+            "postal_code",
             "anonymized",
             "anonymized_at",
             "has_active_consent",
             "email_verified",
             "phone_verified",
+            "preferred_contact_method",
+            "contact_time_preferences",
             "updated_at",
         ]
         self.save(update_fields=fields_to_update)
+
+        # Create an audit log of the anonymization
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+
+        LogEntry.objects.log_action(
+            user_id=self.created_by_id
+            if self.created_by_id
+            else 1,  # Default to first admin if no creator
+            content_type_id=ContentType.objects.get_for_model(self).pk,
+            object_id=self.id,
+            object_repr=str(self),
+            action_flag=CHANGE,
+            change_message="Patient data anonymized",
+        )
 
         # Return true to confirm anonymization
         return True
@@ -385,6 +421,54 @@ class Patient(models.Model):
         if not self.scheduled_deletion_date:
             return False
         return self.scheduled_deletion_date <= timezone.now().date()
+
+    def get_active_consents(self):
+        """Get all active consents for this patient"""
+        from django.db.models import Max
+
+        # Get the latest consent record for each type
+        latest_consents = self.consent_records.values("consent_type").annotate(
+            latest_timestamp=Max("timestamp")
+        )
+
+        # Fetch the corresponding consent records
+        active_consents = {}
+        for consent in latest_consents:
+            record = self.consent_records.filter(
+                consent_type=consent["consent_type"],
+                timestamp=consent["latest_timestamp"],
+            ).first()
+
+            if record and record.granted:
+                active_consents[record.consent_type] = record
+
+        return active_consents
+
+    def has_consent_for(self, consent_type):
+        """Check if patient has given consent for a specific type"""
+        active_consents = self.get_active_consents()
+        return consent_type in active_consents
+
+    def record_consent(
+        self, consent_type, granted, user=None, ip_address=None, metadata=None
+    ):
+        """Record a new consent decision"""
+        from .models import ConsentRecord
+
+        # Update the has_active_consent field if this is the general consent
+        if consent_type == "GENERAL":
+            self.has_active_consent = granted
+            self.save(update_fields=["has_active_consent"])
+
+        # Create the consent record
+        ConsentRecord.objects.create(
+            patient=self,
+            consent_type=consent_type,
+            granted=granted,
+            recorded_by=user,
+            ip_address=ip_address,
+            metadata=metadata or {},
+        )
 
     def update_age_group(self):
         """Calculate and update age group based on date of birth"""
@@ -436,3 +520,55 @@ class Patient(models.Model):
         if campaign_type:
             return self.campaign_preferences.get(campaign_type, {})
         return self.campaign_preferences
+
+
+class ConsentRecord(models.Model):
+    """
+    Tracks patient consents for different types of data processing and communications.
+    Provides a comprehensive audit trail for GDPR compliance.
+    """
+
+    CONSENT_TYPES = [
+        ("GENERAL", "General Data Processing"),
+        ("MARKETING", "Marketing Communications"),
+        ("RESEARCH", "Research Usage"),
+        ("THIRD_PARTY", "Third Party Sharing"),
+        ("SENSITIVE_DATA", "Process Sensitive Data"),
+        ("AUTOMATED_DECISION", "Automated Decision Making"),
+    ]
+
+    patient = models.ForeignKey(
+        "Patient", on_delete=models.CASCADE, related_name="consent_records"
+    )
+    consent_type = models.CharField(max_length=20, choices=CONSENT_TYPES)
+    granted = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    # Who recorded this consent (staff user or self-service)
+    recorded_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="recorded_consents",
+    )
+
+    # Additional metadata for the consent (e.g., form version, context)
+    metadata = models.JSONField(default=dict, blank=True)
+
+    # IP address from which consent was given/withdrawn
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    # Reference to any documents shown to the patient
+    document_version = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        verbose_name = _("Consent Record")
+        verbose_name_plural = _("Consent Records")
+        indexes = [
+            models.Index(fields=["patient", "consent_type"]),
+            models.Index(fields=["timestamp"]),
+        ]
+
+    def __str__(self):
+        status = "Granted" if self.granted else "Withdrawn"
+        return f"{self.consent_type} - {status} ({self.timestamp.strftime('%Y-%m-%d')})"

@@ -1,6 +1,9 @@
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from patients.models import Patient
+from services.ai.prediction import CampaignPredictionService
 from services.analytics import AnalyticsService
 
 from .models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
@@ -23,12 +26,6 @@ class CampaignViewSet(viewsets.ModelViewSet):
     serializer_class = CampaignSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=True, methods=["get"])
-    def effectiveness(self, request, pk=None):
-        campaign = self.get_object()
-        effectiveness = AnalyticsService.calculate_campaign_effectiveness(campaign.id)
-        return Response(effectiveness)
-
     @action(detail=True, methods=["post"])
     def send(self, request, pk=None):
         # Logic to send campaign communications
@@ -37,6 +34,53 @@ class CampaignViewSet(viewsets.ModelViewSet):
         campaign = self.get_object()
         # Implementation details here...
         return Response({"status": "Campaign sending initiated"})
+
+    def perform_create(self, serializer):
+        """Track who created this campaign"""
+        campaign = serializer.save()
+        campaign._current_user_id = self.request.user.id
+        campaign.save()
+
+    def perform_update(self, serializer):
+        """Track who updated this campaign"""
+        campaign = serializer.save()
+        campaign._current_user_id = self.request.user.id
+        campaign.save()
+
+    @action(detail=True, methods=["get"])
+    def effectiveness(self, request, pk=None):
+        campaign = self.get_object()
+        effectiveness = AnalyticsService.calculate_campaign_effectiveness(campaign.id)
+        return Response(effectiveness)
+
+    @action(detail=True, methods=["get"])
+    def predict_effectiveness(self, request, pk=None):
+        """Predict the effectiveness of this campaign"""
+        campaign = self.get_object()
+        prediction = CampaignPredictionService.predict_campaign_effectiveness(campaign.id)
+        return Response(prediction)
+
+    @action(detail=True, methods=["post"])
+    def predict_patient_response(self, request, pk=None):
+        """Predict if a specific patient will respond to this campaign"""
+        campaign = self.get_object()
+
+        # Validate patient_id
+        patient_id = request.data.get("patient_id")
+        if not patient_id:
+            return Response(
+                {"error": "patient_id is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            prediction = CampaignPredictionService.predict_patient_response(
+                patient_id=patient_id, campaign_id=campaign.id
+            )
+            return Response(prediction)
+        except Patient.DoesNotExist:
+            return Response(
+                {"error": "Patient not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class PatientSegmentViewSet(viewsets.ModelViewSet):

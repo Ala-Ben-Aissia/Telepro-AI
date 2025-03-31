@@ -1,19 +1,55 @@
+import django_filters
+from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from services.ai.clustering import PatientClusteringService
+
 from .models import Patient
 from .serializers import (
+    PatientConsentRecordSerializer,
     PatientConsentSerializer,
     PatientPreferencesSerializer,
     PatientSerializer,
 )
 
 
+class PatientFilter(django_filters.FilterSet):
+    """Filter for the Patient model"""
+
+    age_group = django_filters.CharFilter(lookup_expr="exact")
+    location = django_filters.CharFilter(lookup_expr="icontains")
+    gender = django_filters.CharFilter(lookup_expr="exact")
+    preferred_contact_method = django_filters.CharFilter(lookup_expr="exact")
+    has_active_consent = django_filters.BooleanFilter()
+    created_at_after = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="gte"
+    )
+    created_at_before = django_filters.DateTimeFilter(
+        field_name="created_at", lookup_expr="lte"
+    )
+    anonymized = django_filters.BooleanFilter(field_name="anonymized")
+
+    class Meta:
+        model = Patient
+        fields = [
+            "age_group",
+            "location",
+            "gender",
+            "preferred_contact_method",
+            "has_active_consent",
+            "created_at_after",
+            "created_at_before",
+            "anonymized",
+        ]
+
+
 class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filterset_class = PatientFilter
 
     def get_queryset(self):
         user = self.request.user
@@ -64,3 +100,104 @@ class PatientViewSet(viewsets.ModelViewSet):
         days = request.data.get("days", 30)
         deletion_date = patient.schedule_deletion(days)
         return Response({"status": "Deletion scheduled", "scheduled_date": deletion_date})
+
+    @action(detail=True, methods=["post"])
+    def record_consent(self, request, pk=None):
+        """Record a new consent decision for this patient"""
+        patient = self.get_object()
+
+        serializer = PatientConsentRecordSerializer(data=request.data)
+        if serializer.is_valid():
+            consent_type = serializer.validated_data["consent_type"]
+            granted = serializer.validated_data["granted"]
+            metadata = serializer.validated_data.get("metadata", {})
+
+            # Record the consent with IP tracking
+            ip_address = request.META.get("REMOTE_ADDR", None)
+            patient.record_consent(
+                consent_type=consent_type,
+                granted=granted,
+                user=request.user,
+                ip_address=ip_address,
+                metadata=metadata,
+            )
+
+            return Response(
+                {
+                    "status": "Consent recorded",
+                    "consent_type": consent_type,
+                    "granted": granted,
+                }
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=["get"])
+    def active_consents(self, request, pk=None):
+        """Get all active consents for this patient"""
+        patient = self.get_object()
+        active_consents = patient.get_active_consents()
+
+        # Convert to serializable format
+        serializable = [
+            {
+                "consent_type": consent_type,
+                "granted_at": consent.timestamp,
+                "recorded_by": consent.recorded_by.username
+                if consent.recorded_by
+                else "Self",
+            }
+            for consent_type, consent in active_consents.items()
+        ]
+
+        return Response(serializable)
+
+    @action(detail=True, methods=["post"])
+    def export_data(self, request, pk=None):
+        """Export patient data in structured format (GDPR right to data portability)"""
+        patient = self.get_object()
+        from services.gdpr import GDPRService
+
+        data = GDPRService.export_patient_data(patient)
+
+        # Log this export for audit purposes
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+
+        LogEntry.objects.log_action(
+            user_id=request.user.id,
+            content_type_id=ContentType.objects.get_for_model(patient).pk,
+            object_id=patient.id,
+            object_repr=str(patient),
+            action_flag=CHANGE,
+            change_message=f"Patient data exported by {request.user.username}",
+        )
+
+        return Response({"data": data, "exported_at": timezone.now().isoformat()})
+
+    @action(detail=False, methods=["get"])
+    def clusters(self, request):
+        """Get patient clusters based on similarities"""
+        # Only staff can access clustering for all patients
+        if not request.user.is_staff and not request.user.is_superuser:
+            return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
+
+        n_clusters = int(request.query_params.get("n_clusters", 5))
+        consent_only = request.query_params.get("consent_only", "true").lower() == "true"
+
+        result = PatientClusteringService.cluster_patients(
+            n_clusters=n_clusters, include_only_with_consent=consent_only
+        )
+
+        return Response(result)
+
+    @action(detail=True, methods=["get"])
+    def cluster_info(self, request, pk=None):
+        """Get cluster information for a specific patient"""
+        patient = self.get_object()
+        n_clusters = int(request.query_params.get("n_clusters", 5))
+
+        result = PatientClusteringService.get_patient_cluster(
+            patient_id=str(patient.id), n_clusters=n_clusters
+        )
+
+        return Response(result)

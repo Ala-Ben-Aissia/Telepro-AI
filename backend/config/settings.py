@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     # Third party apps
     "rest_framework",
     "rest_framework_simplejwt",
+    "drf_yasg",
+    "django_filters",
+    "drf_spectacular",
     # My apps
     "accounts",
     "patients",
@@ -181,6 +184,10 @@ REST_FRAMEWORK = {
         # "login": "5/hour",
         # "anon": "5/hour",
     },
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
@@ -206,3 +213,32 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Telepro-AI API",
+    "DESCRIPTION": "API for patient teleprospection with AI",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
+SITE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+
+# SECURE_SSL_REDIRECT = True # Redirect all HTTP requests to HTTPS (commented to allow testing on localhost)
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+# SESSION_COOKIE_SECURE = True #disable random users (probably sniffers) from accessing the session cookie
+# CSRF_COOKIE_SECURE = True # disable users from accessing the CSRF cookie and sending CSRF attacks
+X_FRAME_OPTIONS = "DENY"
+
+# For SMS and email templates
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@teleproai.example.com")
+
+# Security settings
+# PASSWORD_HASHERS = [
+#     "django.contrib.auth.hashers.Argon2PasswordHasher",
+#     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+#     "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+# ]

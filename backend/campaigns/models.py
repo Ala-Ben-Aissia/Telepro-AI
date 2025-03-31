@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from common.utils import AuditableMixin
+
 
 class CampaignCategory(models.Model):
     """Categories for different types of campaigns (e.g. vaccination, dental, etc)"""
@@ -17,7 +19,7 @@ class CampaignCategory(models.Model):
         return self.name
 
 
-class Campaign(models.Model):
+class Campaign(AuditableMixin, models.Model):
     """Represents a communication campaign"""
 
     title = models.CharField(max_length=200)
@@ -49,6 +51,14 @@ class Campaign(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        # Track who updated this campaign
+        if hasattr(self, "_current_user_id") and self._current_user_id:
+            if self.pk is None:  # Creating
+                self.created_by_id = self._current_user_id
+            self.updated_by_id = self._current_user_id
+        super().save(*args, **kwargs)
 
 
 class PatientSegment(models.Model):
