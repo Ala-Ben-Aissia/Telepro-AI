@@ -561,6 +561,20 @@ class ConsentRecord(models.Model):
     # Reference to any documents shown to the patient
     document_version = models.CharField(max_length=50, blank=True, null=True)
 
+    # Additonal details to track consent context
+    user_agent = models.TextField(blank=True, null=True, help_text="Browser/device information")
+    consent_method = models.CharField(
+        max_length=20,
+        choices=[
+            ("WEB_FORM", "Web Form"),
+            ("API", "API Request"),
+            ("STAFF", "Staff Member"),
+            ("IMPORT", "Data Import"),
+        ],
+        default="WEB_FORM",
+        help_text="How the consent was collected"
+    )
+
     class Meta:
         verbose_name = _("Consent Record")
         verbose_name_plural = _("Consent Records")
