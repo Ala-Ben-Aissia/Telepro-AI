@@ -446,11 +446,22 @@ class Patient(models.Model):
 
     def has_consent_for(self, consent_type):
         """Check if patient has given consent for a specific type"""
-        active_consents = self.get_active_consents()
-        return consent_type in active_consents
+        latest_consent = (
+            self.consent_records.filter(consent_type=consent_type)
+            .order_by("-timestamp")
+            .first()
+        )
+        return latest_consent and latest_consent.granted
 
     def record_consent(
-        self, consent_type, granted, user=None, ip_address=None, metadata=None
+        self,
+        consent_type,
+        granted,
+        user=None,
+        ip_address=None,
+        metadata=None,
+        user_agent=None,
+        consent_method="WEB_FORM",
     ):
         """Record a new consent decision"""
         from .models import ConsentRecord
@@ -468,7 +479,30 @@ class Patient(models.Model):
             recorded_by=user,
             ip_address=ip_address,
             metadata=metadata or {},
+            user_agent=user_agent,
+            consent_method=consent_method,
         )
+
+        # Log the consent action
+        from django.contrib.admin.models import (
+            LogEntry,
+            CHANGE,
+        )
+        from django.contrib.contenttypes.models import (
+            ContentType,
+        )
+
+        if user and user.id:
+            LogEntry.objects.log_action(
+                user_id=user.id,
+                content_type_id=ContentType.objects.get_for_model(self).pk,
+                object_id=self.id,
+                object_repr=str(self),
+                action_flag=CHANGE,
+                change_message=f"Consent for {consent_type} {'granted' if granted else 'withdrawn'}",
+            )
+
+        return True
 
     def update_age_group(self):
         """Calculate and update age group based on date of birth"""
@@ -562,7 +596,9 @@ class ConsentRecord(models.Model):
     document_version = models.CharField(max_length=50, blank=True, null=True)
 
     # Additonal details to track consent context
-    user_agent = models.TextField(blank=True, null=True, help_text="Browser/device information")
+    user_agent = models.TextField(
+        blank=True, null=True, help_text="Browser/device information"
+    )
     consent_method = models.CharField(
         max_length=20,
         choices=[
@@ -572,7 +608,7 @@ class ConsentRecord(models.Model):
             ("IMPORT", "Data Import"),
         ],
         default="WEB_FORM",
-        help_text="How the consent was collected"
+        help_text="How the consent was collected",
     )
 
     class Meta:
