@@ -313,18 +313,22 @@ class PatientResponseTrainer:
         # Define parameter grid based on classifier type
         if classifier_type == "gradient_boosting":
             param_grid = {
-                "classifier__n_estimators": [50, 100, 200],
-                "classifier__learning_rate": [0.01, 0.1, 0.2],
-                "classifier__max_depth": [3, 5, 7],
+                "classifier__n_estimators": [100, 200, 300],
+                "classifier__learning_rate": [0.01, 0.05, 0.1, 0.2],
+                "classifier__max_depth": [3, 5, 7, 9],
                 "classifier__min_samples_split": [2, 5, 10],
+                "classifier__subsample": [0.8, 0.9, 1.0],
+                "classifier__max_features": ["sqrt", "log2", None],
             }
             base_clf = GradientBoostingClassifier(random_state=42)
         else:  # Random Forest
             param_grid = {
-                "classifier__n_estimators": [50, 100, 200],
-                "classifier__max_depth": [None, 10, 20],
+                "classifier__n_estimators": [100, 200, 300],
+                "classifier__max_depth": [None, 10, 20, 30],
                 "classifier__min_samples_split": [2, 5, 10],
                 "classifier__min_samples_leaf": [1, 2, 4],
+                "classifier__bootstrap": [True, False],
+                "classifier__class_weight": ["balanced", "balanced_subsample", None],
             }
             base_clf = RandomForestClassifier(random_state=42)
 
