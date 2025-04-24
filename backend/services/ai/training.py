@@ -24,10 +24,30 @@ from sklearn.utils.class_weight import compute_class_weight
 from imblearn.over_sampling import SMOTE
 import matplotlib.pyplot as plt
 from django.utils import timezone
+from sklearn.feature_selection import SelectFromModel
 
 from campaigns.models import CommunicationLog
 
 logger = logging.getLogger(__name__)
+
+
+def select_optimal_features(X, y, threshold="median"):
+    """
+    Select most important features using Random Forest feature importance.
+    Returns a fitted selector. Use selector.transform(X) to get reduced features.
+    """
+    selector = SelectFromModel(
+        RandomForestClassifier(n_estimators=100, random_state=42), threshold=threshold
+    )
+    selector.fit(X, y)
+    return selector
+
+
+# Example usage in training pipeline:
+# selector = select_optimal_features(X_train, y_train)
+# X_train_selected = selector.transform(X_train)
+# X_test_selected = selector.transform(X_test)
+# selected_features = [f for f, s in zip(feature_names, selector.get_support()) if s]
 
 
 class PatientResponseTrainer:
@@ -464,6 +484,7 @@ class PatientResponseTrainer:
         test_size=0.2,
         random_state=42,
         use_smote=True,
+        use_feature_selection=False,  # NEW ARGUMENT
     ):
         """
         Train a machine learning model to predict patient responses.
@@ -474,6 +495,7 @@ class PatientResponseTrainer:
             test_size: Proportion of data to use for testing
             random_state: Random seed for reproducibility
             use_smote: Whether to use SMOTE for handling class imbalance
+            use_feature_selection: Whether to use feature selection before training
 
         Returns:
             Dictionary with training results and evaluation metrics
@@ -483,6 +505,16 @@ class PatientResponseTrainer:
 
         if X is None or len(X) < 50:  # Need sufficient data
             return {"status": "error", "message": "Insufficient training data available"}
+
+        # Feature selection (optional)
+        selector = None
+        if use_feature_selection:
+            selector = select_optimal_features(X, y)
+            X = selector.transform(X)
+            # Update feature_names to selected ones
+            feature_names = [
+                f for f, s in zip(feature_names, selector.get_support()) if s
+            ]
 
         # Split into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(
@@ -587,6 +619,9 @@ class PatientResponseTrainer:
                 "avg_precision": float(avg_precision),
                 "class_report": class_report,
             },
+            "feature_selector": selector
+            if use_feature_selection
+            else None,  # Save selector if used
         }
         joblib.dump(model_data, self.model_path)
         logger.info(f"Model saved to {self.model_path}")
@@ -612,6 +647,10 @@ class PatientResponseTrainer:
             "hyperparameter_tuning": tune_hyperparameters,
             "best_params": best_params,
             "training_date": timezone.now().isoformat(),
+            "feature_selection": use_feature_selection,
+            "selected_feature_count": len(feature_names)
+            if use_feature_selection
+            else None,
         }
 
     def load_model(self):
