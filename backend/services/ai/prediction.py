@@ -474,28 +474,59 @@ class CampaignPredictionService:
                 / max(1, patient.contact_attempts),
             }
 
-            # Calculate inactivity risk score (simple weighted score for now)
+            # First filter: Only consider patients who haven't been contacted in [days_threshold] days
+            # This ensures the days_threshold parameter is actually used
+            if (
+                features["days_since_contact"] < days_threshold / 2
+            ):  # Using half the threshold as a minimum
+                continue
+
+            # Calculate risk relative to threshold (makes days_threshold parameter meaningful)
+            # Someone at threshold should have a time risk of 0.5
+            time_risk = min(1.0, features["days_since_contact"] / (days_threshold * 2))
+
+            # Calculate inactivity risk score with adjusted weights
+            # Increase time weight since that's the primary concern
             risk_score = (
-                0.4 * (features["days_since_contact"] / 365)
-                + 0.3 * (1 - features["engagement_score"])
-                + 0.3 * (1 - features["response_rate"])
+                0.6 * time_risk
+                + 0.2 * (1 - features["engagement_score"])
+                + 0.2 * (1 - features["response_rate"])
             )
 
-            if risk_score > 0.6:  # Threshold for high risk
+            # Risk threshold is dynamically based on days_since_contact relation to threshold
+            min_risk_threshold = (
+                0.5 if features["days_since_contact"] >= days_threshold else 0.7
+            )
+
+            if risk_score > min_risk_threshold:
                 results.append(
                     {
                         "patient_id": str(patient.id),
                         "risk_score": risk_score,
                         "days_since_contact": features["days_since_contact"],
-                        "recommended_action": "Follow up required",
+                        # "days_threshold": days_threshold,
+                        "engagement_score": features["engagement_score"],
+                        "response_rate": features["response_rate"],
+                        "recommended_action": "Follow up required"
+                        if risk_score > 0.7
+                        else "Monitor",
                     }
                 )
 
-        return results
+        # Sort by risk score (highest first)
+        return sorted(results, key=lambda x: x["risk_score"], reverse=True)
 
-    """ 
-    There are several issues with this approach: 
-    1. Days since contact is normalized over a full year (365 days): That means a patient with 46 days of no contact would contribute only `0.4 * (46/365) = 0.05` to the risk score from the time component.
-    2. Other factors are heavily weighted: The patient must have very low engagement and response rates, contributing the remaining 0.58 to the score.
-    3. The absolute threshold (0.6) isn't relative to the days_threshold parameter: Even though you set a 90-day threshold, the function doesn't use this parameter in its scoring.
-    """
+
+"""
+This improved implementation:
+1. Uses the days_threshold parameter meaningfully: Filters out patients with recent contact (less than half the threshold)
+2. Normalizes time risk relative to threshold: Makes the days_threshold parameter directly affect scoring
+3. Weights time more heavily (60% vs 40% before)
+4. Adjusts threshold dynamically: Requires higher risk scores for patients below the days threshold
+5. Provides more detailed information in results for better debugging
+6. Creates a "Monitor" vs "Follow up required" distinction for different risk levels
+
+So With these changes, we should see more meaningful results where patients with fewer days since contact won't appear unless they have extremely poor engagement metrics, and the days_threshold parameter will have a more intuitive effect on the results.
+
+This is a common issue in ML applications where multiple factors are combined - it can be challenging to tune the weights and thresholds to match business expectations. The improved implementation gives you more control and transparency.
+"""
