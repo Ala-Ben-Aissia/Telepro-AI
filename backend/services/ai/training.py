@@ -289,8 +289,8 @@ class PatientResponseTrainer:
 
 
 # Training function that can be called from the command line or other services
-def train_patient_response_model(save_dir="models"):
+def train_patient_response_model(save_dir="models", classifier="random_forest"):
     """Train and save a patient response prediction model."""
     trainer = PatientResponseTrainer(model_dir=save_dir)
-    result = trainer.train_model()
+    result = trainer.train_model(classifier=classifier)
     return result
