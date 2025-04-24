@@ -10,8 +10,14 @@ import joblib
 import numpy as np
 import pandas as pd
 from datetime import timedelta
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    GradientBoostingClassifier,
+    StackingClassifier,
+    VotingClassifier,
+)
 from sklearn.metrics import (
     classification_report,
     accuracy_score,
@@ -29,6 +35,29 @@ from sklearn.feature_selection import SelectFromModel
 from campaigns.models import CommunicationLog
 
 logger = logging.getLogger(__name__)
+
+
+def create_ensemble_model(model_type="stacking"):
+    """
+    Create an ensemble model combining multiple classifiers.
+    model_type: "stacking" or "voting"
+    Returns the ensemble classifier.
+    """
+    rf = RandomForestClassifier(n_estimators=200, random_state=42)
+    gb = GradientBoostingClassifier(n_estimators=200, random_state=42)
+
+    if model_type == "voting":
+        # Voting Classifier (soft voting)
+        ensemble = VotingClassifier(estimators=[("rf", rf), ("gb", gb)], voting="soft")
+    else:
+        # Default: Stacking Classifier
+        ensemble = StackingClassifier(
+            estimators=[("rf", rf), ("gb", gb)],
+            final_estimator=LogisticRegression(max_iter=200, random_state=42),
+            passthrough=False,
+            n_jobs=-1,
+        )
+    return ensemble
 
 
 def select_optimal_features(X, y, threshold="median"):
@@ -322,15 +351,31 @@ class PatientResponseTrainer:
             }
             base_clf = GradientBoostingClassifier(random_state=42)
         else:  # Random Forest
+            # param_grid = {
+            #     "classifier__n_estimators": [100, 200, 300],
+            #     "classifier__max_depth": [None, 10, 20, 30],
+            #     "classifier__min_samples_split": [2, 5, 10],
+            #     "classifier__min_samples_leaf": [1, 2, 4],
+            #     "classifier__bootstrap": [True, False],
+            #     "classifier__class_weight": ["balanced", "balanced_subsample", None],
+            # }
             param_grid = {
                 "classifier__n_estimators": [100, 200, 300],
                 "classifier__max_depth": [None, 10, 20, 30],
                 "classifier__min_samples_split": [2, 5, 10],
                 "classifier__min_samples_leaf": [1, 2, 4],
                 "classifier__bootstrap": [True, False],
-                "classifier__class_weight": ["balanced", "balanced_subsample", None],
             }
-            base_clf = RandomForestClassifier(random_state=42)
+
+            # Only add class_weight to search if not using SMOTE
+            if not hasattr(self, "use_smote") or not self.use_smote:
+                param_grid["classifier__class_weight"] = [
+                    "balanced",
+                    "balanced_subsample",
+                    None,
+                ]
+
+                base_clf = RandomForestClassifier(random_state=42)
 
         # Create pipeline with preprocessing
         pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", base_clf)])
@@ -488,18 +533,22 @@ class PatientResponseTrainer:
         test_size=0.2,
         random_state=42,
         use_smote=True,
-        use_feature_selection=False,  # NEW ARGUMENT
+        use_feature_selection=False,
+        use_ensemble=False,
+        ensemble_type="stacking",  # "stacking" or "voting"
     ):
         """
         Train a machine learning model to predict patient responses.
 
         Args:
-            classifier: Type of classifier to use ('random_forest' or 'gradient_boosting')
+            classifier: Type of classifier to use ('random_forest', 'gradient_boosting', or 'ensemble')
             tune_hyperparameters: Whether to perform hyperparameter tuning
             test_size: Proportion of data to use for testing
             random_state: Random seed for reproducibility
             use_smote: Whether to use SMOTE for handling class imbalance
             use_feature_selection: Whether to use feature selection before training
+            use_ensemble: Whether to use an ensemble model (stacking/voting)
+            ensemble_type: Type of ensemble ("stacking" or "voting")
 
         Returns:
             Dictionary with training results and evaluation metrics
@@ -553,7 +602,9 @@ class PatientResponseTrainer:
             weight_dict = None
 
         # Choose classifier
-        if classifier == "gradient_boosting":
+        if use_ensemble:
+            clf = create_ensemble_model(model_type=ensemble_type)
+        elif classifier == "gradient_boosting":
             clf = GradientBoostingClassifier(random_state=random_state)
         else:  # Default to random forest
             clf = RandomForestClassifier(
@@ -562,7 +613,6 @@ class PatientResponseTrainer:
             )
 
         # Perform hyperparameter tuning if requested
-        best_params = {}
         if tune_hyperparameters:
             best_params = self._tune_hyperparameters(X_train, y_train, classifier)
 
@@ -573,11 +623,15 @@ class PatientResponseTrainer:
                     **{k.replace("classifier__", ""): v for k, v in best_params.items()},
                 )
             else:
-                clf = RandomForestClassifier(
-                    random_state=random_state,
-                    class_weight=weight_dict if not use_smote else None,
-                    **{k.replace("classifier__", ""): v for k, v in best_params.items()},
-                )
+                # Check if class_weight is in best_params
+                params = {
+                    k.replace("classifier__", ""): v for k, v in best_params.items()
+                }
+                if "class_weight" not in params and not use_smote:
+                    # Only add class_weight if it's not in best_params and SMOTE isn't used
+                    params["class_weight"] = weight_dict
+
+                clf = RandomForestClassifier(random_state=random_state, **params)
 
         # Create pipeline with preprocessing
         pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", clf)])
@@ -674,15 +728,35 @@ class PatientResponseTrainer:
 
 def train_patient_response_model(
     save_dir="models",
-    classifier="random_forest",
+    classifier="random_forest",  # Can also be 'gradient_boosting' or 'ensemble'
     tune_hyperparameters=True,
     use_smote=True,
+    use_feature_selection=False,
+    use_ensemble=False,
+    ensemble_type="stacking",
 ):
-    """Train and save a patient response prediction model."""
+    """
+    Train and save a patient response prediction model.
+
+    Args:
+        save_dir: Directory to save the model
+        classifier: Base classifier type ("random_forest", "gradient_boosting", or "ensemble")
+        tune_hyperparameters: Whether to perform hyperparameter tuning
+        use_smote: Whether to apply SMOTE for class imbalance
+        use_feature_selection: Whether to select important features before training
+        use_ensemble: Whether to use an ensemble of models
+        ensemble_type: Type of ensemble to use ("stacking" or "voting")
+
+    Returns:
+        Dictionary with training results
+    """
     trainer = PatientResponseTrainer(model_dir=save_dir)
     result = trainer.train_model(
         classifier=classifier,
         tune_hyperparameters=tune_hyperparameters,
         use_smote=use_smote,
+        use_feature_selection=use_feature_selection,
+        use_ensemble=use_ensemble,
+        ensemble_type=ensemble_type,
     )
     return result
