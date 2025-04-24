@@ -8,6 +8,7 @@ router.register(r"categories", views.CampaignCategoryViewSet)
 router.register(r"", views.CampaignViewSet)
 router.register(r"segments", views.PatientSegmentViewSet)
 router.register(r"communications", views.CommunicationLogViewSet)
+router.register(r"analytics", views.StaffAnalyticsViewSet, basename="analytics")
 
 urlpatterns = [
     path("", include(router.urls)),

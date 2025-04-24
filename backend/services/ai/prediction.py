@@ -448,3 +448,47 @@ class CampaignPredictionService:
                 key_factors.append("Not recently active with campaigns")
 
         return key_factors
+
+    def predict_inactive_patients(days_threshold=90):
+        """
+        Identify patients likely to become inactive based on engagement patterns
+        (Implements spec-book requirement 3.2)
+        """
+        from patients.models import Patient
+        from django.utils import timezone
+
+        # Get active patients with consent
+        patients = Patient.objects.filter(is_active=True, has_active_consent=True)
+
+        results = []
+        for patient in patients:
+            # Extract features
+            features = {
+                "days_since_contact": (timezone.now() - patient.last_contacted_at).days
+                if patient.last_contacted_at
+                else 365,
+                "engagement_score": patient.engagement_score,
+                "contact_attempts": patient.contact_attempts,
+                "successful_contacts": patient.successful_contacts,
+                "response_rate": patient.successful_contacts
+                / max(1, patient.contact_attempts),
+            }
+
+            # Calculate inactivity risk score (simple weighted score for now)
+            risk_score = (
+                0.4 * (features["days_since_contact"] / 365)
+                + 0.3 * (1 - features["engagement_score"])
+                + 0.3 * (1 - features["response_rate"])
+            )
+
+            if risk_score > 0.6:  # Threshold for high risk
+                results.append(
+                    {
+                        "patient_id": str(patient.id),
+                        "risk_score": risk_score,
+                        "days_since_contact": features["days_since_contact"],
+                        "recommended_action": "Follow up required",
+                    }
+                )
+
+        return results

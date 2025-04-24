@@ -113,3 +113,27 @@ class CommunicationLogViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(patient_id=patient_id)
 
         return queryset
+
+
+class StaffAnalyticsViewSet(viewsets.ViewSet):
+    """ViewSet for staff-only analytics functions"""
+
+    permission_classes = [permissions.IsAuthenticated, permissions.IsAdminUser]
+
+    @action(detail=False, methods=["get"])
+    def inactive_patients(self, request):
+        """
+        Get a list of patients at risk of becoming inactive
+        who should be targeted for follow-up communications.
+        """
+        days_threshold = request.query_params.get("days", 90)
+        try:
+            days_threshold = int(days_threshold)
+        except (TypeError, ValueError):
+            days_threshold = 90
+
+        results = CampaignPredictionService.predict_inactive_patients(days_threshold)
+
+        return Response(
+            {"count": len(results), "threshold_days": days_threshold, "patients": results}
+        )
