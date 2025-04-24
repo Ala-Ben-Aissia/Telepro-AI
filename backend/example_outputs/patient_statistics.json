@@ -1,0 +1,75 @@
+{
+  "status": "success",
+  "total_patients": 179,
+  "demographics": {
+    "gender": {
+      "F": 87,
+      "M": 83,
+      "N": 4,
+      "O": 5
+    },
+    "age_group": {
+      "0-18": 30,
+      "19-35": 44,
+      "36-50": 50,
+      "51-65": 34,
+      "65+": 21
+    },
+    "location": {
+      "Algiers": 5,
+      "Beirut": 10,
+      "Bordeaux": 12,
+      "Brussels": 5,
+      "Casablanca": 9,
+      "Geneva": 18,
+      "Lausanne": 7,
+      "Lille": 12,
+      "Lyon": 6,
+      "Marseille": 8,
+      "Montpellier": 7,
+      "Montreal": 14,
+      "Nantes": 5,
+      "Nice": 10,
+      "Paris": 13,
+      "Quebec": 7,
+      "Rabat": 5,
+      "Strasbourg": 10,
+      "Toulouse": 6,
+      "Tunis": 10
+    }
+  },
+  "preferences": {
+    "contact_method": {
+      "CALL": 10,
+      "EMAIL": 92,
+      "NONE": 39,
+      "SMS": 38
+    },
+    "language": {
+      "ar": 20,
+      "de": 12,
+      "en": 47,
+      "es": 29,
+      "fr": 71
+    }
+  },
+  "engagement": {
+    "average_score": 0.5390910474372641,
+    "response_rate": 0.25842696629213485,
+    "delivery_rate": 0.1853932584269663,
+    "read_rate": 1.593939393939394
+  },
+  "channel_effectiveness": {
+    "EMAIL": {
+      "count": 542,
+      "response_rate": 0.26014760147601473,
+      "read_rate": 0.2896678966789668
+    },
+    "SMS": {
+      "count": 294,
+      "response_rate": 0.25170068027210885,
+      "read_rate": null
+    }
+  },
+  "time_period": "All time as of 2025-04-23"
+}

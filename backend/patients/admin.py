@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Patient
+from .models import Patient, ConsentRecord
 
 
 class PatientAdmin(admin.ModelAdmin):
@@ -71,3 +71,4 @@ class PatientAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Patient, PatientAdmin)
+admin.site.register(ConsentRecord)
