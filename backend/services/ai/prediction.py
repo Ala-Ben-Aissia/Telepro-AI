@@ -492,3 +492,10 @@ class CampaignPredictionService:
                 )
 
         return results
+
+    """ 
+    There are several issues with this approach: 
+    1. Days since contact is normalized over a full year (365 days): That means a patient with 46 days of no contact would contribute only `0.4 * (46/365) = 0.05` to the risk score from the time component.
+    2. Other factors are heavily weighted: The patient must have very low engagement and response rates, contributing the remaining 0.58 to the score.
+    3. The absolute threshold (0.6) isn't relative to the days_threshold parameter: Even though you set a 90-day threshold, the function doesn't use this parameter in its scoring.
+    """
