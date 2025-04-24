@@ -1,6 +1,9 @@
 from datetime import datetime
 
 from django.utils import timezone
+from .training import PatientResponseTrainer
+import numpy as np
+import pandas as pd
 
 from campaigns.models import Campaign, CommunicationLog
 from patients.models import Patient
@@ -138,6 +141,7 @@ class CampaignPredictionService:
     def predict_patient_response(patient_id, campaign_id):
         """
         Predict whether a specific patient is likely to respond to a campaign.
+        Uses a trained machine learning model if available, otherwise falls back to a rule-based approach.
 
         Returns:
             Probability of patient response and key factors.
@@ -145,6 +149,192 @@ class CampaignPredictionService:
         patient = Patient.objects.get(id=patient_id)
         campaign = Campaign.objects.get(id=campaign_id)
 
+        # Try to use the ML model first
+        trainer = PatientResponseTrainer()
+        model = trainer.load_model()
+
+        if model:
+            # Prepare the feature data for prediction
+            features = {}
+
+            # 1. Patient demographic features
+            features.update(
+                {
+                    "age_group": patient.age_group or "Unknown",
+                    "gender": patient.gender or "Unknown",
+                    "language_preference": patient.language_preference or "Unknown",
+                    "location": patient.location or "Unknown",
+                    "preferred_contact_method": patient.preferred_contact_method,
+                }
+            )
+
+            # 2. Patient engagement metrics
+            features.update(
+                {
+                    "engagement_score": patient.engagement_score,
+                    "contact_attempts": patient.contact_attempts,
+                    "successful_contacts": patient.successful_contacts,
+                    "email_verified": int(patient.email_verified),
+                    "phone_verified": int(patient.phone_verified),
+                }
+            )
+
+            # 3. Campaign features
+            features.update(
+                {
+                    "campaign_category": campaign.category.name
+                    if campaign.category
+                    else "Unknown",
+                    "has_email_template": 1 if campaign.email_template else 0,
+                    "has_sms_template": 1 if campaign.sms_template else 0,
+                }
+            )
+
+            # 4. Patient-campaign match features
+            # Check if patient matches campaign criteria
+            matches_age_group = any(
+                ag == patient.age_group for ag in campaign.target_age_groups
+            )
+            matches_location = any(
+                loc == patient.location for loc in campaign.target_locations
+            )
+            matches_language = any(
+                lang == patient.language_preference for lang in campaign.target_languages
+            )
+
+            features.update(
+                {
+                    "matches_age_group": int(matches_age_group),
+                    "matches_location": int(matches_location),
+                    "matches_language": int(matches_language),
+                    "method_match": int(
+                        (
+                            campaign.email_template
+                            and patient.preferred_contact_method == "EMAIL"
+                        )
+                        or (
+                            campaign.sms_template
+                            and patient.preferred_contact_method == "SMS"
+                        )
+                    ),
+                }
+            )
+
+            # 5. Historical activity features
+            if patient.last_campaign_response:
+                days_since_response = (
+                    timezone.now() - patient.last_campaign_response
+                ).days
+                features["days_since_response"] = min(days_since_response, 365)
+                features["has_recent_response"] = 1 if days_since_response <= 30 else 0
+            else:
+                features["days_since_response"] = 365  # Default to maximum
+                features["has_recent_response"] = 0
+
+            if patient.last_contacted_at:
+                days_since_contact = (timezone.now() - patient.last_contacted_at).days
+                features["days_since_contact"] = min(days_since_contact, 365)
+                features["has_recent_contact"] = 1 if days_since_contact <= 30 else 0
+            else:
+                features["days_since_contact"] = 365
+                features["has_recent_contact"] = 0
+
+            # Convert to DataFrame for one-hot encoding
+            df = pd.DataFrame([features])
+
+            # Create dummy variables for categorical columns
+            categorical_cols = [
+                "age_group",
+                "gender",
+                "language_preference",
+                "location",
+                "preferred_contact_method",
+                "campaign_category",
+            ]
+            df_encoded = pd.get_dummies(df, columns=categorical_cols, drop_first=False)
+
+            # Get missing columns (might be present in training data but not in our single instance)
+            # This is needed because the model expects exactly the same features it was trained on
+
+            try:
+                # Predict probability using the model
+                response_probability = model.predict_proba(df_encoded)[
+                    0, 1
+                ]  # Probability of class 1
+
+                # Determine key factors (using feature importance)
+                if hasattr(model["classifier"], "feature_importances_"):
+                    # Get feature names from the model or use the ones we have
+                    model_features = getattr(
+                        model, "feature_names_in_", df_encoded.columns
+                    )
+
+                    # Get feature importances
+                    importances = model["classifier"].feature_importances_
+
+                    # Get top factors
+                    top_indices = np.argsort(importances)[-5:]  # Top 5 factors
+                    key_factors = []
+
+                    for idx in top_indices:
+                        if idx < len(model_features):
+                            feature = model_features[idx]
+                            # Convert feature name to human-readable description
+                            if "age_group" in feature and matches_age_group:
+                                key_factors.append(
+                                    f"Age group match ({patient.age_group})"
+                                )
+                            elif "location" in feature and matches_location:
+                                key_factors.append(f"Location match ({patient.location})")
+                            elif "language" in feature and matches_language:
+                                key_factors.append(
+                                    f"Language preference match ({patient.language_preference})"
+                                )
+                            elif "method_match" in feature and features["method_match"]:
+                                key_factors.append(
+                                    "Preferred contact method matches campaign"
+                                )
+                            elif "engagement_score" in feature:
+                                if patient.engagement_score > 0.7:
+                                    key_factors.append("High historical engagement")
+                                elif patient.engagement_score < 0.3:
+                                    key_factors.append("Low historical engagement")
+                            elif "recent_response" in feature and features.get(
+                                "has_recent_response"
+                            ):
+                                key_factors.append("Recently responded to campaigns")
+                else:
+                    # Fallback if no feature importances available
+                    key_factors = CampaignPredictionService._get_key_factors(
+                        patient, campaign
+                    )
+
+            except Exception as e:
+                # If prediction fails, fall back to the rule-based approach
+                print(
+                    f"ML prediction failed: {str(e)}, falling back to rule-based approach"
+                )
+                return CampaignPredictionService._rule_based_prediction(patient, campaign)
+
+            return {
+                "patient_id": str(patient.id),
+                "campaign_id": campaign_id,
+                "response_probability": round(response_probability * 100, 2),
+                "key_factors": key_factors,
+                "model_based": True,
+                "matches_criteria": {
+                    "age_group": matches_age_group,
+                    "location": matches_location,
+                    "language": matches_language,
+                },
+            }
+        else:
+            # Fall back to the rule-based approach if no model is available
+            return CampaignPredictionService._rule_based_prediction(patient, campaign)
+
+    @staticmethod
+    def _rule_based_prediction(patient, campaign: Campaign):
+        """Rule-based fallback prediction when ML model is not available."""
         # Check if patient matches campaign criteria
         matches_age_group = any(
             ag == patient.age_group for ag in campaign.target_age_groups
@@ -182,7 +372,6 @@ class CampaignPredictionService:
             )  # 0-1 scale, 90 days max
 
         # Calculate response probability
-        # This is a simple weighted formula - a real implementation would use machine learning
         response_probability = (
             0.3 * criteria_score
             + 0.3 * engagement_score
@@ -190,36 +379,72 @@ class CampaignPredictionService:
             + 0.2 * recency_score
         )
 
-        # Determine key factors
-        key_factors = []
-        if criteria_score > 0.7:
-            key_factors.append("Strong match with campaign criteria")
-        elif criteria_score < 0.3:
-            key_factors.append("Poor match with campaign criteria")
-
-        if engagement_score > 0.7:
-            key_factors.append("High historical engagement")
-        elif engagement_score < 0.3:
-            key_factors.append("Low historical engagement")
-
-        if method_match > 0:
-            key_factors.append("Preferred contact method matches campaign")
-        else:
-            key_factors.append("Preferred contact method doesn't match campaign")
-
-        if recency_score > 0.7:
-            key_factors.append("Recently active with campaigns")
-        elif recency_score < 0.3:
-            key_factors.append("Not recently active with campaigns")
+        # Get key factors
+        key_factors = CampaignPredictionService._get_key_factors(patient, campaign)
 
         return {
             "patient_id": str(patient.id),
-            "campaign_id": campaign_id,
+            "campaign_id": campaign.pk,
             "response_probability": round(response_probability * 100, 2),
             "key_factors": key_factors,
+            "model_based": False,
             "matches_criteria": {
                 "age_group": matches_age_group,
                 "location": matches_location,
                 "language": matches_language,
             },
         }
+
+    @staticmethod
+    def _get_key_factors(patient, campaign):
+        """Determine key factors for the prediction."""
+        key_factors = []
+
+        # Check criteria match
+        matches_age_group = any(
+            ag == patient.age_group for ag in campaign.target_age_groups
+        )
+        matches_location = any(
+            loc == patient.location for loc in campaign.target_locations
+        )
+        matches_language = any(
+            lang == patient.language_preference for lang in campaign.target_languages
+        )
+
+        criteria_score = (
+            (0.4 if matches_age_group else 0)
+            + (0.3 if matches_location else 0)
+            + (0.3 if matches_language else 0)
+        )
+
+        if criteria_score > 0.7:
+            key_factors.append("Strong match with campaign criteria")
+        elif criteria_score < 0.3:
+            key_factors.append("Poor match with campaign criteria")
+
+        if patient.engagement_score > 0.7:
+            key_factors.append("High historical engagement")
+        elif patient.engagement_score < 0.3:
+            key_factors.append("Low historical engagement")
+
+        method_match = 0
+        if campaign.email_template and patient.preferred_contact_method == "EMAIL":
+            method_match = 1
+        elif campaign.sms_template and patient.preferred_contact_method == "SMS":
+            method_match = 1
+
+        if method_match > 0:
+            key_factors.append("Preferred contact method matches campaign")
+        else:
+            key_factors.append("Preferred contact method doesn't match campaign")
+
+        if patient.last_campaign_response:
+            days_since_response = (timezone.now() - patient.last_campaign_response).days
+            recency_score = max(0, 1 - (days_since_response / 90))
+
+            if recency_score > 0.7:
+                key_factors.append("Recently active with campaigns")
+            elif recency_score < 0.3:
+                key_factors.append("Not recently active with campaigns")
+
+        return key_factors
