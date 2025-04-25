@@ -392,7 +392,8 @@ class Command(BaseCommand):
 
             # Get patient profile
             patient = Patient.objects.get(user=user)
-            patient.id = patient_id  # Set the UUID we generated earlier
+            # patient.id = patient_id  # Set the UUID we generated earlier
+            # handled behind the scenes through signals.
 
             # Update patient fields
             patient.gender = gender
@@ -873,9 +874,10 @@ class Command(BaseCommand):
     def create_staff_users(self, count):
         """Create staff users"""
         staff_users = []
+        previous_staff = User.objects.filter(is_staff=True)
         for i in range(count):
-            username = f"staff{i + 1}"
-            email = f"staff{i + 1}@example.com"
+            username = f"staff{i + previous_staff.count() + 1}"
+            email = f"staff{i + previous_staff.count() + 1}@example.com"
 
             user = User.objects.create_user(
                 username=username,

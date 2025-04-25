@@ -1,0 +1,12 @@
+Backup Summary - 2025-04-25 19:32:13
+==================================================
+
+Record Counts:
+Users: 6
+- Staff Users: 6
+- Patient Users: 0
+Patients: 0
+Campaigns: 0
+Campaign Categories: 0
+Communication Logs: 0
+Consent Records: 0

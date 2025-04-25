@@ -47,11 +47,10 @@ class Command(BaseCommand):
             self.stdout.write("SMOTE oversampling enabled for handling class imbalance")
 
         result = train_patient_response_model(
-            tune_hyperparameters=True,
-            use_smote=True,
-            use_feature_selection=True,
-            use_ensemble=True,
-            ensemble_type="stacking",
+            save_dir=model_dir,
+            classifier=classifier,
+            tune_hyperparameters=tune_hyperparameters,
+            use_smote=use_smote,
         )
 
         if result["status"] == "success":
