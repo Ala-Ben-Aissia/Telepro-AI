@@ -44,7 +44,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--correlation",
             type=float,
-            default=0.7,
+            default=0.7,  # 1.0 for perfect correlation, 0.0 for no correlation (random)
             help="Correlation strength between patient attributes and outcomes (0-1)",
         )
 
