@@ -253,6 +253,32 @@ class Command(BaseCommand):
                 "seasonal_effect": True,
             },
         }
+        # Updated location weights based on metropolitan area populations
+        self.location_weights = {
+            # Major French cities
+            "Paris": 0.24,  # ~12.5M metro area
+            "Lyon": 0.05,  # ~2.3M metro area
+            "Marseille": 0.04,  # ~1.7M metro area
+            "Lille": 0.03,  # ~1.2M metro area
+            "Toulouse": 0.03,  # ~1.3M metro area
+            "Bordeaux": 0.03,  # ~1.2M metro area
+            "Nice": 0.02,  # ~1.0M metro area
+            "Nantes": 0.02,  # ~950K metro area
+            "Strasbourg": 0.02,  # ~780K metro area
+            "Montpellier": 0.01,  # ~600K metro area
+            # Major French-speaking cities outside France
+            "Montreal": 0.08,  # ~4.2M metro area
+            "Brussels": 0.04,  # ~2.1M metro area
+            "Quebec": 0.02,  # ~800K metro area
+            "Geneva": 0.01,  # ~600K metro area
+            "Lausanne": 0.01,  # ~420K metro area
+            # North African cities with Francophone populations
+            "Algiers": 0.15,  # ~7.8M metro area
+            "Casablanca": 0.13,  # ~6.8M metro area
+            "Tunis": 0.05,  # ~2.7M metro area
+            "Rabat": 0.04,  # ~1.8M metro area
+            "Beirut": 0.04,  # ~2.2M metro area
+        }
 
     def create_patient_users_and_profiles(self, count, staff_users):
         """Create patient users and their profiles with cohort-based characteristics"""
@@ -265,31 +291,9 @@ class Command(BaseCommand):
         languages = ["fr", "en", "es", "ar", "de"]
         language_weights = [0.4, 0.3, 0.15, 0.1, 0.05]  # For a French-focused system
 
-        # Locations with importance weights
-        location_weights = {
-            "Paris": 0.15,
-            "Lyon": 0.1,
-            "Marseille": 0.1,
-            "Bordeaux": 0.08,
-            "Lille": 0.07,
-            "Toulouse": 0.07,
-            "Nantes": 0.06,
-            "Strasbourg": 0.05,
-            "Montpellier": 0.05,
-            "Nice": 0.05,
-            "Montreal": 0.05,
-            "Quebec": 0.03,
-            "Brussels": 0.03,
-            "Geneva": 0.03,
-            "Lausanne": 0.02,
-            "Algiers": 0.02,
-            "Tunis": 0.01,
-            "Rabat": 0.01,
-            "Casablanca": 0.01,
-            "Beirut": 0.01,
-        }
-        locations = list(location_weights.keys())
-        location_dist = list(location_weights.values())
+        # Locations based on metropolitan area populations
+        locations = list(self.location_weights.keys())
+        location_dist = list(self.location_weights.values())
 
         # Postal codes linked to locations
         postal_code_map = {
@@ -1179,3 +1183,8 @@ class Command(BaseCommand):
             campaigns.append(campaign)
 
         return campaigns
+
+
+"""NOTE:
+The code above generates a more realistic distribution of patients across different metropolitan areas. It uses a population-based approach to create a more meaningful geographic pattern in the ML model training. The campaign targeting is based on the patient's location, age group, and language preference, which will help the prediction models better understand how location correlates with patient behavior, response rates, and campaign effectiveness.
+"""
