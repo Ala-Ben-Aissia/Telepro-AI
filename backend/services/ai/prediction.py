@@ -448,3 +448,85 @@ class CampaignPredictionService:
                 key_factors.append("Not recently active with campaigns")
 
         return key_factors
+
+    def predict_inactive_patients(days_threshold=90):
+        """
+        Identify patients likely to become inactive based on engagement patterns
+        (Implements spec-book requirement 3.2)
+        """
+        from patients.models import Patient
+        from django.utils import timezone
+
+        # Get active patients with consent
+        patients = Patient.objects.filter(is_active=True, has_active_consent=True)
+
+        results = []
+        for patient in patients:
+            # Extract features
+            features = {
+                "days_since_contact": (timezone.now() - patient.last_contacted_at).days
+                if patient.last_contacted_at
+                else 365,
+                "engagement_score": patient.engagement_score,
+                "contact_attempts": patient.contact_attempts,
+                "successful_contacts": patient.successful_contacts,
+                "response_rate": patient.successful_contacts
+                / max(1, patient.contact_attempts),
+            }
+
+            # First filter: Only consider patients who haven't been contacted in [days_threshold] days
+            # This ensures the days_threshold parameter is actually used
+            if (
+                features["days_since_contact"] < days_threshold / 2
+            ):  # Using half the threshold as a minimum
+                continue
+
+            # Calculate risk relative to threshold (makes days_threshold parameter meaningful)
+            # Someone at threshold should have a time risk of 0.5
+            time_risk = min(1.0, features["days_since_contact"] / (days_threshold * 2))
+
+            # Calculate inactivity risk score with adjusted weights
+            # Increase time weight since that's the primary concern
+            risk_score = (
+                0.6 * time_risk
+                + 0.2 * (1 - features["engagement_score"])
+                + 0.2 * (1 - features["response_rate"])
+            )
+
+            # Risk threshold is dynamically based on days_since_contact relation to threshold
+            min_risk_threshold = (
+                0.5 if features["days_since_contact"] >= days_threshold else 0.7
+            )
+
+            if risk_score > min_risk_threshold:
+                results.append(
+                    {
+                        "patient_id": str(patient.id),
+                        "risk_score": risk_score,
+                        "days_since_contact": features["days_since_contact"],
+                        # "days_threshold": days_threshold,
+                        "engagement_score": features["engagement_score"],
+                        "response_rate": features["response_rate"],
+                        "recommended_action": "Follow up required"
+                        if risk_score > 0.7
+                        else "Monitor",
+                    }
+                )
+
+        # Sort by risk score (highest first)
+        return sorted(results, key=lambda x: x["risk_score"], reverse=True)
+
+
+"""
+This improved implementation:
+1. Uses the days_threshold parameter meaningfully: Filters out patients with recent contact (less than half the threshold)
+2. Normalizes time risk relative to threshold: Makes the days_threshold parameter directly affect scoring
+3. Weights time more heavily (60% vs 40% before)
+4. Adjusts threshold dynamically: Requires higher risk scores for patients below the days threshold
+5. Provides more detailed information in results for better debugging
+6. Creates a "Monitor" vs "Follow up required" distinction for different risk levels
+
+So With these changes, we should see more meaningful results where patients with fewer days since contact won't appear unless they have extremely poor engagement metrics, and the days_threshold parameter will have a more intuitive effect on the results.
+
+This is a common issue in ML applications where multiple factors are combined - it can be challenging to tune the weights and thresholds to match business expectations. The improved implementation gives you more control and transparency.
+"""

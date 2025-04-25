@@ -1,0 +1,490 @@
+[
+  {
+    "patient_id": "d062d518-78ab-4b2b-9f88-4c2ef6a00643",
+    "risk_score": 0.9428844216885532,
+    "days_since_contact": 365,
+    "engagement_score": 0.28557789155723423,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "4e95ae92-bf63-4713-bf56-5ced1c6744d3",
+    "risk_score": 0.9260260024594893,
+    "days_since_contact": 365,
+    "engagement_score": 0.36986998770255314,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "97604e45-31b2-428a-9464-56f4e2eddad9",
+    "risk_score": 0.90106575723726,
+    "days_since_contact": 365,
+    "engagement_score": 0.4946712138136995,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "3f3a0f32-70a2-426d-96ef-3d4c83c8615e",
+    "risk_score": 0.9007079174157135,
+    "days_since_contact": 365,
+    "engagement_score": 0.49646041292143217,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "df370194-b5a0-4433-8f62-d440e3e31e7d",
+    "risk_score": 0.8968822100632521,
+    "days_since_contact": 365,
+    "engagement_score": 0.51558894968374,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "27985eed-9379-4547-8356-63e0daafcca5",
+    "risk_score": 0.8930109398790671,
+    "days_since_contact": 365,
+    "engagement_score": 0.534945300604664,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "c6edec4d-f182-4672-980a-47468f83b188",
+    "risk_score": 0.8887724215302073,
+    "days_since_contact": 365,
+    "engagement_score": 0.5561378923489639,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "35228f50-fc2f-4c3b-8f27-836de0f0b92b",
+    "risk_score": 0.8798780181974406,
+    "days_since_contact": 167,
+    "engagement_score": 0.38394324234613025,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "1001ccfe-0a04-442c-9094-e9dd3e2962a2",
+    "risk_score": 0.8789333097203755,
+    "days_since_contact": 365,
+    "engagement_score": 0.605333451398122,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "25434772-eb54-4ce0-98ea-b19e3755596b",
+    "risk_score": 0.8763494619754424,
+    "days_since_contact": 365,
+    "engagement_score": 0.6182526901227875,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "3be89b10-b994-48ee-882b-390417b26ae5",
+    "risk_score": 0.8532255197018599,
+    "days_since_contact": 159,
+    "engagement_score": 0.3838724014906998,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "b9213ecb-85dd-4233-bf15-3e7056938842",
+    "risk_score": 0.8524088693183121,
+    "days_since_contact": 169,
+    "engagement_score": 0.2879556534084405,
+    "response_rate": 0.26666666666666666,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "147be231-a78c-4256-9f41-d97ea8f6fdd5",
+    "risk_score": 0.8499623065633227,
+    "days_since_contact": 180,
+    "engagement_score": 0.27650425665707046,
+    "response_rate": 0.47368421052631576,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "4fa04a11-3df6-464f-a0f4-13dc85f1fd55",
+    "risk_score": 0.8366666666666666,
+    "days_since_contact": 175,
+    "engagement_score": 0.0,
+    "response_rate": 0.7333333333333333,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "d8608773-29ab-431c-86c8-1739b1e2ee94",
+    "risk_score": 0.8255354702689353,
+    "days_since_contact": 151,
+    "engagement_score": 0.3889893153219902,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "cebfc70c-11e3-4613-b524-b5dde9b2db79",
+    "risk_score": 0.8248974868195316,
+    "days_since_contact": 172,
+    "engagement_score": 0.4564649468547237,
+    "response_rate": 0.2857142857142857,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "82ad953e-681c-4621-a5ae-67cd4181c658",
+    "risk_score": 0.8204248533009663,
+    "days_since_contact": 158,
+    "engagement_score": 0.3883519239713592,
+    "response_rate": 0.14285714285714285,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "88b023e5-6fd1-46aa-9640-51ffc8c077b4",
+    "risk_score": 0.8031562752239471,
+    "days_since_contact": 180,
+    "engagement_score": 0.3342186238802643,
+    "response_rate": 0.65,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "569d2e0b-e893-40e6-b543-164a469576a8",
+    "risk_score": 0.801963466324812,
+    "days_since_contact": 177,
+    "engagement_score": 0.84018266837594,
+    "response_rate": 0.1,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "09196a4d-084e-4f18-9cf1-771cb751b832",
+    "risk_score": 0.8,
+    "days_since_contact": 365,
+    "engagement_score": 1.0,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "95120585-8399-4799-8cb4-cce0af1b08cb",
+    "risk_score": 0.7856147067613194,
+    "days_since_contact": 159,
+    "engagement_score": 0.47192646619340256,
+    "response_rate": 0.25,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "5d366764-afff-4fa7-b47a-27e908541ef0",
+    "risk_score": 0.7637526066568135,
+    "days_since_contact": 180,
+    "engagement_score": 0.681236966715932,
+    "response_rate": 0.5,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "e31b7d2e-f195-42d3-9775-baa5a3a51eb9",
+    "risk_score": 0.7390476190476191,
+    "days_since_contact": 166,
+    "engagement_score": 1.0,
+    "response_rate": 0.07142857142857142,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "ec30c08f-fe85-47ed-9343-15af378f51d0",
+    "risk_score": 0.7374150140156059,
+    "days_since_contact": 174,
+    "engagement_score": 0.21292492992197037,
+    "response_rate": 1.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "5a094921-3c81-4624-9c80-fc815ff1a23c",
+    "risk_score": 0.7357699866209914,
+    "days_since_contact": 126,
+    "engagement_score": 0.2961500668950434,
+    "response_rate": 0.125,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "73abe4e1-2a3e-4236-b7c2-e5e014ae98b8",
+    "risk_score": 0.7351147555865405,
+    "days_since_contact": 143,
+    "engagement_score": 0.7077595554006308,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "25ee053e-8dbe-4d37-8935-aa3a588d3eae",
+    "risk_score": 0.7315030736360684,
+    "days_since_contact": 124,
+    "engagement_score": 0.34665129848632464,
+    "response_rate": 0.0625,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "67f572d5-0ef2-4c2d-bee1-7514a9bc450b",
+    "risk_score": 0.7221418130707918,
+    "days_since_contact": 179,
+    "engagement_score": 0.37262426797937404,
+    "response_rate": 1.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "9e8c70d4-3844-4f56-b5c2-7d860094f233",
+    "risk_score": 0.7187696366789509,
+    "days_since_contact": 166,
+    "engagement_score": 0.17281848327191215,
+    "response_rate": 1.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "de6f95d9-b4e2-4d4d-9c5c-d2c5d7afa088",
+    "risk_score": 0.7177410530360746,
+    "days_since_contact": 109,
+    "engagement_score": 0.22796140148629312,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "0fb45d5a-91c4-43f9-8a90-2a0eed2d1b58",
+    "risk_score": 0.7168046811335693,
+    "days_since_contact": 136,
+    "engagement_score": 0.5287971071526667,
+    "response_rate": 0.15384615384615385,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "1d215327-faf5-4c5f-b5e2-36a97c521274",
+    "risk_score": 0.7149577932827741,
+    "days_since_contact": 155,
+    "engagement_score": 0.9418777002527964,
+    "response_rate": 0.06666666666666667,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "ec3e6784-b47d-455a-a29f-085ed6329837",
+    "risk_score": 0.7135429765997159,
+    "days_since_contact": 151,
+    "engagement_score": 0.28228511700142056,
+    "response_rate": 0.6666666666666666,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "87f41702-fc8c-421f-9ef7-74932d5fdc51",
+    "risk_score": 0.7130900847879695,
+    "days_since_contact": 132,
+    "engagement_score": 0.5436404851510612,
+    "response_rate": 0.09090909090909091,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "b69823bd-6e0d-492e-87f0-2746bacd65b0",
+    "risk_score": 0.7129385121070042,
+    "days_since_contact": 163,
+    "engagement_score": 0.6256583166579615,
+    "response_rate": 0.5263157894736842,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "874210da-c217-49aa-9849-433f643a975a",
+    "risk_score": 0.71,
+    "days_since_contact": 153,
+    "engagement_score": 1.0,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "a90cb418-9731-41d5-980b-4408a693c617",
+    "risk_score": 0.71,
+    "days_since_contact": 93,
+    "engagement_score": 0.0,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "40b4e17d-35d5-4954-95da-f0ff92c66829",
+    "risk_score": 0.7073156149263419,
+    "days_since_contact": 124,
+    "engagement_score": 0.3078663698127351,
+    "response_rate": 0.2222222222222222,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "8f78115a-39c4-45cc-89b4-835f86d8d8fb",
+    "risk_score": 0.705355998636552,
+    "days_since_contact": 149,
+    "engagement_score": 0.7690533401505731,
+    "response_rate": 0.1875,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "1c4f7a9b-df0b-4785-a5ae-b933ca45314c",
+    "risk_score": 0.7022391041870888,
+    "days_since_contact": 138,
+    "engagement_score": 0.7888044790645558,
+    "response_rate": 0.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "208f34b2-e2ce-4659-899e-bf2897e0c6ae",
+    "risk_score": 0.7002149354891855,
+    "days_since_contact": 156,
+    "engagement_score": 0.0989253225540728,
+    "response_rate": 1.0,
+    "recommended_action": "Follow up required"
+  },
+  {
+    "patient_id": "85102c51-690a-4764-963c-b69f1a593304",
+    "risk_score": 0.6966666666666665,
+    "days_since_contact": 149,
+    "engagement_score": 1.0,
+    "response_rate": 0.0,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "1a6cf9e5-1532-4781-8b41-1971330b008b",
+    "risk_score": 0.6958328833068692,
+    "days_since_contact": 155,
+    "engagement_score": 0.48878430141437185,
+    "response_rate": 0.6153846153846154,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "121fc313-87f9-43bd-84f7-b0e689ff154e",
+    "risk_score": 0.6864753604986014,
+    "days_since_contact": 103,
+    "engagement_score": 0.2842898641736602,
+    "response_rate": 0.0,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "1cb9887d-a31b-44c9-9247-c430680face5",
+    "risk_score": 0.6841506375390072,
+    "days_since_contact": 136,
+    "engagement_score": 0.47091347897163083,
+    "response_rate": 0.375,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "7d5485f7-f200-4061-ac70-8f6dca62036e",
+    "risk_score": 0.6813521271455683,
+    "days_since_contact": 134,
+    "engagement_score": 0.473631521134904,
+    "response_rate": 0.35294117647058826,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "fffadfc0-d37d-44f9-97a1-03f35234e2a5",
+    "risk_score": 0.6808646494078103,
+    "days_since_contact": 102,
+    "engagement_score": 0.23317675296094809,
+    "response_rate": 0.0625,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "67614d2c-80be-48d9-8056-df79a9944399",
+    "risk_score": 0.6807783288607918,
+    "days_since_contact": 134,
+    "engagement_score": 0.829441689029374,
+    "response_rate": 0.0,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "1fb28149-a9ee-4005-a767-9a13b8c7a856",
+    "risk_score": 0.6791126149383291,
+    "days_since_contact": 103,
+    "engagement_score": 0.24967502054644974,
+    "response_rate": 0.07142857142857142,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "d76eeef1-475f-4864-b90e-e24f474c9487",
+    "risk_score": 0.67,
+    "days_since_contact": 126,
+    "engagement_score": 0.0,
+    "response_rate": 0.75,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "99dfb689-a7e4-4eea-92ad-48897321ab67",
+    "risk_score": 0.6602419103445515,
+    "days_since_contact": 136,
+    "engagement_score": 0.6927298422166366,
+    "response_rate": 0.2727272727272727,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "69fe8b4d-85f0-4c48-b583-8f07dde1e2f5",
+    "risk_score": 0.648001003931945,
+    "days_since_contact": 138,
+    "engagement_score": 0.7266616470069416,
+    "response_rate": 0.3333333333333333,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "a141fba9-38fa-4965-954a-3a2462709b3f",
+    "risk_score": 0.6478423784190757,
+    "days_since_contact": 133,
+    "engagement_score": 0.6245135981007003,
+    "response_rate": 0.35294117647058826,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "60f0e92a-de82-48a1-8e5b-d3395ae28540",
+    "risk_score": 0.6337661212865093,
+    "days_since_contact": 153,
+    "engagement_score": 0.7448057572038171,
+    "response_rate": 0.6363636363636364,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "bcbf3de8-122e-4f89-947f-39413e266ecc",
+    "risk_score": 0.6309318499962279,
+    "days_since_contact": 126,
+    "engagement_score": 0.3571054559012135,
+    "response_rate": 0.5882352941176471,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "ebb71c88-1011-4954-a9cd-34cd5b86e1a6",
+    "risk_score": 0.6237201143684988,
+    "days_since_contact": 167,
+    "engagement_score": 0.6647327614908392,
+    "response_rate": 1.0,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "bef395c0-413a-4f3b-928d-d4a01c292160",
+    "risk_score": 0.6212960497399929,
+    "days_since_contact": 124,
+    "engagement_score": 0.8768530846333694,
+    "response_rate": 0.08333333333333333,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "90af6ea4-7a1c-456d-9217-ffbf915cb73a",
+    "risk_score": 0.6206007927267757,
+    "days_since_contact": 94,
+    "engagement_score": 0.08866270303278809,
+    "response_rate": 0.375,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "8c759174-c8a2-4a3f-84cf-a6d4bc3b4c29",
+    "risk_score": 0.6041345284631245,
+    "days_since_contact": 96,
+    "engagement_score": 0.5793273576843772,
+    "response_rate": 0.0,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "f234acd9-b421-4b6c-9ba6-c81bd4cb7938",
+    "risk_score": 0.60139786830481,
+    "days_since_contact": 142,
+    "engagement_score": 0.3596773251426162,
+    "response_rate": 1.0,
+    "recommended_action": "Monitor"
+  },
+  {
+    "patient_id": "96fbe2de-8df8-45d3-ba05-0ff6d36b1d87",
+    "risk_score": 0.6007846675121185,
+    "days_since_contact": 108,
+    "engagement_score": 0.5294099957727412,
+    "response_rate": 0.26666666666666666,
+    "recommended_action": "Monitor"
+  }
+]

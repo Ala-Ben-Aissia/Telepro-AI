@@ -12,6 +12,90 @@ import os
 
 logger = logging.getLogger(__name__)
 
+# --- Feature Engineering Helper Functions ---
+
+
+def calculate_response_trend(patient, window_days=90):
+    """
+    Calculate the trend in patient response rate over a recent time window.
+    Returns a float: positive for increasing, negative for decreasing, 0 for stable/insufficient data.
+    """
+    from campaigns.models import CommunicationLog
+
+    now = timezone.now()
+    window_start = now - timedelta(days=window_days)
+    logs = CommunicationLog.objects.filter(
+        patient=patient, sent_at__gte=window_start
+    ).order_by("sent_at")
+
+    if logs.count() < 5:
+        return 0.0  # Not enough data for a trend
+
+    # Split window into two halves and compare response rates
+    mid_point = window_start + timedelta(days=window_days // 2)
+    first_half = logs.filter(sent_at__lt=mid_point)
+    second_half = logs.filter(sent_at__gte=mid_point)
+
+    def response_rate(qs):
+        total = qs.count()
+        if total == 0:
+            return 0.0
+        responded = qs.filter(status="RESPONDED").count()
+        return responded / total
+
+    rate1 = response_rate(first_half)
+    rate2 = response_rate(second_half)
+    trend = rate2 - rate1  # Positive: improving, Negative: declining
+
+    return round(trend, 3)
+
+
+def encode_age_group(age_group):
+    """
+    Encode age group as an ordinal integer for feature engineering.
+    """
+    mapping = {
+        "0-18": 0,
+        "19-35": 1,
+        "36-50": 2,
+        "51-65": 3,
+        "65+": 4,
+        "UNKNOWN": -1,
+        "Unknown": -1,
+        None: -1,
+    }
+    return mapping.get(age_group, -1)
+
+
+def calculate_campaign_match_score(patient):
+    """
+    Calculate a match score (0-1) between patient and their most recent campaign.
+    If no campaign, returns 0.
+    """
+    from campaigns.models import CommunicationLog
+
+    # Find the most recent campaign communication for this patient
+    log = (
+        CommunicationLog.objects.filter(patient=patient, campaign__isnull=False)
+        .order_by("-sent_at")
+        .first()
+    )
+    if not log or not log.campaign:
+        return 0.0
+
+    campaign = log.campaign
+    score = 0.0
+    if patient.age_group and campaign.target_age_groups:
+        if patient.age_group in campaign.target_age_groups:
+            score += 0.4
+    if patient.location and campaign.target_locations:
+        if patient.location in campaign.target_locations:
+            score += 0.3
+    if patient.language_preference and campaign.target_languages:
+        if patient.language_preference in campaign.target_languages:
+            score += 0.3
+    return round(score, 2)
+
 
 class DataPreprocessingService:
     """
@@ -153,6 +237,18 @@ class DataPreprocessingService:
             patient_data["location"] = patient.location or "UNKNOWN"
             patient_data["preferred_contact_method"] = patient.preferred_contact_method
             patient_data["language_preference"] = patient.language_preference or "fr"
+            patient_data["days_active"] = (now - patient.created_at).days
+            patient_data["response_rate_trend"] = calculate_response_trend(
+                patient
+            )  # Implement this function
+
+            # Add interaction features
+            patient_data["engagement_by_age"] = patient_data[
+                "engagement_score"
+            ] * encode_age_group(patient_data["age_group"])
+            patient_data["match_score"] = calculate_campaign_match_score(
+                patient
+            )  # Implement this
 
             # Generate postal region from postal code
             if patient.postal_code and len(patient.postal_code) >= 2:

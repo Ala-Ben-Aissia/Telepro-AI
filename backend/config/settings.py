@@ -233,8 +233,22 @@ SECURE_BROWSER_XSS_FILTER = True
 # CSRF_COOKIE_SECURE = True # disable users from accessing the CSRF cookie and sending CSRF attacks
 X_FRAME_OPTIONS = "DENY"
 
-# For SMS and email templates
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@teleproai.example.com")
+# Email settings
+if DEBUG:
+    # During development, print emails to console instead of sending them
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = "noreply@telepro-ai.example.com"
+    ADMIN_EMAIL = "alabenaisssia@hotmail.com"
+else:
+    # Production email settings (update with your actual SMTP details)
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+    EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+    EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+    DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@telepro-ai.com")
+    ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@telepro-ai.com")
 
 # Security settings
 # PASSWORD_HASHERS = [
