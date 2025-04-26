@@ -15,8 +15,8 @@ class Command(BaseCommand):
         parser.add_argument(
             "--classifier",
             type=str,
-            default="random_forest",
-            choices=["random_forest", "gradient_boosting"],
+            default="ensemble",  # Changed default to ensemble
+            choices=["random_forest", "gradient_boosting", "ensemble"],
             help="Classifier algorithm to use",
         )
         parser.add_argument(
@@ -27,6 +27,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--smote",
             action="store_true",
+            default=True,  # Enable SMOTE by default
             help="Use SMOTE for class imbalance",
         )
 
@@ -46,11 +47,15 @@ class Command(BaseCommand):
         if use_smote:
             self.stdout.write("SMOTE oversampling enabled for handling class imbalance")
 
+        # Use optimized settings
         result = train_patient_response_model(
             save_dir=model_dir,
             classifier=classifier,
-            tune_hyperparameters=tune_hyperparameters,
-            use_smote=use_smote,
+            tune_hyperparameters=True,  # Always tune hyperparameters
+            use_smote=True,  # Always use SMOTE
+            use_feature_selection=True,  # Enable feature selection
+            use_ensemble=True,  # Use ensemble methods
+            ensemble_type="stacking",  # Use stacking ensemble
         )
 
         if result["status"] == "success":

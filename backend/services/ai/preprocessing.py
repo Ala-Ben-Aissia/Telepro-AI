@@ -1,3 +1,7 @@
+"""Preprocessing utilities for AI services"""
+
+__all__ = ["DataPreprocessingService", "calculate_response_trend"]
+
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -17,37 +21,50 @@ logger = logging.getLogger(__name__)
 
 def calculate_response_trend(patient, window_days=90):
     """
-    Calculate the trend in patient response rate over a recent time window.
-    Returns a float: positive for increasing, negative for decreasing, 0 for stable/insufficient data.
+    Calculate the trend in patient response rate over time.
+    A positive trend means improving response rate, negative means declining.
+
+    Args:
+        patient: Patient instance
+        window_days: Number of days to analyze for trend
+
+    Returns:
+        float: Trend value between -1 and 1
     """
     from campaigns.models import CommunicationLog
 
     now = timezone.now()
     window_start = now - timedelta(days=window_days)
+
+    # Get communications in the window
     logs = CommunicationLog.objects.filter(
         patient=patient, sent_at__gte=window_start
     ).order_by("sent_at")
 
-    if logs.count() < 5:
-        return 0.0  # Not enough data for a trend
+    if logs.count() < 5:  # Need minimum data points
+        return 0.0
 
-    # Split window into two halves and compare response rates
+    # Split window into two halves
     mid_point = window_start + timedelta(days=window_days // 2)
     first_half = logs.filter(sent_at__lt=mid_point)
     second_half = logs.filter(sent_at__gte=mid_point)
 
-    def response_rate(qs):
-        total = qs.count()
+    def calc_response_rate(queryset):
+        total = queryset.count()
         if total == 0:
             return 0.0
-        responded = qs.filter(status="RESPONDED").count()
+        responded = queryset.filter(status="RESPONDED").count()
         return responded / total
 
-    rate1 = response_rate(first_half)
-    rate2 = response_rate(second_half)
-    trend = rate2 - rate1  # Positive: improving, Negative: declining
+    # Calculate response rates for each half
+    rate1 = calc_response_rate(first_half)
+    rate2 = calc_response_rate(second_half)
 
-    return round(trend, 3)
+    # Calculate trend (-1 to 1)
+    trend = rate2 - rate1
+
+    # Normalize to -1 to 1 range
+    return max(min(trend, 1.0), -1.0)
 
 
 def encode_age_group(age_group):

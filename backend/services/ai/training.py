@@ -11,12 +11,21 @@ import numpy as np
 import pandas as pd
 from datetime import timedelta
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
+from sklearn.model_selection import (
+    train_test_split,
+    GridSearchCV,
+    StratifiedKFold,
+    RepeatedStratifiedKFold,
+)
+from sklearn.base import clone
+from sklearn.experimental import enable_halving_search_cv  # Required import
+from sklearn.model_selection import HalvingRandomSearchCV
 from sklearn.ensemble import (
     RandomForestClassifier,
     GradientBoostingClassifier,
     StackingClassifier,
     VotingClassifier,
+    ExtraTreesClassifier,
 )
 from sklearn.metrics import (
     classification_report,
@@ -33,30 +42,77 @@ from django.utils import timezone
 from sklearn.feature_selection import SelectFromModel
 
 from campaigns.models import CommunicationLog
+from .preprocessing import calculate_response_trend  # Add this import
 
 logger = logging.getLogger(__name__)
 
 
 def create_ensemble_model(model_type="stacking"):
     """
-    Create an ensemble model combining multiple classifiers.
-    model_type: "stacking" or "voting"
-    Returns the ensemble classifier.
+    Create an ensemble model with advanced configuration and learning rate scheduling.
     """
-    rf = RandomForestClassifier(n_estimators=200, random_state=42)
-    gb = GradientBoostingClassifier(n_estimators=200, random_state=42)
+    # Base classifiers with optimized hyperparameters
+    rf = RandomForestClassifier(
+        n_estimators=1000,  # Increased for better convergence
+        max_depth=20,
+        min_samples_split=5,
+        min_samples_leaf=2,
+        random_state=42,
+        class_weight="balanced",
+        bootstrap=True,
+        max_features="sqrt",
+        n_jobs=-1,  # Utilize all cores
+    )
+
+    gb = GradientBoostingClassifier(
+        n_estimators=500,  # Increased from 300
+        learning_rate=0.01,
+        max_depth=6,
+        subsample=0.8,
+        max_features="sqrt",
+        random_state=42,
+        validation_fraction=0.2,  # Increased validation set
+        n_iter_no_change=20,  # More patience
+        tol=1e-5,  # Stricter convergence
+    )
+
+    et = ExtraTreesClassifier(
+        n_estimators=500,
+        max_depth=15,
+        min_samples_split=4,
+        random_state=42,
+        class_weight="balanced",
+        bootstrap=True,
+        max_features="sqrt",
+        n_jobs=-1,
+    )
 
     if model_type == "voting":
-        # Voting Classifier (soft voting)
-        ensemble = VotingClassifier(estimators=[("rf", rf), ("gb", gb)], voting="soft")
+        ensemble = VotingClassifier(
+            estimators=[("rf", rf), ("gb", gb), ("et", et)],
+            voting="soft",
+            weights=[1, 2, 1],
+        )
     else:
-        # Default: Stacking Classifier
-        ensemble = StackingClassifier(
-            estimators=[("rf", rf), ("gb", gb)],
-            final_estimator=LogisticRegression(max_iter=200, random_state=42),
-            passthrough=False,
+        meta_classifier = LogisticRegression(
+            max_iter=2000,
+            class_weight="balanced",
+            random_state=42,
+            C=0.1,
+            solver="saga",
+            penalty="l2",  # Changed from elasticnet since saga doesn't support it
             n_jobs=-1,
         )
+
+        # Use simple StratifiedKFold instead of RepeatedStratifiedKFold
+        ensemble = StackingClassifier(
+            estimators=[("rf", rf), ("gb", gb), ("et", et)],
+            final_estimator=meta_classifier,
+            cv=5,  # Simple k-fold CV
+            passthrough=True,
+            n_jobs=-1,
+        )
+
     return ensemble
 
 
@@ -88,29 +144,22 @@ class PatientResponseTrainer:
     def __init__(self, model_dir="models"):
         """Initialize the trainer with a directory to save models."""
         self.model_dir = model_dir
+        self.use_smote = True  # Default value
         os.makedirs(model_dir, exist_ok=True)
         self.model_path = os.path.join(model_dir, "patient_response_model.joblib")
         self.metrics_path = os.path.join(model_dir, "patient_response_model_metrics.png")
 
-    def generate_training_data(self, lookback_days=720):  # Extended lookback period
+    def generate_training_data(self, lookback_days=720):
         """
         Generate training data from historical communication logs.
-
-        Args:
-            lookback_days: Number of days to look back for historical data
-
-        Returns:
-            X: Feature matrix
-            y: Target vector (1 for response, 0 for no response)
-            feature_names: List of feature names
+        Now includes aggregated historical interactions and temporal patterns.
         """
         logger.info(f"Generating training data from the last {lookback_days} days")
 
-        # Get historical communication logs
         cutoff_date = timezone.now() - timedelta(days=lookback_days)
         comm_logs = CommunicationLog.objects.filter(
             sent_at__gte=cutoff_date,
-            status__in=["RESPONDED", "READ", "DELIVERED", "SENT"],  # Skip pending/failed
+            status__in=["RESPONDED", "READ", "DELIVERED", "SENT"],
         ).select_related("patient", "campaign")
 
         total_logs = comm_logs.count()
@@ -120,31 +169,27 @@ class PatientResponseTrainer:
 
         logger.info(f"Found {total_logs} communication logs for model training")
 
+        # Group logs by patient for historical pattern analysis
+        patient_history = {}
+        for log in comm_logs:
+            if log.patient_id not in patient_history:
+                patient_history[log.patient_id] = []
+            patient_history[log.patient_id].append(log)
+
         # Prepare data structures
         data = []
         labels = []
-        patient_campaigns = {}  # Store the latest communication for each patient-campaign pair
 
-        # First pass: identify the latest communication for each patient-campaign pair
+        # Process each communication log with enhanced features
         for log in comm_logs:
-            patient_campaign_key = (str(log.patient.id), log.campaign.id)
-
-            # If we haven't seen this pair before, or this log is newer
-            if patient_campaign_key not in patient_campaigns or (
-                log.sent_at
-                and patient_campaigns[patient_campaign_key].sent_at
-                and log.sent_at > patient_campaigns[patient_campaign_key].sent_at
-            ):
-                patient_campaigns[patient_campaign_key] = log
-
-        # Second pass: process only the latest communication for each patient-campaign pair
-        for log in patient_campaigns.values():
             try:
-                # Extract patient features
                 patient = log.patient
                 campaign = log.campaign
+                patient_logs = sorted(
+                    patient_history[patient.id], key=lambda x: x.sent_at or timezone.now()
+                )
 
-                # 1. Patient demographic features
+                # 1. Enhanced Patient demographic features
                 features = {
                     "age_group": patient.age_group or "Unknown",
                     "gender": patient.gender or "Unknown",
@@ -153,23 +198,30 @@ class PatientResponseTrainer:
                     "preferred_contact_method": patient.preferred_contact_method,
                 }
 
-                # 2. Patient engagement metrics
+                # 2. Enhanced engagement metrics with historical patterns
+                recent_responses = sum(
+                    1 for l in patient_logs[-5:] if l.status == "RESPONDED"
+                )
+                response_trend = calculate_response_trend(patient)
+
                 features.update(
                     {
                         "engagement_score": float(patient.engagement_score),
-                        "contact_attempts": min(
-                            patient.contact_attempts, 50
-                        ),  # Cap to avoid outliers
+                        "contact_attempts": min(patient.contact_attempts, 50),
                         "successful_contacts": min(patient.successful_contacts, 50),
-                        "contact_success_rate": (
-                            patient.successful_contacts / max(1, patient.contact_attempts)
-                        ),
+                        "contact_success_rate": patient.successful_contacts
+                        / max(1, patient.contact_attempts),
                         "email_verified": int(patient.email_verified),
                         "phone_verified": int(patient.phone_verified),
+                        "recent_response_rate": recent_responses / 5.0,
+                        "response_trend": response_trend,
                     }
                 )
 
-                # 3. Campaign features
+                # 3. Enhanced campaign features with content analysis
+                email_len = len(campaign.email_template) if campaign.email_template else 0
+                sms_len = len(campaign.sms_template) if campaign.sms_template else 0
+
                 features.update(
                     {
                         "campaign_category": campaign.category.name
@@ -177,17 +229,13 @@ class PatientResponseTrainer:
                         else "Unknown",
                         "has_email_template": 1 if campaign.email_template else 0,
                         "has_sms_template": 1 if campaign.sms_template else 0,
-                        "email_template_length": len(campaign.email_template)
-                        if campaign.email_template
-                        else 0,
-                        "sms_template_length": len(campaign.sms_template)
-                        if campaign.sms_template
-                        else 0,
+                        "email_template_length": email_len,
+                        "sms_template_length": sms_len,
+                        "total_content_length": email_len + sms_len,
                     }
                 )
 
-                # 4. Patient-campaign match features
-                # Check if patient matches campaign criteria
+                # 4. Enhanced matching features with weighted scores
                 matches_age_group = any(
                     ag == patient.age_group for ag in campaign.target_age_groups
                 )
@@ -199,11 +247,11 @@ class PatientResponseTrainer:
                     for lang in campaign.target_languages
                 )
 
-                # Calculate a match score (0-1)
+                # Calculate weighted match score with more emphasis on language and location
                 match_score = (
-                    (0.4 if matches_age_group else 0)
-                    + (0.3 if matches_location else 0)
-                    + (0.3 if matches_language else 0)
+                    (0.3 if matches_age_group else 0)  # Reduced weight for age group
+                    + (0.4 if matches_location else 0)  # Increased weight for location
+                    + (0.3 if matches_language else 0)  # Kept same weight for language
                 )
 
                 features.update(
@@ -225,26 +273,67 @@ class PatientResponseTrainer:
                     }
                 )
 
-                # 5. Historical activity features
-                features.update(self._extract_historical_features(patient, cutoff_date))
+                # 5. Enhanced historical features with temporal patterns
+                historical_features = self._extract_historical_features(
+                    patient, cutoff_date
+                )
+                features.update(historical_features)
 
-                # 6. Communication context features
+                # 6. Enhanced communication context features
                 if log.sent_at:
-                    features["sent_hour"] = log.sent_at.hour
-                    features["sent_day_of_week"] = log.sent_at.weekday()
-                    features["sent_month"] = log.sent_at.month
+                    hour = log.sent_at.hour
+                    features.update(
+                        {
+                            "sent_hour": hour,
+                            "sent_day_of_week": log.sent_at.weekday(),
+                            "sent_month": log.sent_at.month,
+                            "is_business_hours": 1 if 9 <= hour <= 17 else 0,
+                            "is_evening": 1 if 17 <= hour <= 21 else 0,
+                            "is_weekend": 1 if log.sent_at.weekday() >= 5 else 0,
+                        }
+                    )
                 else:
-                    # Default values if sent_at is None
-                    features["sent_hour"] = 12  # Noon as default
-                    features["sent_day_of_week"] = 2  # Wednesday as default
-                    features["sent_month"] = 6  # June as default
+                    features.update(
+                        {
+                            "sent_hour": 12,
+                            "sent_day_of_week": 2,
+                            "sent_month": 6,
+                            "is_business_hours": 1,
+                            "is_evening": 0,
+                            "is_weekend": 0,
+                        }
+                    )
+
+                # 7. Response pattern features
+                prev_logs = [
+                    l for l in patient_logs if l.sent_at and l.sent_at < log.sent_at
+                ]
+                if prev_logs:
+                    last_response = next(
+                        (l for l in reversed(prev_logs) if l.status == "RESPONDED"), None
+                    )
+                    if last_response:
+                        days_since_last_response = (
+                            log.sent_at - last_response.sent_at
+                        ).days
+                        features["days_since_last_response"] = min(
+                            days_since_last_response, 365
+                        )
+                        features["had_previous_response"] = 1
+                    else:
+                        features["days_since_last_response"] = 365
+                        features["had_previous_response"] = 0
+                else:
+                    features["days_since_last_response"] = 365
+                    features["had_previous_response"] = 0
 
                 # Create label (1 if responded, 0 otherwise)
                 responded = log.status == "RESPONDED"
 
-                # Add to datasets
-                data.append(features)
-                labels.append(1 if responded else 0)
+                # Add to datasets only if the features are complete
+                if all(v is not None for v in features.values()):
+                    data.append(features)
+                    labels.append(1 if responded else 0)
 
             except Exception as e:
                 logger.warning(f"Error processing log {log.id}: {str(e)}")
@@ -257,7 +346,7 @@ class PatientResponseTrainer:
         # Convert to DataFrame
         df = pd.DataFrame(data)
 
-        # Check for correlation between features and target
+        # Log feature correlations with target
         y_array = np.array(labels)
         for col in df.columns:
             if df[col].dtype in [np.int64, np.float64]:
@@ -326,75 +415,84 @@ class PatientResponseTrainer:
         return features
 
     def _tune_hyperparameters(self, X, y, classifier_type):
-        """
-        Perform hyperparameter tuning using GridSearchCV.
-
-        Args:
-            X: Feature matrix
-            y: Target vector
-            classifier_type: Type of classifier ('random_forest' or 'gradient_boosting')
-
-        Returns:
-            Best parameters found
-        """
+        """Enhanced hyperparameter tuning using Halving Random Search"""
         logger.info(f"Performing hyperparameter tuning for {classifier_type}")
 
-        # Define parameter grid based on classifier type
         if classifier_type == "gradient_boosting":
-            param_grid = {
-                "classifier__n_estimators": [100, 200, 300],
-                "classifier__learning_rate": [0.01, 0.05, 0.1, 0.2],
-                "classifier__max_depth": [3, 5, 7, 9],
+            param_distributions = {
+                "classifier__n_estimators": [100, 200, 300, 500],
+                "classifier__learning_rate": [0.001, 0.01, 0.05, 0.1],
+                "classifier__max_depth": [3, 4, 5, 6, 7],
                 "classifier__min_samples_split": [2, 5, 10],
-                "classifier__subsample": [0.8, 0.9, 1.0],
-                "classifier__max_features": ["sqrt", "log2", None],
+                "classifier__subsample": [0.6, 0.7, 0.8, 0.9],
+                "classifier__max_features": ["sqrt", "log2"],
+                "classifier__validation_fraction": [0.1, 0.2],
+                "classifier__n_iter_no_change": [10, 20, 30],
+                "classifier__tol": [1e-5, 1e-4, 1e-3],
             }
             base_clf = GradientBoostingClassifier(random_state=42)
-        else:  # Random Forest
-            # param_grid = {
-            #     "classifier__n_estimators": [100, 200, 300],
-            #     "classifier__max_depth": [None, 10, 20, 30],
-            #     "classifier__min_samples_split": [2, 5, 10],
-            #     "classifier__min_samples_leaf": [1, 2, 4],
-            #     "classifier__bootstrap": [True, False],
-            #     "classifier__class_weight": ["balanced", "balanced_subsample", None],
-            # }
-            param_grid = {
-                "classifier__n_estimators": [100, 200, 300],
-                "classifier__max_depth": [None, 10, 20, 30],
-                "classifier__min_samples_split": [2, 5, 10],
+        else:
+            param_distributions = {
+                "classifier__n_estimators": [100, 300, 500, 1000],
+                "classifier__max_depth": [10, 15, 20, 25, None],
+                "classifier__min_samples_split": [2, 4, 5, 10],
                 "classifier__min_samples_leaf": [1, 2, 4],
+                "classifier__max_features": ["sqrt", "log2"],
                 "classifier__bootstrap": [True, False],
             }
+            base_clf = RandomForestClassifier(
+                random_state=42, class_weight="balanced" if not self.use_smote else None
+            )
 
-            # Only add class_weight to search if not using SMOTE
-            if not hasattr(self, "use_smote") or not self.use_smote:
-                param_grid["classifier__class_weight"] = [
-                    "balanced",
-                    "balanced_subsample",
-                    None,
-                ]
-
-                base_clf = RandomForestClassifier(random_state=42)
-
-        # Create pipeline with preprocessing
         pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", base_clf)])
 
-        # Set up cross-validation
-        cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        # Use repeated stratified k-fold
+        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=3, random_state=42)
 
-        # Create grid search
-        grid_search = GridSearchCV(
-            pipeline, param_grid, cv=cv, scoring="roc_auc", n_jobs=-1, verbose=1
+        # Use Halving Random Search with single scoring metric
+        search = HalvingRandomSearchCV(
+            pipeline,
+            param_distributions,
+            cv=cv,
+            factor=2,
+            n_candidates=20,  # Number of parameter settings that are sampled
+            min_resources=20,  # Minimum number of samples used
+            scoring="roc_auc",  # Use ROC-AUC as primary metric
+            n_jobs=-1,
+            random_state=42,
+            verbose=1,
         )
 
-        # Fit grid search
-        grid_search.fit(X, y)
+        search.fit(X, y)
 
-        logger.info(f"Best parameters: {grid_search.best_params_}")
-        logger.info(f"Best score: {grid_search.best_score_:.4f}")
+        logger.info(f"Best parameters: {search.best_params_}")
+        logger.info(f"Best ROC-AUC score: {search.best_score_:.4f}")
 
-        return grid_search.best_params_
+        # Additional scoring metrics using cross_val_score
+        from sklearn.model_selection import cross_val_score
+
+        best_pipeline = Pipeline(
+            [
+                ("scaler", StandardScaler()),
+                (
+                    "classifier",
+                    clone(base_clf).set_params(
+                        **{
+                            k.replace("classifier__", ""): v
+                            for k, v in search.best_params_.items()
+                        }
+                    ),
+                ),
+            ]
+        )
+
+        for metric in ["average_precision", "f1"]:
+            scores = cross_val_score(best_pipeline, X, y, cv=cv, scoring=metric)
+            logger.info(
+                f"{metric} score: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})"
+            )
+
+        return search.best_params_
 
     def _plot_learning_curves(self, X, y, pipeline, cv=5):
         """
@@ -535,162 +633,167 @@ class PatientResponseTrainer:
         use_smote=True,
         use_feature_selection=False,
         use_ensemble=False,
-        ensemble_type="stacking",  # "stacking" or "voting"
+        ensemble_type="stacking",
     ):
-        """
-        Train a machine learning model to predict patient responses.
-
-        Args:
-            classifier: Type of classifier to use ('random_forest', 'gradient_boosting', or 'ensemble')
-            tune_hyperparameters: Whether to perform hyperparameter tuning
-            test_size: Proportion of data to use for testing
-            random_state: Random seed for reproducibility
-            use_smote: Whether to use SMOTE for handling class imbalance
-            use_feature_selection: Whether to use feature selection before training
-            use_ensemble: Whether to use an ensemble model (stacking/voting)
-            ensemble_type: Type of ensemble ("stacking" or "voting")
-
-        Returns:
-            Dictionary with training results and evaluation metrics
-        """
+        """Train a machine learning model to predict patient responses."""
         # Generate training data
         X, y, feature_names = self.generate_training_data()
 
-        if X is None or len(X) < 50:  # Need sufficient data
+        if X is None or len(X) < 50:
+            logger.error("Insufficient training data")
             return {"status": "error", "message": "Insufficient training data available"}
+
+        # Handle missing values and normalize features
+        from sklearn.impute import SimpleImputer
+
+        imputer = SimpleImputer(strategy="median")
+        X = imputer.fit_transform(X)
 
         # Feature selection (optional)
         selector = None
         if use_feature_selection:
             selector = select_optimal_features(X, y)
             X = selector.transform(X)
-            # Update feature_names to selected ones
             feature_names = [
                 f for f, s in zip(feature_names, selector.get_support()) if s
             ]
 
-        # Split into training and testing sets
-        X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=test_size, random_state=random_state, stratify=y
+        # Ensure we have enough samples of each class before splitting
+        unique_classes = np.unique(y)
+        if len(unique_classes) < 2:
+            logger.error("Need samples from at least 2 classes")
+            return {
+                "status": "error",
+                "message": "Insufficient class diversity in training data",
+            }
+
+        # Split into training and testing sets with stratification
+        stratified_splitter = StratifiedKFold(
+            n_splits=5, shuffle=True, random_state=random_state
         )
+        train_idx, test_idx = next(stratified_splitter.split(X, y))
+
+        X_train, X_test = X[train_idx], X[test_idx]
+        y_train, y_test = y[train_idx], y[test_idx]
 
         # Handle class imbalance if needed
         class_counts = np.bincount(y_train)
         if use_smote and (min(class_counts) / max(class_counts) < 0.5):
-            logger.info("Using SMOTE to handle class imbalance")
+            logger.info("Applying SMOTE for class imbalance")
             try:
-                smote = SMOTE(random_state=random_state)
-                X_train_resampled, y_train_resampled = smote.fit_resample(
-                    X_train, y_train
+                smote = SMOTE(
+                    random_state=random_state,
+                    sampling_strategy="auto",
+                    k_neighbors=min(5, min(class_counts) - 1),
                 )
-                logger.info(
-                    f"SMOTE applied - Data increased from {len(X_train)} to {len(X_train_resampled)}"
-                )
-                X_train, y_train = X_train_resampled, y_train_resampled
+                X_train, y_train = smote.fit_resample(X_train, y_train)
+                logger.info(f"After SMOTE - training samples: {len(X_train)}")
             except Exception as e:
-                logger.warning(f"SMOTE failed, falling back to class weights: {str(e)}")
+                logger.warning(f"SMOTE failed, proceeding without it: {str(e)}")
                 use_smote = False
 
-        # Compute class weights if not using SMOTE
-        if not use_smote:
-            class_weights = compute_class_weight(
-                "balanced", classes=np.unique(y_train), y=y_train
-            )
-            weight_dict = {i: weight for i, weight in enumerate(class_weights)}
-            logger.info(f"Using class weights: {weight_dict}")
-        else:
-            weight_dict = None
-
-        # Choose classifier
+        # Choose and configure classifier
         if use_ensemble:
+            logger.info(f"Creating ensemble model with {ensemble_type} strategy")
             clf = create_ensemble_model(model_type=ensemble_type)
         elif classifier == "gradient_boosting":
-            clf = GradientBoostingClassifier(random_state=random_state)
-        else:  # Default to random forest
-            clf = RandomForestClassifier(
+            clf = GradientBoostingClassifier(
                 random_state=random_state,
-                class_weight=weight_dict if not use_smote else None,
+                n_estimators=100,
+                learning_rate=0.1,
+                max_depth=3,
+                validation_fraction=0.2,
+            )
+        else:
+            clf = RandomForestClassifier(
+                n_estimators=100,
+                max_depth=None,
+                random_state=random_state,
+                class_weight="balanced" if not use_smote else None,
+                min_samples_leaf=2,
             )
 
         # Perform hyperparameter tuning if requested
+        best_params = None
         if tune_hyperparameters:
+            logger.info("Performing hyperparameter tuning")
             best_params = self._tune_hyperparameters(X_train, y_train, classifier)
+            if best_params:
+                for param, value in best_params.items():
+                    param_name = param.replace("classifier__", "")
+                    if hasattr(clf, param_name):
+                        setattr(clf, param_name, value)
 
-            # Update classifier with best parameters
-            if classifier == "gradient_boosting":
-                clf = GradientBoostingClassifier(
-                    random_state=random_state,
-                    **{k.replace("classifier__", ""): v for k, v in best_params.items()},
-                )
-            else:
-                # Check if class_weight is in best_params
-                params = {
-                    k.replace("classifier__", ""): v for k, v in best_params.items()
-                }
-                if "class_weight" not in params and not use_smote:
-                    # Only add class_weight if it's not in best_params and SMOTE isn't used
-                    params["class_weight"] = weight_dict
-
-                clf = RandomForestClassifier(random_state=random_state, **params)
-
-        # Create pipeline with preprocessing
+        # Create and train pipeline
+        logger.info(f"Training {classifier} model with {len(X_train)} samples")
         pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", clf)])
 
-        # Train model
-        logger.info(f"Training {classifier} model with {len(X_train)} samples")
-        pipeline.fit(X_train, y_train)
+        # Fit with error handling
+        try:
+            pipeline.fit(X_train, y_train)
+        except Exception as e:
+            logger.error(f"Model training failed: {str(e)}")
+            return {"status": "error", "message": f"Model training failed: {str(e)}"}
 
-        # Evaluate on test set
-        y_pred = pipeline.predict(X_test)
-        y_prob = pipeline.predict_proba(X_test)[:, 1]
+        # Evaluate
+        try:
+            y_pred = pipeline.predict(X_test)
+            y_prob = pipeline.predict_proba(X_test)[:, 1]
 
-        # Calculate metrics
-        accuracy = accuracy_score(y_test, y_pred)
-        roc_auc = roc_auc_score(y_test, y_prob)
-        avg_precision = average_precision_score(y_test, y_prob)
-        class_report = classification_report(y_test, y_pred, output_dict=True)
+            # Calculate metrics
+            accuracy = accuracy_score(y_test, y_pred)
+            roc_auc = roc_auc_score(y_test, y_prob)
+            avg_precision = average_precision_score(y_test, y_prob)
+            class_report = classification_report(y_test, y_pred, output_dict=True)
 
-        # Save model visualization
-        self._plot_metrics(y_test, y_pred, y_prob)
+            # Plot metrics and learning curves
+            self._plot_metrics(y_test, y_pred, y_prob)
+            self._plot_learning_curves(X, y, pipeline)
 
-        # Plot learning curves for diagnosis
-        self._plot_learning_curves(X, y, pipeline)
+        except Exception as e:
+            logger.error(f"Error during model evaluation: {str(e)}")
+            return {"status": "error", "message": f"Model evaluation failed: {str(e)}"}
 
         # Get feature importance
+        top_features = {}
         if hasattr(pipeline["classifier"], "feature_importances_"):
-            importances = pipeline["classifier"].feature_importances_
-            feature_importance = dict(zip(feature_names, importances))
-            top_features = sorted(
-                feature_importance.items(), key=lambda x: x[1], reverse=True
-            )[:10]
-        else:
-            top_features = []
+            try:
+                importances = pipeline["classifier"].feature_importances_
+                indices = np.argsort(importances)[::-1]
+                top_features = {
+                    feature_names[i]: float(importances[i]) for i in indices[:10]
+                }
+                logger.info("Top influential features:")
+                for feat, imp in top_features.items():
+                    logger.info(f"  - {feat}: {imp:.4f}")
+            except Exception as e:
+                logger.warning(f"Could not extract feature importances: {str(e)}")
 
-        # Save model and feature names
-        model_data = {
-            "pipeline": pipeline,
-            "feature_names": feature_names,
-            "training_date": timezone.now().isoformat(),
-            "metrics": {
-                "accuracy": float(accuracy),
-                "roc_auc": float(roc_auc),
-                "avg_precision": float(avg_precision),
-                "class_report": class_report,
-            },
-            "feature_selector": selector
-            if use_feature_selection
-            else None,  # Save selector if used
-        }
-        joblib.dump(model_data, self.model_path)
-        logger.info(f"Model saved to {self.model_path}")
+        # Save model and return results
+        try:
+            model_data = {
+                "pipeline": pipeline,
+                "feature_names": feature_names,
+                "training_date": timezone.now().isoformat(),
+                "metrics": {
+                    "accuracy": float(accuracy),
+                    "roc_auc": float(roc_auc),
+                    "avg_precision": float(avg_precision),
+                    "class_report": class_report,
+                },
+                "feature_selector": selector if use_feature_selection else None,
+            }
+            joblib.dump(model_data, self.model_path)
+            logger.info(f"Model saved to {self.model_path}")
+        except Exception as e:
+            logger.error(f"Error saving model: {str(e)}")
+            return {"status": "error", "message": f"Could not save model: {str(e)}"}
 
-        # Return results
         return {
             "status": "success",
             "model_type": classifier,
             "accuracy": float(accuracy),
             "roc_auc": float(roc_auc),
-            "avg_precision": float(avg_precision),
             "precision": float(class_report["1"]["precision"]),
             "recall": float(class_report["1"]["recall"]),
             "f1_score": float(class_report["1"]["f1-score"]),
