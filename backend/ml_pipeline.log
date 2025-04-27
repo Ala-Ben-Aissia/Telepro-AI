@@ -1,0 +1,32 @@
+/Users/alabenaissia/Developer/FYP/Telepro-AI/backend/.venv/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/Users/alabenaissia/Developer/FYP/Telepro-AI/backend/.venv/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+Target class distribution: {0: 711, 1: 462}
+n_iterations: 4
+n_required_iterations: 5
+n_possible_iterations: 4
+min_resources_: 100
+max_resources_: 938
+aggressive_elimination: False
+factor: 2
+----------
+iter: 0
+n_candidates: 20
+n_resources: 100
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+----------
+iter: 1
+n_candidates: 10
+n_resources: 200
+Fitting 5 folds for each of 10 candidates, totalling 50 fits
+----------
+iter: 2
+n_candidates: 5
+n_resources: 400
+Fitting 5 folds for each of 5 candidates, totalling 25 fits
+----------
+iter: 3
+n_candidates: 3
+n_resources: 800
+Fitting 5 folds for each of 3 candidates, totalling 15 fits

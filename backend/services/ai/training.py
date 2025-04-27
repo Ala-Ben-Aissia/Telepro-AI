@@ -9,14 +9,22 @@ import logging
 import joblib
 import numpy as np
 import pandas as pd
+from sklearn.impute import SimpleImputer
 from datetime import timedelta
 from sklearn.linear_model import LogisticRegression
+from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import (
     train_test_split,
     GridSearchCV,
+    cross_val_score,
     StratifiedKFold,
-    RepeatedStratifiedKFold,
+    StratifiedShuffleSplit,
+    HalvingGridSearchCV,
 )
+
+# Set default number of folds for cross-validation
+N_FOLDS = 5
+
 from sklearn.base import clone
 from sklearn.experimental import enable_halving_search_cv  # Required import
 from sklearn.model_selection import HalvingRandomSearchCV
@@ -108,7 +116,7 @@ def create_ensemble_model(model_type="stacking"):
         ensemble = StackingClassifier(
             estimators=[("rf", rf), ("gb", gb), ("et", et)],
             final_estimator=meta_classifier,
-            cv=5,  # Simple k-fold CV
+            cv=N_FOLDS,  # Simple k-fold CV
             passthrough=True,
             n_jobs=-1,
         )
@@ -179,6 +187,7 @@ class PatientResponseTrainer:
         # Prepare data structures
         data = []
         labels = []
+        feature_names = None
 
         # Process each communication log with enhanced features
         for log in comm_logs:
@@ -189,13 +198,58 @@ class PatientResponseTrainer:
                     patient_history[patient.id], key=lambda x: x.sent_at or timezone.now()
                 )
 
+                # --- Validation: Only use patients with all critical fields and logical consistency ---
+                valid = True
+                reasons = []
+                if not patient.gender or patient.gender not in ["M", "F", "O", "N"]:
+                    valid = False
+                    reasons.append("Invalid or missing gender")
+                if not patient.age_group or patient.age_group not in [
+                    "0-18",
+                    "19-35",
+                    "36-50",
+                    "51-65",
+                    "65+",
+                ]:
+                    valid = False
+                    reasons.append("Invalid or missing age_group")
+                if not patient.location:
+                    valid = False
+                    reasons.append("Missing location")
+                if not patient.language_preference or patient.language_preference not in [
+                    "fr",
+                    "en",
+                    "es",
+                    "ar",
+                    "de",
+                ]:
+                    valid = False
+                    reasons.append("Invalid or missing language_preference")
+                if patient.engagement_score is None or not (
+                    0 <= patient.engagement_score <= 1
+                ):
+                    valid = False
+                    reasons.append("Invalid or missing engagement_score")
+                if patient.has_active_consent not in [True, False]:
+                    valid = False
+                    reasons.append("Missing has_active_consent")
+                if not patient.preferred_contact_method:
+                    valid = False
+                    reasons.append("Missing preferred_contact_method")
+                if not valid:
+                    logger.warning(
+                        f"Skipping patient {patient.id} in training data: {', '.join(reasons)}"
+                    )
+                    continue
+
                 # 1. Enhanced Patient demographic features
                 features = {
-                    "age_group": patient.age_group or "Unknown",
-                    "gender": patient.gender or "Unknown",
-                    "language_preference": patient.language_preference or "Unknown",
-                    "location": patient.location or "Unknown",
-                    "preferred_contact_method": patient.preferred_contact_method,
+                    "age_group": patient.age_group or np.nan,
+                    "gender": patient.gender or np.nan,
+                    "language_preference": patient.language_preference or np.nan,
+                    "location": patient.location or np.nan,
+                    "preferred_contact_method": patient.preferred_contact_method
+                    or np.nan,
                 }
 
                 # 2. Enhanced engagement metrics with historical patterns
@@ -345,6 +399,20 @@ class PatientResponseTrainer:
 
         # Convert to DataFrame
         df = pd.DataFrame(data)
+        y = np.array(labels)
+
+        # --- Diagnostics: Log missing value counts per feature ---
+        missing_counts = df.isnull().sum()
+        logger.info("Missing value counts per feature:\n" + str(missing_counts))
+        logger.info(f"Total samples: {len(df)}")
+        logger.info(f"Target class distribution: {pd.Series(y).value_counts().to_dict()}")
+        print(f"Target class distribution: {pd.Series(y).value_counts().to_dict()}")
+
+        # --- Impute missing values ---
+        # For simplicity, use most_frequent for all columns (works for categorical and numeric)
+        imputer = SimpleImputer(strategy="most_frequent")
+        df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+        logger.info("Sample after imputation:\n" + str(df_imputed.head()))
 
         # Log feature correlations with target
         y_array = np.array(labels)
@@ -362,7 +430,9 @@ class PatientResponseTrainer:
             "preferred_contact_method",
             "campaign_category",
         ]
-        df_encoded = pd.get_dummies(df, columns=categorical_cols, drop_first=False)
+        df_encoded = pd.get_dummies(
+            df_imputed, columns=categorical_cols, drop_first=False
+        )
 
         # Get feature names
         feature_names = df_encoded.columns.tolist()
@@ -446,17 +516,17 @@ class PatientResponseTrainer:
 
         pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", base_clf)])
 
-        # Use repeated stratified k-fold
-        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=3, random_state=42)
+        # Cross-validation strategy
+        cv_strategy = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
 
         # Use Halving Random Search with single scoring metric
         search = HalvingRandomSearchCV(
             pipeline,
             param_distributions,
-            cv=cv,
+            cv=cv_strategy,
             factor=2,
             n_candidates=20,  # Number of parameter settings that are sampled
-            min_resources=20,  # Minimum number of samples used
+            min_resources=100,  # Ensure enough samples per class in each fold
             scoring="roc_auc",  # Use ROC-AUC as primary metric
             n_jobs=-1,
             random_state=42,
@@ -486,11 +556,36 @@ class PatientResponseTrainer:
             ]
         )
 
+        def safe_cross_val_score(estimator, X, y, cv, scoring):
+            from sklearn.model_selection import cross_val_score
+            from sklearn.utils.validation import _num_samples
+            import numpy as np
+
+            scores = []
+            for train_idx, test_idx in cv.split(X, y):
+                y_test = y[test_idx]
+                # Skip folds with only one class
+                if len(np.unique(y_test)) < 2:
+                    logger.warning(
+                        "Skipping fold with only one class in y_test during scoring."
+                    )
+                    continue
+                score = cross_val_score(
+                    estimator, X, y, cv=[(train_idx, test_idx)], scoring=scoring
+                )
+                scores.extend(score)
+            return np.array(scores)
+
         for metric in ["average_precision", "f1"]:
-            scores = cross_val_score(best_pipeline, X, y, cv=cv, scoring=metric)
-            logger.info(
-                f"{metric} score: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})"
+            scores = safe_cross_val_score(
+                best_pipeline, X, y, cv=cv_strategy, scoring=metric
             )
+            if len(scores) > 0:
+                logger.info(
+                    f"{metric} score: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})"
+                )
+            else:
+                logger.warning(f"No valid folds for scoring metric {metric}.")
 
         return search.best_params_
 
