@@ -96,6 +96,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 f"Created {num_patients} patient users with cohort-based profiles"
             )
+            # The validation summary will be printed after patient creation (see validation code in create_patient_users_and_profiles)
 
             # Create communication logs with realistic response patterns
             self.create_communication_logs(num_communications, campaigns, patients)
@@ -464,7 +465,38 @@ class Command(BaseCommand):
 
             patients.append(patient)
 
-        return patients
+        # --- Automated Validation of Generated Patient Data ---
+        valid_patients = []
+        invalid_patients = []
+        for patient in patients:
+            errors = []
+            if not patient.gender or patient.gender not in ["M", "F", "O", "N"]:
+                errors.append("Invalid or missing gender")
+            if not patient.age_group or patient.age_group not in ["0-18", "19-35", "36-50", "51-65", "65+"]:
+                errors.append("Invalid or missing age_group")
+            if not patient.location:
+                errors.append("Missing location")
+            if not patient.language_preference or patient.language_preference not in ["fr", "en", "es", "ar", "de"]:
+                errors.append("Invalid or missing language_preference")
+            if patient.engagement_score is None or not (0 <= patient.engagement_score <= 1):
+                errors.append("Invalid or missing engagement_score")
+            if patient.has_active_consent not in [True, False]:
+                errors.append("Missing has_active_consent")
+            if not patient.preferred_contact_method:
+                errors.append("Missing preferred_contact_method")
+            if errors:
+                invalid_patients.append((patient, errors))
+            else:
+                valid_patients.append(patient)
+        if invalid_patients:
+            from django.core.management.base import CommandError
+            self.stdout.write(self.style.WARNING(f"Validation: {len(invalid_patients)} invalid patient records found."))
+            for patient, errs in invalid_patients[:5]:
+                self.stdout.write(self.style.WARNING(f"  - Patient ID {patient.id}: {', '.join(errs)}"))
+            if len(invalid_patients) > 5:
+                self.stdout.write(self.style.WARNING(f"  ...and {len(invalid_patients)-5} more."))
+        self.stdout.write(self.style.SUCCESS(f"Validation: {len(valid_patients)} valid patient records generated."))
+        return valid_patients
 
     def create_realistic_consent_records(self, patient, staff_users, cohort_data):
         """Create consent records with patterns based on patient cohort"""
@@ -862,13 +894,23 @@ class Command(BaseCommand):
                 patient.save(update_fields=["engagement_score"])
 
     def clear_data(self):
-        """Clear existing data from the database"""
+        """Clear existing data from the database, handling protected relationships."""
         self.stdout.write("Clearing existing data...")
 
-        # Only delete non-superuser users
+        # Delete related objects first to avoid ProtectedError
+        from campaigns.models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
+        from patients.models import Patient, ConsentRecord
+
+        CommunicationLog.objects.all().delete()
+        PatientSegment.objects.all().delete()
+        Campaign.objects.all().delete()
+        CampaignCategory.objects.all().delete()
+        ConsentRecord.objects.all().delete()
+        Patient.objects.all().delete()
+
+        # Only delete non-superuser users (after related objects are gone)
         User.objects.filter(is_superuser=False).delete()
 
-        # Other models will be deleted via cascade
         self.stdout.write(self.style.SUCCESS("Existing data cleared"))
 
     def create_staff_users(self, count):
