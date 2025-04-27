@@ -595,35 +595,49 @@ class PatientResponseTrainer:
         except Exception as e:
             logger.warning(f"Could not refit best pipeline for diagnostics: {e}")
 
-        # --- Diagnostics and Visualizations ---
+        # --- Diagnostics and Visualizations: Side-by-Side (Training vs Cross-Validation) ---
         try:
-            from services.ai.diagnostics import (
-                plot_confusion_matrix,
-                plot_roc_curve,
-                plot_precision_recall_curve,
-                print_classification_report,
+            from services.ai.diagnostics import print_classification_report
+            from services.ai.diagnostics_side_by_side import (
+                plot_confusion_matrix_side_by_side,
+                plot_roc_curve_side_by_side,
+                plot_precision_recall_curve_side_by_side,
             )
             import matplotlib.pyplot as plt
+            from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
-            # Predict on the whole data (for diagnostics only)
-            y_pred = best_pipeline.predict(X)
+            # Training set predictions
+            y_pred_train = best_pipeline.predict(X)
             if hasattr(best_pipeline, "predict_proba"):
-                y_score = best_pipeline.predict_proba(X)[:, 1]
+                y_score_train = best_pipeline.predict_proba(X)[:, 1]
             else:
-                y_score = best_pipeline.decision_function(X)
+                y_score_train = best_pipeline.decision_function(X)
 
-            # Confusion Matrix
-            plot_confusion_matrix(
-                y, y_pred, labels=[0, 1], title="Confusion Matrix (All Data)", save_path="models/confusion_matrix.png"
+            # Cross-validation predictions
+            cv_strategy = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
+            y_pred_cv = cross_val_predict(best_pipeline, X, y, cv=cv_strategy, method="predict")
+            if hasattr(best_pipeline, "predict_proba"):
+                y_score_cv = cross_val_predict(best_pipeline, X, y, cv=cv_strategy, method="predict_proba")[:, 1]
+            else:
+                y_score_cv = cross_val_predict(best_pipeline, X, y, cv=cv_strategy, method="decision_function")
+
+            # Side-by-side Confusion Matrix
+            plot_confusion_matrix_side_by_side(
+                y, y_pred_train, y, y_pred_cv, labels=[0, 1], save_path="models/confusion_matrix_side_by_side.png"
             )
-            # ROC Curve
-            plot_roc_curve(y, y_score, title="ROC Curve (All Data)", save_path="models/roc_curve.png")
-            # Precision-Recall Curve
-            plot_precision_recall_curve(
-                y, y_score, title="Precision-Recall Curve (All Data)", save_path="models/precision_recall_curve.png"
+            # Side-by-side ROC Curve
+            plot_roc_curve_side_by_side(
+                y, y_score_train, y, y_score_cv, save_path="models/roc_curve_side_by_side.png"
             )
-            # Classification Report
-            print_classification_report(y, y_pred)
+            # Side-by-side Precision-Recall Curve
+            plot_precision_recall_curve_side_by_side(
+                y, y_score_train, y, y_score_cv, save_path="models/precision_recall_curve_side_by_side.png"
+            )
+            # Print both classification reports
+            print("--- Classification Report (Training Data) ---")
+            print_classification_report(y, y_pred_train)
+            print("--- Classification Report (Cross-Validation) ---")
+            print_classification_report(y, y_pred_cv)
         except Exception as e:
             logger.warning(f"Diagnostics/visualization failed: {e}")
 
