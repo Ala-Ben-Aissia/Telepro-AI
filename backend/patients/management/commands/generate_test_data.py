@@ -98,6 +98,34 @@ class Command(BaseCommand):
             )
             # The validation summary will be printed after patient creation (see validation code in create_patient_users_and_profiles)
 
+            # --- Generate Patient Segments ---
+            from campaigns.models import PatientSegment
+            segments = [
+                {
+                    "name": "Young Urban Adults",
+                    "description": "Patients aged 19-35 living in major cities.",
+                    "criteria": {"age_group": ["19-35"], "location": ["Paris", "Montreal", "Toulouse"]}
+                },
+                {
+                    "name": "Seniors",
+                    "description": "Patients aged 65+.",
+                    "criteria": {"age_group": ["65+"]}
+                },
+                {
+                    "name": "Engaged Patients",
+                    "description": "Patients with engagement_score > 0.5.",
+                    "criteria": {"engagement_score__gt": 0.5}
+                },
+                {
+                    "name": "Consent-Active",
+                    "description": "Patients with active consent for marketing.",
+                    "criteria": {"has_active_consent": True}
+                },
+            ]
+            for seg in segments:
+                PatientSegment.objects.create(**seg)
+            self.stdout.write(self.style.SUCCESS(f"Created {len(segments)} patient segments with realistic criteria."))
+
             # Create communication logs with realistic response patterns
             self.create_communication_logs(num_communications, campaigns, patients)
             self.stdout.write(
