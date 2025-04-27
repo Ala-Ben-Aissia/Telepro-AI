@@ -515,6 +515,7 @@ class PatientResponseTrainer:
             )
 
         pipeline = Pipeline([("scaler", StandardScaler()), ("classifier", base_clf)])
+        from sklearn.model_selection import StratifiedKFold
 
         # Cross-validation strategy
         cv_strategy = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
@@ -615,23 +616,42 @@ class PatientResponseTrainer:
 
             # Cross-validation predictions
             cv_strategy = StratifiedKFold(n_splits=N_FOLDS, shuffle=True, random_state=42)
-            y_pred_cv = cross_val_predict(best_pipeline, X, y, cv=cv_strategy, method="predict")
+            y_pred_cv = cross_val_predict(
+                best_pipeline, X, y, cv=cv_strategy, method="predict"
+            )
             if hasattr(best_pipeline, "predict_proba"):
-                y_score_cv = cross_val_predict(best_pipeline, X, y, cv=cv_strategy, method="predict_proba")[:, 1]
+                y_score_cv = cross_val_predict(
+                    best_pipeline, X, y, cv=cv_strategy, method="predict_proba"
+                )[:, 1]
             else:
-                y_score_cv = cross_val_predict(best_pipeline, X, y, cv=cv_strategy, method="decision_function")
+                y_score_cv = cross_val_predict(
+                    best_pipeline, X, y, cv=cv_strategy, method="decision_function"
+                )
 
             # Side-by-side Confusion Matrix
             plot_confusion_matrix_side_by_side(
-                y, y_pred_train, y, y_pred_cv, labels=[0, 1], save_path="models/confusion_matrix_side_by_side.png"
+                y,
+                y_pred_train,
+                y,
+                y_pred_cv,
+                labels=[0, 1],
+                save_path="models/confusion_matrix_side_by_side.png",
             )
             # Side-by-side ROC Curve
             plot_roc_curve_side_by_side(
-                y, y_score_train, y, y_score_cv, save_path="models/roc_curve_side_by_side.png"
+                y,
+                y_score_train,
+                y,
+                y_score_cv,
+                save_path="models/roc_curve_side_by_side.png",
             )
             # Side-by-side Precision-Recall Curve
             plot_precision_recall_curve_side_by_side(
-                y, y_score_train, y, y_score_cv, save_path="models/precision_recall_curve_side_by_side.png"
+                y,
+                y_score_train,
+                y,
+                y_score_cv,
+                save_path="models/precision_recall_curve_side_by_side.png",
             )
             # Print both classification reports
             print("--- Classification Report (Training Data) ---")
