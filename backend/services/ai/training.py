@@ -530,16 +530,14 @@ class PatientResponseTrainer:
             scoring="roc_auc",  # Use ROC-AUC as primary metric
             n_jobs=-1,
             random_state=42,
-            verbose=1,
         )
 
         search.fit(X, y)
 
-        logger.info(f"Best parameters: {search.best_params_}")
-        logger.info(f"Best ROC-AUC score: {search.best_score_:.4f}")
-
-        # Additional scoring metrics using cross_val_score
-        from sklearn.model_selection import cross_val_score
+        logger.info(f"Best params: {search.best_params_}")
+        print(f"Best params: {search.best_params_}")
+        logger.info(f"Best score: {search.best_score_}")
+        print(f"Best score: {search.best_score_}")
 
         best_pipeline = Pipeline(
             [
@@ -581,11 +579,53 @@ class PatientResponseTrainer:
                 best_pipeline, X, y, cv=cv_strategy, scoring=metric
             )
             if len(scores) > 0:
-                logger.info(
+                score_msg = (
                     f"{metric} score: {scores.mean():.4f} (+/- {scores.std() * 2:.4f})"
                 )
+                logger.info(score_msg)
+                print(score_msg)
             else:
-                logger.warning(f"No valid folds for scoring metric {metric}.")
+                warn_msg = f"No valid folds for scoring metric {metric}."
+                logger.warning(warn_msg)
+                print(warn_msg)
+
+        # --- Diagnostics and Visualizations ---
+        try:
+            from services.ai.diagnostics import (
+                plot_confusion_matrix,
+                plot_roc_curve,
+                plot_precision_recall_curve,
+                print_classification_report,
+            )
+            import matplotlib.pyplot as plt
+
+            # Predict on the whole data (for diagnostics only)
+            y_pred = best_pipeline.predict(X)
+            if hasattr(best_pipeline, "predict_proba"):
+                y_score = best_pipeline.predict_proba(X)[:, 1]
+            else:
+                y_score = best_pipeline.decision_function(X)
+
+            # Confusion Matrix
+            plot_confusion_matrix(
+                y, y_pred, labels=[0, 1], title="Confusion Matrix (All Data)"
+            )
+            plt.savefig("confusion_matrix.png")
+            plt.close()
+            # ROC Curve
+            plot_roc_curve(y, y_score, title="ROC Curve (All Data)")
+            plt.savefig("roc_curve.png")
+            plt.close()
+            # Precision-Recall Curve
+            plot_precision_recall_curve(
+                y, y_score, title="Precision-Recall Curve (All Data)"
+            )
+            plt.savefig("precision_recall_curve.png")
+            plt.close()
+            # Classification Report
+            print_classification_report(y, y_pred)
+        except Exception as e:
+            logger.warning(f"Diagnostics/visualization failed: {e}")
 
         return search.best_params_
 
@@ -754,6 +794,8 @@ class PatientResponseTrainer:
             ]
 
         # Ensure we have enough samples of each class before splitting
+        import numpy as np
+
         unique_classes = np.unique(y)
         if len(unique_classes) < 2:
             logger.error("Need samples from at least 2 classes")
@@ -851,18 +893,76 @@ class PatientResponseTrainer:
 
         # Get feature importance
         top_features = {}
-        if hasattr(pipeline["classifier"], "feature_importances_"):
-            try:
-                importances = pipeline["classifier"].feature_importances_
+        from services.ai.diagnostics import plot_feature_importance
+
+        classifier = pipeline["classifier"]
+        try:
+            if hasattr(classifier, "feature_importances_"):
+                # Standard case: RandomForest, GradientBoosting
+                importances = classifier.feature_importances_
                 indices = np.argsort(importances)[::-1]
                 top_features = {
                     feature_names[i]: float(importances[i]) for i in indices[:10]
                 }
                 logger.info("Top influential features:")
+                print("Top influential features:")
                 for feat, imp in top_features.items():
                     logger.info(f"  - {feat}: {imp:.4f}")
-            except Exception as e:
-                logger.warning(f"Could not extract feature importances: {str(e)}")
+                    print(f"  - {feat}: {imp:.4f}")
+                plot_feature_importance(
+                    importances[indices[:10]],
+                    [feature_names[i] for i in indices[:10]],
+                    filename="feature_importance.png",
+                    top_n=10,
+                    title="Top Feature Importances",
+                )
+                logger.info("Feature importance plot saved as feature_importance.png")
+                print("Feature importance plot saved as feature_importance.png")
+            elif hasattr(classifier, "estimators_"):
+                # Ensemble case: StackingClassifier or VotingClassifier
+                logger.info(
+                    "Extracting feature importances from ensemble base estimators..."
+                )
+                base_importances = []
+                base_names = []
+                for est in classifier.estimators_:
+                    if hasattr(est, "feature_importances_"):
+                        base_importances.append(est.feature_importances_)
+                        base_names.append(est.__class__.__name__)
+                if base_importances:
+                    # Average importances across all base estimators
+                    import numpy as np
+
+                    importances = np.mean(base_importances, axis=0)
+                    indices = np.argsort(importances)[::-1]
+                    top_features = {
+                        feature_names[i]: float(importances[i]) for i in indices[:10]
+                    }
+                    logger.info("Top influential features (ensemble average):")
+                    print("Top influential features (ensemble average):")
+                    for feat, imp in top_features.items():
+                        logger.info(f"  - {feat}: {imp:.4f}")
+                        print(f"  - {feat}: {imp:.4f}")
+                    plot_feature_importance(
+                        importances[indices[:10]],
+                        [feature_names[i] for i in indices[:10]],
+                        filename="feature_importance.png",
+                        top_n=10,
+                        title="Top Feature Importances (Ensemble Average)",
+                    )
+                    logger.info("Feature importance plot saved as feature_importance.png")
+                    print("Feature importance plot saved as feature_importance.png")
+                else:
+                    logger.warning(
+                        "No base estimator in ensemble exposes feature_importances_."
+                    )
+                    print("No base estimator in ensemble exposes feature_importances_.")
+            else:
+                logger.warning("Classifier does not expose feature_importances_.")
+                print("Classifier does not expose feature_importances_.")
+        except Exception as e:
+            logger.warning(f"Could not extract feature importances: {str(e)}")
+            print(f"Could not extract feature importances: {str(e)}")
 
         # Save model and return results
         try:

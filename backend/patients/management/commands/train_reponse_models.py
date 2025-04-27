@@ -79,7 +79,7 @@ class Command(BaseCommand):
             self.stdout.write(f"Metrics visualization: {result['metrics_plot']}")
 
             self.stdout.write("\nTop influential features:")
-            for feature, importance in result["top_features"]:
+            for feature, importance in result["top_features"].items():
                 self.stdout.write(f"  - {feature}: {importance:.4f}")
         else:
             self.stdout.write(
