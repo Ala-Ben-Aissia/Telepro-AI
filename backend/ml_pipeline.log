@@ -1,10 +1,45 @@
+===== Run at 2025-04-27T16:38:15 =====
+Command: python manage.py shell -c 'from services.ai.training import train_patient_response_model; train_patient_response_model()'
 /Users/alabenaissia/Developer/FYP/Telepro-AI/backend/.venv/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3045: RuntimeWarning: invalid value encountered in divide
   c /= stddev[:, None]
 /Users/alabenaissia/Developer/FYP/Telepro-AI/backend/.venv/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:3046: RuntimeWarning: invalid value encountered in divide
   c /= stddev[None, :]
 Target class distribution: {0: 711, 1: 462}
-Diagnostics/visualization failed: Pipeline is not fitted yet.
 Best params: {'classifier__n_estimators': 500, 'classifier__min_samples_split': 4, 'classifier__min_samples_leaf': 4, 'classifier__max_features': 'log2', 'classifier__max_depth': 10, 'classifier__bootstrap': True}
-Best score: 0.5994984133759385
-average_precision score: 0.4779 (+/- 0.0410)
-f1 score: 0.3151 (+/- 0.0395)
+Best score: 0.6001966854663289
+average_precision score: 0.4800 (+/- 0.0383)
+f1 score: 0.3133 (+/- 0.0307)
+--- Classification Report (Training Data) ---
+              precision    recall  f1-score   support
+
+           0     0.7463    0.9666    0.8423       569
+           1     0.9055    0.4932    0.6386       369
+
+    accuracy                         0.7804       938
+   macro avg     0.8259    0.7299    0.7404       938
+weighted avg     0.8089    0.7804    0.7621       938
+
+--- Classification Report (Cross-Validation) ---
+              precision    recall  f1-score   support
+
+           0     0.6304    0.8541    0.7254       569
+           1     0.5030    0.2276    0.3134       369
+
+    accuracy                         0.6077       938
+   macro avg     0.5667    0.5409    0.5194       938
+weighted avg     0.5802    0.6077    0.5633       938
+
+Top influential features:
+  - engagement_score: 0.1057
+  - days_since_response: 0.0797
+  - days_since_last_response: 0.0730
+  - response_trend: 0.0711
+  - recent_response_rate: 0.0661
+  - days_since_contact: 0.0574
+  - sent_day_of_week: 0.0492
+  - sent_month: 0.0349
+  - total_content_length: 0.0304
+  - match_score: 0.0260
+Feature importance plot saved as feature_importance.png
+
+
