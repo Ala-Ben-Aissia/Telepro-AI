@@ -589,6 +589,12 @@ class PatientResponseTrainer:
                 logger.warning(warn_msg)
                 print(warn_msg)
 
+        # Ensure the best pipeline is fitted on all data for diagnostics
+        try:
+            best_pipeline.fit(X, y)
+        except Exception as e:
+            logger.warning(f"Could not refit best pipeline for diagnostics: {e}")
+
         # --- Diagnostics and Visualizations ---
         try:
             from services.ai.diagnostics import (
@@ -608,20 +614,14 @@ class PatientResponseTrainer:
 
             # Confusion Matrix
             plot_confusion_matrix(
-                y, y_pred, labels=[0, 1], title="Confusion Matrix (All Data)"
+                y, y_pred, labels=[0, 1], title="Confusion Matrix (All Data)", save_path="models/confusion_matrix.png"
             )
-            plt.savefig("confusion_matrix.png")
-            plt.close()
             # ROC Curve
-            plot_roc_curve(y, y_score, title="ROC Curve (All Data)")
-            plt.savefig("roc_curve.png")
-            plt.close()
+            plot_roc_curve(y, y_score, title="ROC Curve (All Data)", save_path="models/roc_curve.png")
             # Precision-Recall Curve
             plot_precision_recall_curve(
-                y, y_score, title="Precision-Recall Curve (All Data)"
+                y, y_score, title="Precision-Recall Curve (All Data)", save_path="models/precision_recall_curve.png"
             )
-            plt.savefig("precision_recall_curve.png")
-            plt.close()
             # Classification Report
             print_classification_report(y, y_pred)
         except Exception as e:
