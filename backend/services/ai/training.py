@@ -12,21 +12,13 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from datetime import timedelta
 from sklearn.linear_model import LogisticRegression
-from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import (
-    train_test_split,
-    GridSearchCV,
     cross_val_score,
     StratifiedKFold,
-    StratifiedShuffleSplit,
-    HalvingGridSearchCV,
 )
 
-# Set default number of folds for cross-validation
-N_FOLDS = 5
 
 from sklearn.base import clone
-from sklearn.experimental import enable_halving_search_cv  # Required import
 from sklearn.model_selection import HalvingRandomSearchCV
 from sklearn.ensemble import (
     RandomForestClassifier,
@@ -43,7 +35,6 @@ from sklearn.metrics import (
 )
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-from sklearn.utils.class_weight import compute_class_weight
 from imblearn.over_sampling import SMOTE
 import matplotlib.pyplot as plt
 from django.utils import timezone
@@ -51,6 +42,9 @@ from sklearn.feature_selection import SelectFromModel
 
 from campaigns.models import CommunicationLog
 from .preprocessing import calculate_response_trend  # Add this import
+
+# Set default number of folds for cross-validation
+N_FOLDS = 5
 
 logger = logging.getLogger(__name__)
 
@@ -254,7 +248,7 @@ class PatientResponseTrainer:
 
                 # 2. Enhanced engagement metrics with historical patterns
                 recent_responses = sum(
-                    1 for l in patient_logs[-5:] if l.status == "RESPONDED"
+                    1 for log in patient_logs[-5:] if log.status == "RESPONDED"
                 )
                 response_trend = calculate_response_trend(patient)
 
@@ -360,11 +354,14 @@ class PatientResponseTrainer:
 
                 # 7. Response pattern features
                 prev_logs = [
-                    l for l in patient_logs if l.sent_at and l.sent_at < log.sent_at
+                    log
+                    for log in patient_logs
+                    if log.sent_at and log.sent_at < log.sent_at
                 ]
                 if prev_logs:
                     last_response = next(
-                        (l for l in reversed(prev_logs) if l.status == "RESPONDED"), None
+                        (log for log in reversed(prev_logs) if log.status == "RESPONDED"),
+                        None,
                     )
                     if last_response:
                         days_since_last_response = (
@@ -556,8 +553,6 @@ class PatientResponseTrainer:
         )
 
         def safe_cross_val_score(estimator, X, y, cv, scoring):
-            from sklearn.model_selection import cross_val_score
-            from sklearn.utils.validation import _num_samples
             import numpy as np
 
             scores = []
@@ -604,7 +599,6 @@ class PatientResponseTrainer:
                 plot_roc_curve_side_by_side,
                 plot_precision_recall_curve_side_by_side,
             )
-            import matplotlib.pyplot as plt
             from sklearn.model_selection import StratifiedKFold, cross_val_predict
 
             # Training set predictions

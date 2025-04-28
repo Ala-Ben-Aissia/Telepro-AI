@@ -15,6 +15,7 @@ This document presents a comprehensive, professional reflection on the machine l
 - Used segmentation and clustering (e.g., k-means, hierarchical clustering) to uncover hidden patterns and patient subgroups, informing feature engineering and business strategy.
 
 **Example: Visualizing Feature Distributions and Correlations**
+
 ```python
 import pandas as pd
 import seaborn as sns
@@ -24,7 +25,8 @@ df = pd.read_csv('patient_data.csv')
 sns.pairplot(df[['age', 'engagement_score', 'days_since_last_response', 'response']])
 plt.show()
 ```
-*Caption: Pairplot for multivariate EDA and correlation analysis.*
+
+_Caption: Pairplot for multivariate EDA and correlation analysis._
 
 ### Data Cleaning & Preprocessing
 
@@ -33,6 +35,7 @@ plt.show()
 - Automated data cleaning pipelines using **scikit-learn Pipelines** for reproducibility and modularity.
 
 **Example: Imputation and Scaling Pipeline**
+
 ```python
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
@@ -44,7 +47,8 @@ pipeline = Pipeline([
 ])
 X_clean = pipeline.fit_transform(df.drop('response', axis=1))
 ```
-*Caption: Pipeline for missing value imputation and feature scaling.*
+
+_Caption: Pipeline for missing value imputation and feature scaling._
 
 ### Feature Engineering
 
@@ -53,13 +57,15 @@ X_clean = pipeline.fit_transform(df.drop('response', axis=1))
 - Applied **one-hot encoding** and categorical variable transformations where needed.
 
 **Example: Feature Creation and Importance**
+
 ```python
 df['response_trend'] = df['recent_response_rate'] - df['past_response_rate']
 from sklearn.ensemble import RandomForestClassifier
 rf = RandomForestClassifier().fit(X_clean, df['response'])
 importances = rf.feature_importances_
 ```
-*Caption: Creating new features and extracting feature importances.*
+
+_Caption: Creating new features and extracting feature importances._
 
 ---
 
@@ -70,6 +76,7 @@ importances = rf.feature_importances_
 - Demonstrated the value of unsupervised learning for business understanding and downstream supervised modeling.
 
 **Example: Patient Segmentation with K-Means**
+
 ```python
 from sklearn.cluster import KMeans
 kmeans = KMeans(n_clusters=3, random_state=42)
@@ -77,7 +84,8 @@ df['segment'] = kmeans.fit_predict(X_clean)
 sns.scatterplot(x='engagement_score', y='days_since_last_response', hue='segment', data=df)
 plt.show()
 ```
-*Caption: Clustering patients into behavioral segments for targeted strategies.*
+
+_Caption: Clustering patients into behavioral segments for targeted strategies._
 
 ---
 
@@ -90,6 +98,7 @@ plt.show()
 - Diagnosed model bias/variance trade-offs using learning curves and cross-validation diagnostics.
 
 **Example: Random Forest and Stacking Ensemble**
+
 ```python
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, StackingClassifier
 from sklearn.linear_model import LogisticRegression
@@ -101,7 +110,8 @@ base_learners = [
 stack = StackingClassifier(estimators=base_learners, final_estimator=LogisticRegression())
 stack.fit(X_clean, df['response'])
 ```
-*Caption: Building a stacking ensemble for robust predictions.*
+
+_Caption: Building a stacking ensemble for robust predictions._
 
 ### Pipeline Design
 
@@ -109,6 +119,7 @@ stack.fit(X_clean, df['response'])
 - Ensured every step, from raw data to prediction, was automated, versioned, and reproducible.
 
 **Example: Full ML Pipeline with SMOTE**
+
 ```python
 from imblearn.over_sampling import SMOTE
 from imblearn.pipeline import Pipeline as ImbPipeline
@@ -121,7 +132,8 @@ ml_pipeline = ImbPipeline([
 ])
 ml_pipeline.fit(X, y)
 ```
-*Caption: Complete pipeline including SMOTE for class balancing.*
+
+_Caption: Complete pipeline including SMOTE for class balancing._
 
 ### Hyperparameter Optimization
 
@@ -129,6 +141,7 @@ ml_pipeline.fit(X, y)
 - Used stratified k-fold cross-validation to avoid overfitting and obtain honest performance metrics.
 
 **Example: Hyperparameter Tuning with HalvingRandomSearchCV**
+
 ```python
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import HalvingRandomSearchCV
@@ -137,7 +150,8 @@ param_grid = {'classifier__n_estimators': [100, 200, 300]}
 search = HalvingRandomSearchCV(ml_pipeline, param_grid, cv=5, random_state=42)
 search.fit(X, y)
 ```
-*Caption: Efficient hyperparameter search using HalvingRandomSearchCV.*
+
+_Caption: Efficient hyperparameter search using HalvingRandomSearchCV._
 
 ### Handling Class Imbalance
 
@@ -145,12 +159,14 @@ search.fit(X, y)
 - Validated the impact of balancing via both metrics and visualizations.
 
 **Example: Applying SMOTE**
+
 ```python
 from imblearn.over_sampling import SMOTE
 smote = SMOTE(random_state=42)
 X_bal, y_bal = smote.fit_resample(X, y)
 ```
-*Caption: Balancing classes using SMOTE.*
+
+_Caption: Balancing classes using SMOTE._
 
 ---
 
@@ -162,13 +178,15 @@ X_bal, y_bal = smote.fit_resample(X, y)
 - Reported both optimistic (training) and realistic (cross-validation) results, with clear, semantic legends and side-by-side visualizations.
 
 **Example: Stratified K-Fold Cross-Validation**
+
 ```python
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 scores = cross_val_score(ml_pipeline, X, y, cv=cv, scoring='f1')
 print(f'Average F1 (CV): {scores.mean():.3f}')
 ```
-*Caption: Honest model evaluation with stratified k-fold cross-validation.*
+
+_Caption: Honest model evaluation with stratified k-fold cross-validation._
 
 ### Visual Analytics & Interpretation
 
@@ -179,13 +197,16 @@ print(f'Average F1 (CV): {scores.mean():.3f}')
 - Automated all visual outputs and stored them in a dedicated `models/` directory for auditability.
 
 **Example: Side-by-Side Confusion Matrix Visualization**
+
 ```python
 from diagnostics_side_by_side import plot_confusion_matrix_side_by_side
 plot_confusion_matrix_side_by_side(y_train, y_pred_train, y_cv, y_pred_cv, labels=[0,1], save_path='models/confusion_matrix_side_by_side.png')
 ```
-*Caption: Custom function for side-by-side confusion matrix comparison.*
+
+_Caption: Custom function for side-by-side confusion matrix comparison._
 
 **Example: ROC Curve Visualization**
+
 ```python
 from sklearn.metrics import roc_curve
 fpr, tpr, _ = roc_curve(y_true, y_score)
@@ -195,9 +216,11 @@ plt.ylabel('True Positive Rate')
 plt.legend()
 plt.show()
 ```
-*Caption: ROC curve for model discrimination analysis.*
+
+_Caption: ROC curve for model discrimination analysis._
 
 **Example: Feature Importance Plot**
+
 ```python
 importances = rf.feature_importances_
 plt.barh(range(len(importances)), importances)
@@ -206,7 +229,8 @@ plt.ylabel('Feature Index')
 plt.title('Feature Importances')
 plt.show()
 ```
-*Caption: Visualizing feature importances for model interpretability.*
+
+_Caption: Visualizing feature importances for model interpretability._
 
 ### Consistency & Transparency
 

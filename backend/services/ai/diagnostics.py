@@ -10,7 +10,9 @@ from sklearn.metrics import (
 )
 
 
-def plot_confusion_matrix(y_true, y_pred, labels=None, title="Confusion Matrix", save_path=None):
+def plot_confusion_matrix(
+    y_true, y_pred, labels=None, title="Confusion Matrix", save_path=None
+):
     cm = confusion_matrix(y_true, y_pred, labels=labels)
     plt.figure(figsize=(6, 5))
     sns.heatmap(
@@ -45,7 +47,9 @@ def plot_roc_curve(y_true, y_score, title="ROC Curve", save_path=None):
     plt.close()
 
 
-def plot_precision_recall_curve(y_true, y_score, title="Precision-Recall Curve", save_path=None):
+def plot_precision_recall_curve(
+    y_true, y_score, title="Precision-Recall Curve", save_path=None
+):
     precision, recall, _ = precision_recall_curve(y_true, y_score)
     plt.figure(figsize=(6, 5))
     plt.plot(recall, precision, color="blue", lw=2)
