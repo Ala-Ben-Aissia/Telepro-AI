@@ -19,6 +19,9 @@ from sklearn.model_selection import (
 
 
 from sklearn.base import clone
+from sklearn.experimental import (
+    enable_halving_search_cv,
+)  # since HalvingRandomSearchCV is still experimentale.
 from sklearn.model_selection import HalvingRandomSearchCV
 from sklearn.ensemble import (
     RandomForestClassifier,

@@ -35,6 +35,7 @@ class CampaignViewSet(viewsets.ModelViewSet):
         # This would use the CommunicationService
         # to send emails or SMS based on patient preferences
         campaign = self.get_object()
+        print({campaign.sms_template, request})
         # Implementation details here...
         return Response({"status": "Campaign sending initiated"})
 

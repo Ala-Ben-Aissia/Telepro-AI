@@ -108,7 +108,7 @@ class Command(BaseCommand):
                 )
                 logger.warning(f"Email notification failed: {str(e)}")
 
-        return filtered_results
+        self.stdout.write(self.style.SUCCESS("Command completed successfully"))
 
     def _send_notification(self, results):
         """Send email notification to staff with list of inactive patients"""
