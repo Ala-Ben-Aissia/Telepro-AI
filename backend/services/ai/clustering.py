@@ -375,7 +375,6 @@ class PatientClusteringService:
             "n_clusters": n_clusters,
             "clusters": clusters,
             "feature_names": feature_names,
-            "pipeline": used_pipeline,
         }
 
     @staticmethod

@@ -252,46 +252,57 @@ class DataPreprocessingService:
             patient_data["gender"] = patient.gender or "N"
             patient_data["age_group"] = patient.age_group or "UNKNOWN"
             patient_data["location"] = patient.location or "UNKNOWN"
-            patient_data["preferred_contact_method"] = patient.preferred_contact_method
-            patient_data["language_preference"] = patient.language_preference or "fr"
-            patient_data["days_active"] = (now - patient.created_at).days
-            patient_data["response_rate_trend"] = calculate_response_trend(
-                patient
-            )  # Implement this function
-
+            patient_data["preferred_contact_method"] = getattr(
+                patient, "preferred_contact_method", None
+            )
+            patient_data["language_preference"] = getattr(
+                patient, "language_preference", "fr"
+            )
+            # Defensive: created_at may not exist in all models
+            created_at = getattr(patient, "created_at", None)
+            if created_at:
+                patient_data["days_active"] = (now - created_at).days
+            else:
+                patient_data["days_active"] = 0
+            patient_data["response_rate_trend"] = calculate_response_trend(patient)
             # Add interaction features
-            patient_data["engagement_by_age"] = patient_data[
-                "engagement_score"
-            ] * encode_age_group(patient_data["age_group"])
-            patient_data["match_score"] = calculate_campaign_match_score(
-                patient
-            )  # Implement this
+            engagement_score = getattr(patient, "engagement_score", 0.0)
+            patient_data["engagement_score"] = float(engagement_score)
+            patient_data["engagement_by_age"] = float(
+                engagement_score
+            ) * encode_age_group(patient_data["age_group"])
+            patient_data["match_score"] = calculate_campaign_match_score(patient)
 
             # Generate postal region from postal code
-            if patient.postal_code and len(patient.postal_code) >= 2:
+            if getattr(patient, "postal_code", None) and len(patient.postal_code) >= 2:
                 patient_data["postal_region"] = patient.postal_code[:2]
             else:
                 patient_data["postal_region"] = "XX"
 
             # Communication and engagement metrics
-            patient_data["engagement_score"] = float(patient.engagement_score)
-            patient_data["contact_rate"] = patient.successful_contacts / max(
-                1, patient.contact_attempts
+            patient_data["contact_rate"] = getattr(
+                patient, "successful_contacts", 0
+            ) / max(1, getattr(patient, "contact_attempts", 1))
+            patient_data["email_verified"] = int(
+                getattr(patient, "email_verified", False)
             )
-            patient_data["email_verified"] = int(patient.email_verified)
-            patient_data["phone_verified"] = int(patient.phone_verified)
+            patient_data["phone_verified"] = int(
+                getattr(patient, "phone_verified", False)
+            )
 
             # Recent activity metrics
-            if patient.last_contacted_at:
-                days_since_contact = (now - patient.last_contacted_at).days
+            last_contacted_at = getattr(patient, "last_contacted_at", None)
+            if last_contacted_at:
+                days_since_contact = (now - last_contacted_at).days
                 patient_data["days_since_contact"] = min(days_since_contact, 365)
                 patient_data["recent_contact"] = 1 if days_since_contact <= 30 else 0
             else:
                 patient_data["days_since_contact"] = 365  # Default to max
                 patient_data["recent_contact"] = 0
 
-            if patient.last_campaign_response:
-                days_since_response = (now - patient.last_campaign_response).days
+            last_campaign_response = getattr(patient, "last_campaign_response", None)
+            if last_campaign_response:
+                days_since_response = (now - last_campaign_response).days
                 patient_data["days_since_response"] = min(days_since_response, 365)
                 patient_data["recent_response"] = 1 if days_since_response <= 30 else 0
             else:
