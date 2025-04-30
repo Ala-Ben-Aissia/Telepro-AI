@@ -13,10 +13,10 @@ class SegmentationService:
 
         criteria_json format:
         {
-            "age_groups": ["19-35", "36-50"],
-            "locations": ["Montreal", "Quebec"],
+            "age_groups": ["19-35", "36-50"],  # or "age_group": ["19-35", "36-50"]
+            "locations": ["Montreal", "Quebec"],  # or "location": ["Montreal", "Quebec"]
             "gender": "F",
-            "languages": ["fr", "en"],
+            "languages": ["fr", "en"],  # or "language_preference": ["fr", "en"]
             "has_active_consent": true
         }
         """
@@ -25,21 +25,46 @@ class SegmentationService:
         )
         query = Q()
 
-        # Build query based on criteria
+        # Build query based on criteria - handle both plural and singular field names
+        # Age group criteria
         if criteria.get("age_groups"):
             query &= Q(age_group__in=criteria["age_groups"])
+        elif criteria.get("age_group"):
+            query &= Q(age_group__in=criteria["age_group"])
 
+        # Location criteria
         if criteria.get("locations"):
             query &= Q(location__in=criteria["locations"])
+        elif criteria.get("location"):
+            query &= Q(location__in=criteria["location"])
 
+        # Gender criteria
         if criteria.get("gender"):
             query &= Q(gender=criteria["gender"])
 
+        # Language criteria
         if criteria.get("languages"):
             query &= Q(language_preference__in=criteria["languages"])
+        elif criteria.get("language_preference"):
+            query &= Q(language_preference__in=criteria["language_preference"])
 
-        # Always respect consent
-        query &= Q(has_active_consent=criteria.get("has_active_consent", True))
+        # Engagement score criteria (for advanced filtering)
+        if criteria.get("engagement_score__gt"):
+            query &= Q(engagement_score__gt=criteria["engagement_score__gt"])
+        elif criteria.get("engagement_score__lt"):
+            query &= Q(engagement_score__lt=criteria["engagement_score__lt"])
+        elif criteria.get("engagement_score__gte"):
+            query &= Q(engagement_score__gte=criteria["engagement_score__gte"])
+        elif criteria.get("engagement_score__lte"):
+            query &= Q(engagement_score__lte=criteria["engagement_score__lte"])
+
+        # Patient IDs criteria (for specific targeting)
+        if criteria.get("patient_ids"):
+            query &= Q(id__in=criteria["patient_ids"])
+
+        # Always respect consent unless explicitly set to False
+        if criteria.get("has_active_consent") is not False:
+            query &= Q(has_active_consent=True)
 
         # Return filtered queryset
         return Patient.objects.filter(query)

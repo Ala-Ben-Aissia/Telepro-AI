@@ -31,13 +31,89 @@ class CampaignViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"])
     def send(self, request, pk=None):
-        # Logic to send campaign communications
-        # This would use the CommunicationService
-        # to send emails or SMS based on patient preferences
+        """
+        Send campaign communications to targeted patients.
+
+        This endpoint initiates the sending of campaign communications to patients
+        who match the campaign's targeting criteria and have active consent.
+        """
         campaign = self.get_object()
-        print({campaign.sms_template, request})
-        # Implementation details here...
-        return Response({"status": "Campaign sending initiated"})
+
+        # Get target segment if provided
+        segment_id = request.data.get("segment_id")
+
+        if segment_id:
+            try:
+                segment = PatientSegment.objects.get(id=segment_id)
+                from services.segmentation import SegmentationService
+
+                patients = SegmentationService.get_patients_by_criteria(segment.criteria)
+            except PatientSegment.DoesNotExist:
+                return Response(
+                    {"error": "Segment not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            # Use campaign's targeting criteria
+            criteria = {
+                "age_groups": campaign.target_age_groups,
+                "locations": campaign.target_locations,
+                "languages": campaign.target_languages,
+                "has_active_consent": True,
+            }
+            from services.segmentation import SegmentationService
+
+            patients = SegmentationService.get_patients_by_criteria(criteria)
+
+        # Check if we have patients to target
+        if not patients.exists():
+            return Response(
+                {
+                    "error": "No patients match the targeting criteria or have active consent"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Create communication logs for each patient
+        from django.utils import timezone
+
+        communication_logs = []
+        for patient in patients:
+            # Determine communication type based on patient preferences
+            comm_type = patient.preferred_contact_method
+            if comm_type == "NONE":
+                continue  # Skip patients who don't want to be contacted
+
+            # Create communication log
+            log = CommunicationLog.objects.create(
+                campaign=campaign,
+                patient=patient,
+                communication_type=comm_type,
+                status="PENDING",
+                metadata={"source": "campaign_send_api"},
+            )
+            communication_logs.append(log)
+
+            # In a real implementation, you would queue these for actual sending
+            # through an email service, SMS gateway, etc.
+
+            # For now, just mark as sent for demonstration
+            log.status = "SENT"
+            log.sent_at = timezone.now()
+            log.save()
+
+            # Update patient's last_contacted_at
+            patient.last_contacted_at = timezone.now()
+            patient.contact_attempts += 1
+            patient.save(update_fields=["last_contacted_at", "contact_attempts"])
+
+        return Response(
+            {
+                "status": "Campaign sending initiated",
+                "campaign_id": campaign.id,
+                "communications_created": len(communication_logs),
+                "target_patients": patients.count(),
+            }
+        )
 
     def perform_create(self, serializer):
         """Track who created this campaign"""
@@ -231,11 +307,31 @@ class PatientSegmentViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["get"])
     def patients(self, request, pk=None):
+        """Get all patients matching this segment's criteria"""
         segment = self.get_object()
-        # Logic to retrieve patients in this segment
-        # You'll need to implement the criteria matching logic
-        # Implementation details here...
-        return Response({"count": 0, "patients": []})
+        from services.segmentation import SegmentationService
+
+        # Get patients matching the segment criteria
+        patients = SegmentationService.get_patients_by_criteria(segment.criteria)
+
+        # Get pagination parameters
+        page = self.paginate_queryset(patients)
+
+        # Serialize the patients
+        from patients.serializers import PatientSerializer
+
+        if page is not None:
+            serializer = PatientSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = PatientSerializer(patients, many=True)
+
+        # Include segment statistics
+        stats = SegmentationService.update_segment_statistics(segment)
+
+        return Response(
+            {"count": patients.count(), "patients": serializer.data, "statistics": stats}
+        )
 
 
 class CommunicationLogViewSet(viewsets.ReadOnlyModelViewSet):
