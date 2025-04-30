@@ -5,7 +5,6 @@ This service provides personalized message content based on patient preferences,
 historical engagement, and campaign context.
 """
 
-import re
 from django.utils import timezone
 from django.template import Template, Context
 

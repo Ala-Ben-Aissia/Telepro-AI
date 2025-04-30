@@ -10,7 +10,6 @@ from django.utils import timezone
 from campaigns.models import Campaign, PatientSegment
 from services.ai.clustering import PatientClusteringService
 from services.ai.prediction import CampaignPredictionService
-from services.segmentation import SegmentationService
 
 
 class CampaignOptimizationService:

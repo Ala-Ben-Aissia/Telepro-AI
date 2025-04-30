@@ -3,7 +3,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from django.utils import timezone
-from django.db import models
 from datetime import timedelta
 
 from patients.models import Patient
@@ -12,6 +11,7 @@ from services.analytics import AnalyticsService
 from services.optimization import CampaignOptimizationService
 from services.ml_segmentation import MLSegmentationService
 from services.personalization import PersonalizationService
+from services.proactive_identification import ProactiveIdentificationService
 
 from .models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
 from .serializers import (
@@ -601,15 +601,91 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
         """
         Get a list of patients at risk of becoming inactive
         who should be targeted for follow-up communications.
+
+        Query parameters:
+        - days: Number of days since last contact (default: 90)
+        - min_risk_score: Minimum risk score to include (default: 0.5)
         """
         days_threshold = request.query_params.get("days", 90)
+        min_risk_score = request.query_params.get("min_risk_score", 0.5)
+
         try:
             days_threshold = int(days_threshold)
         except (TypeError, ValueError):
             days_threshold = 90
 
-        results = CampaignPredictionService.predict_inactive_patients(days_threshold)
+        try:
+            min_risk_score = float(min_risk_score)
+        except (TypeError, ValueError):
+            min_risk_score = 0.5
 
-        return Response(
-            {"count": len(results), "threshold_days": days_threshold, "patients": results}
+        results = ProactiveIdentificationService.identify_inactive_patients(
+            days_threshold=days_threshold, min_risk_score=min_risk_score
         )
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"])
+    def declining_engagement(self, request):
+        """
+        Identify patients with declining engagement over time.
+
+        Query parameters:
+        - lookback_days: Number of days to look back (default: 180)
+        - engagement_drop_threshold: Minimum drop in engagement score (default: 0.2)
+        """
+        lookback_days = request.query_params.get("lookback_days", 180)
+        engagement_drop_threshold = request.query_params.get(
+            "engagement_drop_threshold", 0.2
+        )
+
+        try:
+            lookback_days = int(lookback_days)
+        except (TypeError, ValueError):
+            lookback_days = 180
+
+        try:
+            engagement_drop_threshold = float(engagement_drop_threshold)
+        except (TypeError, ValueError):
+            engagement_drop_threshold = 0.2
+
+        results = ProactiveIdentificationService.identify_declining_engagement(
+            lookback_days=lookback_days,
+            engagement_drop_threshold=engagement_drop_threshold,
+        )
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"])
+    def follow_up_candidates(self, request):
+        """
+        Identify patients who need specific follow-up based on condition type.
+
+        Query parameters:
+        - condition_type: Type of condition to filter by (e.g., "vaccination", "dental", "chronic)
+        - days_since_last_contact: Minimum days since last contact (default: 60)
+        """
+        condition_type = request.query_params.get("condition_type")
+        days_since_last_contact = request.query_params.get("days_since_last_contact", 60)
+
+        try:
+            days_since_last_contact = int(days_since_last_contact)
+        except (TypeError, ValueError):
+            days_since_last_contact = 60
+
+        results = ProactiveIdentificationService.identify_follow_up_candidates(
+            condition_type=condition_type, days_since_last_contact=days_since_last_contact
+        )
+
+        return Response(results)
+
+    @action(detail=True, methods=["get"], url_path="follow-up-recommendations")
+    def follow_up_recommendations(self, request, pk=None):
+        """
+        Get personalized follow-up recommendations for a specific patient.
+        """
+        patient_id = pk
+
+        results = ProactiveIdentificationService.get_follow_up_recommendations(patient_id)
+
+        return Response(results)

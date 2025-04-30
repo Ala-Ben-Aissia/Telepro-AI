@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from services.ai.clustering import PatientClusteringService
+from services.proactive_identification import ProactiveIdentificationService
 
 from .models import Patient
 from .serializers import (
@@ -198,6 +199,25 @@ class PatientViewSet(viewsets.ModelViewSet):
 
         result = PatientClusteringService.get_patient_cluster(
             patient_id=str(patient.id), n_clusters=n_clusters
+        )
+
+        return Response(result)
+
+    @action(detail=True, methods=["get"], url_path="follow-up-recommendations")
+    def follow_up_recommendations(self, request, pk=None):
+        """
+        Get personalized follow-up recommendations for a specific patient.
+
+        This endpoint provides:
+        - Best contact method based on historical engagement
+        - Optimal contact timing
+        - Personalized follow-up recommendations
+        """
+        patient = self.get_object()
+
+        # Get follow-up recommendations
+        result = ProactiveIdentificationService.get_follow_up_recommendations(
+            str(patient.id)
         )
 
         return Response(result)
