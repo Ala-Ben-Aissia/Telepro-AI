@@ -3,12 +3,14 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from django.utils import timezone
+from django.db import models
 from datetime import timedelta
 
 from patients.models import Patient
 from services.ai.prediction import CampaignPredictionService
 from services.analytics import AnalyticsService
 from services.optimization import CampaignOptimizationService
+from services.ml_segmentation import MLSegmentationService
 
 from .models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
 from .serializers import (
@@ -381,6 +383,116 @@ class PatientSegmentViewSet(viewsets.ModelViewSet):
         return Response(
             {"count": patients.count(), "patients": serializer.data, "statistics": stats}
         )
+
+    @action(detail=True, methods=["get"])
+    def analyze(self, request, pk=None):
+        """
+        Analyze a segment to extract key characteristics and patterns.
+
+        This endpoint provides detailed analysis of the segment, including:
+        - Demographic breakdown
+        - Engagement metrics
+        - Communication preferences
+        - Campaign response history
+        """
+        segment = self.get_object()
+
+        # Use ML segmentation service to analyze the segment
+        analysis = MLSegmentationService.analyze_segment(segment.id)
+
+        return Response(analysis)
+
+    @action(detail=False, methods=["post"])
+    def create_ml_segments(self, request):
+        """
+        Create ML-driven segments using clustering algorithms.
+
+        Request body should contain:
+        {
+            "algorithm": "kmeans",  # or "dbscan"
+            "n_clusters": 3,
+            "name_prefix": "ML Segment"
+        }
+        """
+        # Get parameters from request
+        algorithm = request.data.get("algorithm", "kmeans")
+        n_clusters = request.data.get("n_clusters", 3)
+        name_prefix = request.data.get("name_prefix", "ML Segment")
+
+        # Validate parameters
+        if algorithm not in ["kmeans", "dbscan"]:
+            return Response(
+                {"error": "Invalid algorithm. Must be 'kmeans' or 'dbscan'"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            n_clusters = int(n_clusters)
+            if n_clusters < 2 or n_clusters > 10:
+                return Response(
+                    {"error": "n_clusters must be between 2 and 10"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+        except (ValueError, TypeError):
+            return Response(
+                {"error": "n_clusters must be an integer"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Create ML segments
+        result = MLSegmentationService.create_ml_segments(
+            algorithm=algorithm, n_clusters=n_clusters, name_prefix=name_prefix
+        )
+
+        return Response(result)
+
+    @action(detail=False, methods=["get"])
+    def recommend_for_campaign(self, request):
+        """
+        Recommend segments for a campaign based on targeting criteria.
+
+        Query parameters:
+        - campaign_id: ID of the campaign
+        """
+        # Get campaign ID from query parameters
+        campaign_id = request.query_params.get("campaign_id")
+
+        if not campaign_id:
+            return Response(
+                {"error": "campaign_id is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Get segment recommendations
+        recommendations = MLSegmentationService.recommend_segments_for_campaign(
+            campaign_id
+        )
+
+        return Response(recommendations)
+
+    @action(detail=True, methods=["post"])
+    def link_to_campaign(self, request, pk=None):
+        """
+        Link a segment to a campaign.
+
+        Request body should contain:
+        {
+            "campaign_id": 123
+        }
+        """
+        segment = self.get_object()
+
+        # Get campaign ID from request
+        campaign_id = request.data.get("campaign_id")
+
+        if not campaign_id:
+            return Response(
+                {"error": "campaign_id is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Link segment to campaign
+        result = MLSegmentationService.link_segment_to_campaign(segment.id, campaign_id)
+
+        return Response(result)
 
 
 class CommunicationLogViewSet(viewsets.ReadOnlyModelViewSet):
