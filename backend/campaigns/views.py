@@ -8,6 +8,7 @@ from datetime import timedelta
 from patients.models import Patient
 from services.ai.prediction import CampaignPredictionService
 from services.analytics import AnalyticsService
+from services.optimization import CampaignOptimizationService
 
 from .models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
 from .serializers import (
@@ -161,6 +162,54 @@ class CampaignViewSet(viewsets.ModelViewSet):
             return Response(
                 {"error": "Patient not found"}, status=status.HTTP_404_NOT_FOUND
             )
+
+    @action(detail=True, methods=["get"])
+    def optimize(self, request, pk=None):
+        """
+        Get optimization suggestions for a campaign.
+
+        This endpoint provides AI-driven suggestions for:
+        - ML-based patient segmentation
+        - Optimal sending times
+        - Message content optimization
+        """
+        campaign = self.get_object()
+
+        # Get optimization suggestions
+        optimization = CampaignOptimizationService.optimize_campaign(campaign.id)
+
+        return Response(optimization)
+
+    @action(detail=True, methods=["post"])
+    def apply_optimization(self, request, pk=None):
+        """
+        Apply optimization suggestions to a campaign.
+
+        Request body should contain:
+        {
+            "apply_ml_segments": true,
+            "selected_segment_ids": [1, 2, 3],
+            "create_new_segments": true,
+            "new_segments": [
+                {
+                    "name": "Segment Name",
+                    "description": "Segment Description",
+                    "patient_ids": ["uuid1", "uuid2"]
+                }
+            ],
+            "apply_timing_optimization": true,
+            "start_date": "2025-05-01T10:00:00Z",
+            "apply_content_optimization": true,
+            "email_template": "...",
+            "sms_template": "..."
+        }
+        """
+        campaign = self.get_object()
+
+        # Apply optimization
+        result = CampaignOptimizationService.apply_optimization(campaign.id, request.data)
+
+        return Response(result)
 
     @action(detail=False, methods=["post"])
     def create_followup_campaign(self, request):
