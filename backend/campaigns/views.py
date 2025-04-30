@@ -11,6 +11,7 @@ from services.ai.prediction import CampaignPredictionService
 from services.analytics import AnalyticsService
 from services.optimization import CampaignOptimizationService
 from services.ml_segmentation import MLSegmentationService
+from services.personalization import PersonalizationService
 
 from .models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
 from .serializers import (
@@ -212,6 +213,83 @@ class CampaignViewSet(viewsets.ModelViewSet):
         result = CampaignOptimizationService.apply_optimization(campaign.id, request.data)
 
         return Response(result)
+
+    @action(detail=True, methods=["get"])
+    def personalized_templates(self, request, pk=None):
+        """
+        Get personalized message templates for a campaign.
+
+        Query parameters:
+        - patient_id: Optional ID of a specific patient to personalize for
+        """
+        campaign = self.get_object()
+
+        # Get patient ID from query parameters
+        patient_id = request.query_params.get("patient_id")
+
+        # Get personalized templates
+        templates = PersonalizationService.suggest_personalized_templates(
+            campaign.id, patient_id
+        )
+
+        return Response(templates)
+
+    @action(detail=True, methods=["post"])
+    def personalize_message(self, request, pk=None):
+        """
+        Personalize a message template for a specific patient.
+
+        Request body should contain:
+        {
+            "template_content": "Hello {{first_name}}...",
+            "patient_id": "uuid"
+        }
+        """
+        campaign = self.get_object()
+
+        # Validate request data
+        template_content = request.data.get("template_content")
+        patient_id = request.data.get("patient_id")
+
+        if not template_content:
+            return Response(
+                {"error": "template_content is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not patient_id:
+            return Response(
+                {"error": "patient_id is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Personalize the message
+        result = PersonalizationService.personalize_message(
+            template_content, patient_id, campaign.id
+        )
+
+        return Response(result)
+
+    @action(detail=True, methods=["get"])
+    def message_effectiveness(self, request, pk=None):
+        """
+        Analyze the effectiveness of different message templates.
+        """
+        campaign = self.get_object()
+
+        # Analyze message effectiveness
+        analysis = PersonalizationService.analyze_message_effectiveness(campaign.id)
+
+        return Response(analysis)
+
+    @action(detail=False, methods=["get"])
+    def template_variables(self, request):
+        """
+        Get a list of available template variables.
+        """
+        # Get template variables
+        variables = PersonalizationService.get_template_variables()
+
+        return Response(variables)
 
     @action(detail=False, methods=["post"])
     def create_followup_campaign(self, request):

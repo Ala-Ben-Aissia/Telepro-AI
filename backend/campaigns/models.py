@@ -113,6 +113,7 @@ class CommunicationLog(models.Model):
     delivered_at = models.DateTimeField(null=True)
     read_at = models.DateTimeField(null=True)
     response = models.TextField(blank=True)
+    responded_at = models.DateTimeField(null=True)
 
     # Additional useful fields
     error_message = models.TextField(
@@ -164,8 +165,9 @@ class CommunicationLog(models.Model):
         from django.utils import timezone
 
         self.response = response_text
+        self.responded_at = timezone.now()
         self.status = "RESPONDED"
-        self.save(update_fields=["response", "status"])
+        self.save(update_fields=["response", "responded_at", "status"])
 
         # Update patient's last campaign response
         self.patient.last_campaign_response = timezone.now()
