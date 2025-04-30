@@ -12,6 +12,7 @@ from services.optimization import CampaignOptimizationService
 from services.ml_segmentation import MLSegmentationService
 from services.personalization import PersonalizationService
 from services.proactive_identification import ProactiveIdentificationService
+from services.enhanced_analytics import EnhancedAnalyticsService
 
 from .models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
 from .serializers import (
@@ -136,6 +137,28 @@ class CampaignViewSet(viewsets.ModelViewSet):
         campaign = self.get_object()
         effectiveness = AnalyticsService.calculate_campaign_effectiveness(campaign.id)
         return Response(effectiveness)
+
+    @action(detail=True, methods=["get"])
+    def analytics(self, request, pk=None):
+        """
+        Get detailed analytics for this campaign.
+
+        Query parameters:
+        - days: Number of days to look back (default: 90)
+        """
+        campaign = self.get_object()
+        days = request.query_params.get("days", 90)
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 90
+
+        results = EnhancedAnalyticsService.get_campaign_performance(
+            campaign_id=campaign.id, days=days
+        )
+
+        return Response(results)
 
     @action(detail=True, methods=["get"])
     def predict_effectiveness(self, request, pk=None):
@@ -687,5 +710,153 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
         patient_id = pk
 
         results = ProactiveIdentificationService.get_follow_up_recommendations(patient_id)
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"], url_path="dashboard")
+    def dashboard(self, request):
+        """
+        Get comprehensive data for the engagement dashboard.
+
+        Query parameters:
+        - days: Number of days to look back (default: 30)
+        """
+        days = request.query_params.get("days", 30)
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 30
+
+        results = EnhancedAnalyticsService.get_dashboard_data(days=days)
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"], url_path="engagement-overview")
+    def engagement_overview(self, request):
+        """
+        Get an overview of patient engagement metrics.
+
+        Query parameters:
+        - days: Number of days to look back (default: 30)
+        """
+        days = request.query_params.get("days", 30)
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 30
+
+        results = EnhancedAnalyticsService.get_engagement_overview(days=days)
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"], url_path="engagement-trends")
+    def engagement_trends(self, request):
+        """
+        Get engagement trends over time.
+
+        Query parameters:
+        - days: Number of days to look back (default: 90)
+        - interval: Time interval for grouping (day, week, month) (default: week)
+        """
+        days = request.query_params.get("days", 90)
+        interval = request.query_params.get("interval", "week")
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 90
+
+        if interval not in ["day", "week", "month"]:
+            interval = "week"
+
+        results = EnhancedAnalyticsService.get_engagement_trends(
+            days=days, interval=interval
+        )
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"], url_path="campaign-performance")
+    def campaign_performance(self, request):
+        """
+        Get performance metrics for campaigns.
+
+        Query parameters:
+        - campaign_id: Optional ID of a specific campaign
+        - days: Number of days to look back (default: 90)
+        """
+        campaign_id = request.query_params.get("campaign_id")
+        days = request.query_params.get("days", 90)
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 90
+
+        results = EnhancedAnalyticsService.get_campaign_performance(
+            campaign_id=campaign_id, days=days
+        )
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"], url_path="segment-performance")
+    def segment_performance(self, request):
+        """
+        Get performance metrics for patient segments.
+
+        Query parameters:
+        - segment_id: Optional ID of a specific segment
+        - days: Number of days to look back (default: 90)
+        """
+        segment_id = request.query_params.get("segment_id")
+        days = request.query_params.get("days", 90)
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 90
+
+        results = EnhancedAnalyticsService.get_segment_performance(
+            segment_id=segment_id, days=days
+        )
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"], url_path="channel-metrics")
+    def channel_metrics(self, request):
+        """
+        Get performance metrics for different communication channels.
+
+        Query parameters:
+        - days: Number of days to look back (default: 90)
+        """
+        days = request.query_params.get("days", 90)
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 90
+
+        results = EnhancedAnalyticsService.get_communication_channel_metrics(days=days)
+
+        return Response(results)
+
+    @action(detail=False, methods=["get"], url_path="time-metrics")
+    def time_metrics(self, request):
+        """
+        Get performance metrics for different times of day.
+
+        Query parameters:
+        - days: Number of days to look back (default: 90)
+        """
+        days = request.query_params.get("days", 90)
+
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            days = 90
+
+        results = EnhancedAnalyticsService.get_time_of_day_metrics(days=days)
 
         return Response(results)
