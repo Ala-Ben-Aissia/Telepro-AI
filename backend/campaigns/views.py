@@ -860,3 +860,42 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
         results = EnhancedAnalyticsService.get_time_of_day_metrics(days=days)
 
         return Response(results)
+
+    @action(detail=False, methods=["post"], url_path="test-sms")
+    def test_sms(self, request):
+        """
+        Send a test SMS message to a specified phone number.
+
+        Request body should contain:
+        {
+            "phone_number": "+21622492052",
+            "message": "Test message content"
+        }
+        """
+        # Validate request data
+        phone_number = request.data.get("phone_number")
+        message = request.data.get("message")
+
+        if not phone_number:
+            return Response(
+                {"error": "phone_number is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not message:
+            return Response(
+                {"error": "message is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Import the SMS service
+        from services.communications import SMSService
+
+        # Send the test SMS
+        try:
+            result = SMSService.send_test_sms(phone_number, message)
+            print("To: ", phone_number)
+            return Response(result)
+        except Exception as e:
+            return Response(
+                {"error": f"Failed to send SMS: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
