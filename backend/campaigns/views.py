@@ -869,14 +869,12 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
         Request body should contain:
         {
             "phone_number": "+21622492052",
-            "message": "Test message content",
-            "provider": "twilio" or "sim800l" (optional)
+            "message": "Test message content"
         }
         """
         # Validate request data
         phone_number = request.data.get("phone_number")
         message = request.data.get("message")
-        provider = request.data.get("provider")
 
         if not phone_number:
             return Response(
@@ -888,19 +886,12 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
                 {"error": "message is required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Validate provider if specified
-        if provider and provider not in ["twilio", "sim800l"]:
-            return Response(
-                {"error": "provider must be either 'twilio' or 'sim800l'"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Import the SMS service
         from services.communications import SMSService
 
         # Send the test SMS
         try:
-            result = SMSService.send_test_sms(phone_number, message, provider)
+            result = SMSService.send_test_sms(phone_number, message)
             print("To: ", phone_number)
             return Response(result)
         except Exception as e:

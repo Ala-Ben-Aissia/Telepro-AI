@@ -271,3 +271,7 @@ SIM800L_PORT = os.getenv("SIM800L_PORT", "/dev/ttyUSB0")  # Serial port for SIM8
 SIM800L_BAUDRATE = int(
     os.getenv("SIM800L_BAUDRATE", "9600")
 )  # Baud rate for serial communication
+
+# Add this to your settings
+TESTING = os.environ.get("TESTING", "false").lower() == "true"
+USE_MOCK_SIM800L = os.environ.get("USE_MOCK_SIM800L", "true").lower() == "true"

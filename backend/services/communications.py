@@ -7,182 +7,22 @@ It supports both cloud-based services (Twilio) and hardware-based solutions (SIM
 
 import os
 import logging
-import time
-import serial
-import threading
 from django.conf import settings
 from twilio.rest import Client
 from twilio.base.exceptions import TwilioRestException
 
 logger = logging.getLogger(__name__)
 
+# Import the real or mock SIM800L based on environment
+if settings.TESTING or os.environ.get("USE_MOCK_SIM800L") == "true":
+    from services.mock_sim800l import MockSIM800L as SIM800L
 
-class SIM800L:
-    """
-    Interface for the SIM800L GSM/GPRS module.
+    print("Using mock SIM800L")
+else:
+    # Use the real implementation when not testing
+    # from services.real_sim800l import SIM800L
 
-    This class provides methods to interact with the SIM800L module
-    for sending SMS messages directly from hardware.
-    """
-
-    def __init__(self, port=None, baudrate=9600, timeout=1):
-        """
-        Initialize the SIM800L interface.
-
-        Args:
-            port: Serial port (e.g., '/dev/ttyUSB0', 'COM3')
-            baudrate: Baud rate for serial communication
-            timeout: Serial timeout in seconds
-        """
-        self.port = port or getattr(settings, "SIM800L_PORT", "/dev/ttyUSB0")
-        self.baudrate = baudrate or getattr(settings, "SIM800L_BAUDRATE", 9600)
-        self.timeout = timeout
-        self.ser = None
-        self.lock = threading.Lock()
-
-    def connect(self):
-        """
-        Connect to the SIM800L module.
-
-        Returns:
-            bool: True if connection successful, False otherwise
-        """
-        try:
-            self.ser = serial.Serial(
-                port=self.port, baudrate=self.baudrate, timeout=self.timeout
-            )
-
-            # Initialize the module
-            self.send_command("AT")
-            response = self.read_response()
-            if "OK" not in response:
-                logger.error(f"Failed to initialize SIM800L module: {response}")
-                return False
-
-            # Set SMS text mode
-            self.send_command("AT+CMGF=1")
-            response = self.read_response()
-            if "OK" not in response:
-                logger.error(f"Failed to set SMS text mode: {response}")
-                return False
-
-            logger.info("Successfully connected to SIM800L module")
-            return True
-
-        except Exception as e:
-            logger.error(f"Error connecting to SIM800L module: {str(e)}")
-            return False
-
-    def disconnect(self):
-        """Close the serial connection to the module."""
-        if self.ser and self.ser.is_open:
-            self.ser.close()
-            logger.info("Disconnected from SIM800L module")
-
-    def send_command(self, command):
-        """
-        Send an AT command to the module.
-
-        Args:
-            command: AT command to send
-        """
-        if not self.ser or not self.ser.is_open:
-            raise ValueError("Serial connection not open")
-
-        # Add carriage return and line feed
-        full_command = command + "\r\n"
-        self.ser.write(full_command.encode())
-        time.sleep(0.5)  # Give the module time to process
-
-    def read_response(self, timeout=5):
-        """
-        Read the response from the module.
-
-        Args:
-            timeout: Maximum time to wait for response in seconds
-
-        Returns:
-            str: Response from the module
-        """
-        if not self.ser or not self.ser.is_open:
-            raise ValueError("Serial connection not open")
-
-        response = ""
-        start_time = time.time()
-
-        while (time.time() - start_time) < timeout:
-            if self.ser.in_waiting:
-                line = self.ser.readline().decode("utf-8", errors="ignore").strip()
-                response += line + "\n"
-
-                # Check if response is complete
-                if line == "OK" or line == "ERROR" or "+CMGS:" in line:
-                    break
-
-            time.sleep(0.1)
-
-        return response
-
-    def send_sms(self, phone_number, message):
-        """
-        Send an SMS message using the SIM800L module.
-
-        Args:
-            phone_number: Recipient phone number (with country code)
-            message: Message content
-
-        Returns:
-            dict: Result of the SMS sending operation
-        """
-        with self.lock:  # Ensure thread safety
-            try:
-                if not self.ser or not self.ser.is_open:
-                    if not self.connect():
-                        return {
-                            "status": "error",
-                            "error_message": "Failed to connect to SIM800L module",
-                            "to": phone_number,
-                        }
-
-                # Set message center number if needed
-                # self.send_command('AT+CSCA="+1234567890"')
-                # self.read_response()
-
-                # Send SMS command
-                self.send_command(f'AT+CMGS="{phone_number}"')
-                time.sleep(0.5)
-
-                # Send message content
-                self.send_command(
-                    message + chr(26)
-                )  # chr(26) is CTRL+Z, indicates end of message
-
-                # Read response (may take longer for SMS)
-                response = self.read_response(timeout=10)
-
-                if "+CMGS:" in response:
-                    logger.info(f"SMS sent to {phone_number} via SIM800L module")
-                    return {
-                        "status": "success",
-                        "to": phone_number,
-                        "message": message,
-                        "response": response,
-                        "method": "SIM800L",
-                    }
-                else:
-                    logger.error(f"Failed to send SMS via SIM800L: {response}")
-                    return {
-                        "status": "error",
-                        "error_message": f"Module error: {response}",
-                        "to": phone_number,
-                    }
-
-            except Exception as e:
-                logger.error(f"Error sending SMS via SIM800L: {str(e)}")
-                return {"status": "error", "error_message": str(e), "to": phone_number}
-            finally:
-                # Keep connection open for future messages
-                pass
+    print("Using real SIM800L")
 
 
 class SMSService:
