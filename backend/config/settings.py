@@ -257,7 +257,17 @@ else:
 #     "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
 # ]
 
-# Twilio settings for SMS
+# SMS settings
+# Provider can be 'twilio' or 'sim800l'
+SMS_PROVIDER = os.getenv("SMS_PROVIDER", "twilio")
+
+# Twilio settings
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
 TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER", "")
+
+# SIM800L hardware settings
+SIM800L_PORT = os.getenv("SIM800L_PORT", "/dev/ttyUSB0")  # Serial port for SIM800L module
+SIM800L_BAUDRATE = int(
+    os.getenv("SIM800L_BAUDRATE", "9600")
+)  # Baud rate for serial communication
