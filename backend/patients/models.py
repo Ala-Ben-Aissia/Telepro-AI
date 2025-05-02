@@ -352,8 +352,8 @@ class Patient(models.Model):
         self.email = f"{anonymous_id}@anonymized.example"
         self.phone_number = None
         self.date_of_birth = None
-        self.gender = "N"  # Not specified
-        self.location = None
+        # self.gender = "N"  # Not specified
+        # self.location = None
 
         # Retain only the first two characters of postal code for regional statistics
         if self.postal_code and len(self.postal_code) > 2:
