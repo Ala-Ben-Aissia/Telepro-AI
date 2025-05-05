@@ -60,6 +60,17 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["email"] = self.user.email
         data["user_type"] = self.user.user_type
 
+        # Add patient UUID if the user is a patient
+        if self.user.user_type == "PATIENT" and hasattr(self.user, "patient_profile"):
+            try:
+                data["patient_uuid"] = str(self.user.patient_profile.id)
+            except Exception as e:
+                # If there's an error getting the patient profile, log it but don't fail
+                print(f"Error getting patient UUID: {e}")
+                data["patient_uuid"] = None
+        else:
+            data["patient_uuid"] = None
+
         # Update login stats
         # self.user.failed_login_attempts = 0
 

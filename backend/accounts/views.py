@@ -33,10 +33,22 @@ class PatientRegistrationView(APIView):
             # Generate JWT tokens for immediate login
             refresh = RefreshToken.for_user(user)
 
+            # Get patient UUID if available
+            patient_uuid = None
+            if hasattr(user, "patient_profile"):
+                try:
+                    patient_uuid = str(user.patient_profile.id)
+                except Exception as e:
+                    print(f"Error getting patient UUID during registration: {e}")
+
             return Response(
                 {
                     "message": "Registration successful",
                     "user_id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "user_type": user.user_type,
+                    "patient_uuid": patient_uuid,
                     "refresh": str(refresh),
                     "access": str(refresh.access_token),
                 },

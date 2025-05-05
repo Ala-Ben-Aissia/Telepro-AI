@@ -15,6 +15,8 @@ from .serializers import (
     PatientSerializer,
 )
 
+from campaigns.models import CommunicationLog
+
 
 class PatientFilter(django_filters.FilterSet):
     """Filter for the Patient model"""
@@ -58,6 +60,30 @@ class PatientViewSet(viewsets.ModelViewSet):
         if user.user_type == "PATIENT":
             return Patient.objects.filter(user=user)
         return Patient.objects.all()
+
+    @action(detail=True, methods=["get"])
+    def communications(self, request, pk):
+        """Get communication history for a specific patient"""
+        patient = Patient.objects.get(pk=pk)
+        recent_logs = CommunicationLog.objects.filter(patient=patient).order_by(
+            "-sent_at"
+        )[:10]
+
+        serialized_logs = [
+            {
+                "id": log.id,
+                "campaign": log.campaign.title if log.campaign else None,
+                "communication_type": log.communication_type,
+                "status": log.status,
+                "sent_at": log.sent_at.isoformat() if log.sent_at else None,
+                "delivered_at": log.delivered_at.isoformat()
+                if log.delivered_at
+                else None,
+                "read_at": log.read_at.isoformat() if log.read_at else None,
+            }
+            for log in recent_logs
+        ]
+        return Response(serialized_logs)
 
     @action(detail=True, methods=["get", "patch"])
     def preferences(self, request, pk=None):
