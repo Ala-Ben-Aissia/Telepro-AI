@@ -32,6 +32,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CORS_ORIGIN_ALLOW_ALL = True if DEBUG else False
 
 
 # Application definition
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "django_filters",
     "drf_spectacular",
+    "corsheaders",
     # My apps
     "accounts",
     "patients",
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
