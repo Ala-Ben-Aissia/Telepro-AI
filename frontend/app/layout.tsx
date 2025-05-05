@@ -1,27 +1,24 @@
-import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import { Geist } from 'next/font/google'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-})
+import { Providers } from './providers'
+import { PropsWithChildren } from 'react'
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export const metadata = {
+  title: 'Telepro-AI',
+  description: 'Intelligent telehealth communication platform',
+}
+
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang="en" className="h-full">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-full bg-surface-50`}
-      >
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={geistSans.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

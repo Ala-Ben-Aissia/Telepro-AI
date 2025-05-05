@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { AppLayout } from '@/components/layout/AppLayout'
 import {
   Card,
-  CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
@@ -15,6 +14,7 @@ import {
 import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { AuthService } from '@/lib/auth'
+import { LogIn } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -107,18 +107,26 @@ export default function LoginPage() {
 
   return (
     <AppLayout>
-      <div className="max-w-md mx-auto">
-        <Card>
-          <CardHeader>
-            <CardTitle>Login to Telepro-AI</CardTitle>
-            <CardDescription>
-              Enter your credentials to access your account
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-surface-50 to-white dark:from-gray-950 dark:to-gray-900">
+        <div className="w-full max-w-md px-4 sm:px-0">
+          <Card className="shadow-2xl border border-gray-100 rounded-2xl p-0 overflow-hidden">
+            <CardHeader className="flex flex-col items-center gap-2 pb-0 bg-primary-50 dark:bg-primary-950/30 py-8">
+              <div className="bg-white dark:bg-gray-900 rounded-full p-3 mb-2 shadow">
+                <LogIn className="h-7 w-7 text-primary-700" />
+              </div>
+              <CardTitle className="text-2xl font-extrabold text-gray-900">
+                Login to Telepro-AI
+              </CardTitle>
+              <CardDescription className="text-lg text-gray-600 font-medium">
+                Enter your credentials to access your account
+              </CardDescription>
+            </CardHeader>
+            <form
+              onSubmit={handleSubmit}
+              className="px-6 py-8 space-y-6"
+            >
               {error && (
-                <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+                <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm font-semibold text-center">
                   {error}
                 </div>
               )}
@@ -142,23 +150,28 @@ export default function LoginPage() {
                 required
                 autoComplete="current-password"
               />
-            </CardContent>
-            <CardFooter className="flex flex-col space-y-4">
-              <Button type="submit" fullWidth disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                size="lg"
+                className="w-full font-semibold text-lg shadow-md mt-2"
+              >
                 {isLoading ? 'Logging in...' : 'Login'}
               </Button>
-              <div className="text-center text-sm">
+            </form>
+            <CardFooter className="bg-surface-50 dark:bg-gray-900/60 py-5 px-6 flex flex-col items-center">
+              <div className="text-center text-base text-gray-700">
                 Don&apos;t have an account?{' '}
                 <Link
                   href="/register"
-                  className="text-primary-600 hover:text-primary-700 font-medium"
+                  className="text-primary-700 hover:text-primary-900 font-semibold underline underline-offset-2"
                 >
                   Register here
                 </Link>
               </div>
             </CardFooter>
-          </form>
-        </Card>
+          </Card>
+        </div>
       </div>
     </AppLayout>
   )

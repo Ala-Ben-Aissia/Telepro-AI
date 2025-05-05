@@ -1,75 +1,114 @@
 'use client'
-
-import React from 'react'
+import '../../app/globals.css'
+import { useState, useEffect, ReactNode } from 'react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { ThemeToggle } from '@/components/ThemeToggle'
+import {
+  User,
+  LogIn,
+  UserCog,
+  Users,
+  BarChart3,
+  MessageCircle,
+  Settings,
+  Home,
+  Menu,
+  X,
+} from 'lucide-react'
 
-interface AppLayoutProps {
-  children: React.ReactNode
+type AppLayoutProps = {
+  children: ReactNode
   userType?: 'STAFF' | 'PATIENT'
 }
 
+/**
+ * Main application layout wrapper
+ */
 export function AppLayout({ children, userType }: AppLayoutProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Close mobile menu when window resizes
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10 dark:bg-gray-900 dark:border-gray-800">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-primary-700 font-bold text-xl dark:text-primary-400">
+    <div className="min-h-screen flex flex-col font-sans bg-surface-50 dark:bg-surface-50">
+      <header className="bg-background/80 backdrop-blur-sm border-b border-border sticky top-0 z-20 shadow-subtle">
+        <div className="container flex items-center justify-between h-16">
+          <Link href="/" className="flex items-center gap-2 group">
+            <Home className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
+            <span className="text-primary font-extrabold text-xl tracking-tight">
               Telepro-AI
             </span>
           </Link>
-          <nav className="hidden md:flex items-center space-x-6">
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-6">
             {userType === 'STAFF' ? (
-              <>
-                <NavLink href="/admin/dashboard">Dashboard</NavLink>
-                <NavLink href="/admin/patients">Patients</NavLink>
-                <NavLink href="/admin/campaigns">Campaigns</NavLink>
-                <NavLink href="/admin/analytics">Analytics</NavLink>
-              </>
+              <StaffNavigation />
             ) : userType === 'PATIENT' ? (
-              <>
-                <NavLink href="/dashboard">Dashboard</NavLink>
-                <NavLink href="/preferences">Preferences</NavLink>
-                <NavLink href="/communications">
-                  Communications
-                </NavLink>
-              </>
+              <PatientNavigation />
             ) : (
-              <>
-                <NavLink href="/login">Login</NavLink>
-                <NavLink href="/register">Register</NavLink>
-              </>
+              <GuestNavigation />
             )}
           </nav>
-          {userType && (
-            <div className="flex items-center space-x-4">
-              <button className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200">
+
+          <div className="flex items-center gap-3">
+            {/* Dark mode toggle using our ThemeProvider component */}
+            <ThemeToggle />
+
+            {/* User menu if logged in */}
+            {userType && (
+              <button className="rounded-full border border-border bg-background/50 p-2 hover:shadow-md transition text-primary">
                 <span className="sr-only">User menu</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
+                <User className="h-5 w-5" />
               </button>
-            </div>
-          )}
+            )}
+
+            {/* Mobile menu toggle */}
+            <button
+              className="md:hidden rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border bg-background">
+            <nav className="flex flex-col py-4">
+              {userType === 'STAFF' ? (
+                <StaffNavigation mobile />
+              ) : userType === 'PATIENT' ? (
+                <PatientNavigation mobile />
+              ) : (
+                <GuestNavigation mobile />
+              )}
+            </nav>
+          </div>
+        )}
       </header>
-      <main className="flex-1 container mx-auto px-4 py-8">
-        {children}
-      </main>
-      <footer className="bg-white border-t border-gray-200 py-6 dark:bg-gray-900 dark:border-gray-800">
-        <div className="container mx-auto px-4 text-center text-gray-500 text-sm dark:text-gray-400">
+
+      <main className="flex-1 container py-8">{children}</main>
+
+      <footer className="bg-background/80 backdrop-blur-sm border-t border-border py-6 mt-auto">
+        <div className="container text-center text-muted-foreground text-sm">
           &copy; {new Date().getFullYear()} Telepro-AI. All rights
           reserved.
         </div>
@@ -78,23 +117,97 @@ export function AppLayout({ children, userType }: AppLayoutProps) {
   )
 }
 
-interface NavLinkProps
-  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
-  href: string
-  children: React.ReactNode
+/**
+ * Navigation component for staff users
+ */
+function StaffNavigation({ mobile = false }) {
+  return (
+    <>
+      <NavLink href="/admin/dashboard" mobile={mobile}>
+        <BarChart3 className="h-4 w-4 mr-2" />
+        Dashboard
+      </NavLink>
+      <NavLink href="/admin/patients" mobile={mobile}>
+        <Users className="h-4 w-4 mr-2" />
+        Patients
+      </NavLink>
+      <NavLink href="/admin/campaigns" mobile={mobile}>
+        <MessageCircle className="h-4 w-4 mr-2" />
+        Campaigns
+      </NavLink>
+      <NavLink href="/admin/analytics" mobile={mobile}>
+        <BarChart3 className="h-4 w-4 mr-2" />
+        Analytics
+      </NavLink>
+    </>
+  )
 }
 
+/**
+ * Navigation component for patient users
+ */
+function PatientNavigation({ mobile = false }) {
+  return (
+    <>
+      <NavLink href="/dashboard" mobile={mobile}>
+        <User className="h-4 w-4 mr-2" />
+        Dashboard
+      </NavLink>
+      <NavLink href="/preferences" mobile={mobile}>
+        <Settings className="h-4 w-4 mr-2" />
+        Preferences
+      </NavLink>
+      <NavLink href="/communications" mobile={mobile}>
+        <MessageCircle className="h-4 w-4 mr-2" />
+        Communications
+      </NavLink>
+    </>
+  )
+}
+
+/**
+ * Navigation component for guest users
+ */
+function GuestNavigation({ mobile = false }) {
+  return (
+    <>
+      <NavLink href="/login" mobile={mobile}>
+        <LogIn className="h-4 w-4 mr-2" />
+        Login
+      </NavLink>
+      <NavLink href="/register" mobile={mobile}>
+        <UserCog className="h-4 w-4 mr-2" />
+        Register
+      </NavLink>
+    </>
+  )
+}
+
+type Props = {
+  href: string
+  children: ReactNode
+  className?: string
+  mobile: boolean
+}
+
+/**
+ * Navigation link component
+ */
 function NavLink({
   href,
   children,
-  className,
+  className = '',
+  mobile = false,
   ...props
-}: NavLinkProps) {
+}: Props) {
   return (
     <Link
       href={href}
       className={cn(
-        'text-gray-600 hover:text-primary-700 font-medium dark:text-gray-300 dark:hover:text-primary-400',
+        'flex items-center transition-colors',
+        mobile
+          ? 'px-6 py-3 text-foreground hover:bg-muted w-full'
+          : 'text-muted-foreground hover:text-foreground font-medium',
         className
       )}
       {...props}

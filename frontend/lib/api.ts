@@ -39,7 +39,7 @@ export const ApiClient = {
   /**
    * Make a POST request to the API
    */
-  post: async <T>(endpoint: string, data: any): Promise<T> => {
+  post: async <T>(endpoint: string, data: unknown): Promise<T> => {
     const response = await fetch(`${API_URL}${endpoint}`, {
       method: 'POST',
       headers: await getHeaders(),
@@ -54,7 +54,7 @@ export const ApiClient = {
   /**
    * Make a PUT request to the API
    */
-  put: async <T>(endpoint: string, data: any): Promise<T> => {
+  put: async <T>(endpoint: string, data: unknown): Promise<T> => {
     const response = await fetch(`${API_URL}${endpoint}`, {
       method: 'PUT',
       headers: await getHeaders(),
@@ -69,7 +69,7 @@ export const ApiClient = {
   /**
    * Make a PATCH request to the API
    */
-  patch: async <T>(endpoint: string, data: any): Promise<T> => {
+  patch: async <T>(endpoint: string, data: unknown): Promise<T> => {
     const response = await fetch(`${API_URL}${endpoint}`, {
       method: 'PATCH',
       headers: await getHeaders(),
@@ -152,7 +152,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
       })
 
       return handleResponse<T>(retryResponse)
-    } catch (error) {
+    } catch {
       // If refresh fails, clear refresh state and throw error
       isRefreshing = false
       refreshPromise = null

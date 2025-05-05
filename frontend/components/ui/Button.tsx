@@ -1,74 +1,76 @@
-import React from 'react'
-import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
+import { ButtonHTMLAttributes } from 'react'
 
-const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
-  {
-    variants: {
-      variant: {
-        default:
-          'bg-primary-500 text-white hover:bg-primary-600 dark:bg-primary-600 dark:hover:bg-primary-700',
-        secondary:
-          'bg-secondary-500 text-white hover:bg-secondary-600 dark:bg-secondary-600 dark:hover:bg-secondary-700',
-        accent:
-          'bg-accent-400 text-white hover:bg-accent-500 dark:bg-accent-500 dark:hover:bg-accent-600',
-        outline:
-          'border border-primary-200 bg-transparent hover:bg-primary-50 text-primary-700 dark:border-primary-700 dark:text-primary-400 dark:hover:bg-primary-900/30',
-        ghost:
-          'bg-transparent hover:bg-primary-50 text-primary-700 dark:text-primary-400 dark:hover:bg-primary-900/30',
-        link: 'bg-transparent underline-offset-4 hover:underline text-primary-700 hover:bg-transparent dark:text-primary-400',
-        destructive:
-          'bg-red-500 text-white hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800',
-      },
-      size: {
-        default: 'h-10 py-2 px-4',
-        sm: 'h-8 px-3 text-xs',
-        lg: 'h-12 px-6 text-base',
-        icon: 'h-10 w-10',
-      },
-      fullWidth: {
-        true: 'w-full',
-      },
-    },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-      fullWidth: false,
-    },
-  }
-)
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'link'
+  | 'destructive'
+type ButtonSize = 'default' | 'sm' | 'lg' | 'icon'
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode
+  variant?: ButtonVariant
+  size?: ButtonSize
+  className?: string
+  disabled?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      fullWidth,
-      asChild = false,
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <button
-        className={cn(
-          buttonVariants({ variant, size, fullWidth, className })
-        )}
-        ref={ref}
-        {...props}
-      />
-    )
-  }
-)
+/**
+ * Button component with multiple variants
+ */
+export function Button({
+  children,
+  variant = 'primary',
+  size = 'default',
+  className,
+  disabled = false,
+  type = 'button',
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      type={type}
+      disabled={disabled}
+      className={cn(
+        // Base styles
+        'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+        'disabled:opacity-50 disabled:pointer-events-none',
 
-Button.displayName = 'Button'
+        // Size variants
+        size === 'default' ? 'h-10 py-2 px-4' : '',
+        size === 'sm' ? 'h-8 px-3 text-sm' : '',
+        size === 'lg' ? 'h-12 px-6 text-lg' : '',
+        size === 'icon' ? 'h-10 w-10' : '',
 
-export { Button, buttonVariants }
+        // Style variants
+        variant === 'primary'
+          ? 'bg-primary text-primary-foreground hover:bg-primary-600 dark:hover:bg-primary-400'
+          : '',
+        variant === 'secondary'
+          ? 'bg-secondary text-secondary-foreground hover:bg-secondary-500 dark:hover:bg-secondary-300'
+          : '',
+        variant === 'outline'
+          ? 'border border-input bg-background hover:bg-muted hover:text-foreground'
+          : '',
+        variant === 'ghost'
+          ? 'hover:bg-muted hover:text-foreground'
+          : '',
+        variant === 'link'
+          ? 'text-primary underline-offset-4 hover:underline'
+          : '',
+        variant === 'destructive'
+          ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+          : '',
+
+        className || ''
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+}

@@ -15,6 +15,13 @@ import { AuthService } from '@/lib/auth'
 import { ApiClient } from '@/lib/api'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { PatientProfile, CommunicationLog } from '@/types'
+import {
+  User,
+  Mail,
+  Phone,
+  CheckCircle2,
+  MessageCircle,
+} from 'lucide-react'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -99,10 +106,11 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute allowedUserTypes={['PATIENT']}>
       <AppLayout userType={user?.user_type}>
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Patient Dashboard
+        <div className="space-y-10">
+          <div className="flex justify-between items-center mb-2">
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+              <User className="h-7 w-7 text-primary-700" /> Patient
+              Dashboard
             </h1>
             <Button
               variant="outline"
@@ -110,67 +118,66 @@ export default function DashboardPage() {
                 AuthService.logout()
                 router.push('/')
               }}
+              className="font-semibold"
             >
               Logout
             </Button>
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-500 p-4 rounded-md">
+            <div className="bg-red-50 text-red-500 p-4 rounded-md font-semibold">
               {error}
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Your Profile</CardTitle>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card className="rounded-2xl shadow-md border border-gray-100">
+              <CardHeader className="flex flex-row items-center gap-3 pb-0">
+                <User className="h-6 w-6 text-primary-700" />
+                <CardTitle className="text-xl font-bold">
+                  Your Profile
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      Username
-                    </p>
-                    <p className="mt-1">{user?.username}</p>
+                <div className="space-y-5 mt-2">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium text-gray-700">
+                      {user?.username}
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      Email
-                    </p>
-                    <p className="mt-1">{user?.email}</p>
-                    {patientProfile &&
-                      patientProfile.email_verified === false && (
-                        <p className="text-xs text-amber-600 mt-1">
-                          Not verified. Please verify your email.
-                        </p>
-                      )}
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium text-gray-700">
+                      {user?.email}
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      Contact Preference
-                    </p>
-                    <p className="mt-1">
-                      {patientProfile
-                        ? patientProfile.preferred_contact_method ||
-                          'Not set'
-                        : 'Not set'}
-                    </p>
+                  {patientProfile &&
+                    patientProfile.email_verified === false && (
+                      <p className="text-xs text-amber-600 mt-1 ml-7">
+                        Not verified. Please verify your email.
+                      </p>
+                    )}
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium text-gray-700">
+                      {patientProfile?.preferred_contact_method ||
+                        'Not set'}
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500">
-                      Consent Status
-                    </p>
-                    <p className="mt-1">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-primary-600" />
+                    <span className="font-medium text-gray-700">
                       {patientProfile &&
                       patientProfile.has_active_consent
                         ? 'Active consent provided'
                         : 'No active consent'}
-                    </p>
+                    </span>
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => router.push('/profile')}
+                    className="font-semibold"
                   >
                     Update Profile
                   </Button>
@@ -178,33 +185,35 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Communications</CardTitle>
+            <Card className="rounded-2xl shadow-md border border-gray-100">
+              <CardHeader className="flex flex-row items-center gap-3 pb-0">
+                <MessageCircle className="h-6 w-6 text-primary-700" />
+                <CardTitle className="text-xl font-bold">
+                  Recent Communications
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {recentCommunications.length === 0 ? (
-                  <p className="text-gray-500">
+                  <p className="text-gray-500 font-medium mt-2">
                     No recent communications.
                   </p>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-4 mt-2">
                     {recentCommunications
                       .slice(0, communicationsToShow)
                       .map((comm) => (
                         <div
                           key={comm.id}
-                          className="p-3 border border-gray-100 rounded-md"
+                          className="p-4 border border-gray-100 rounded-lg bg-surface-50 shadow-sm"
                         >
-                          <div className="flex justify-between">
-                            <p className="font-medium">
+                          <div className="flex justify-between items-center">
+                            <p className="font-semibold text-gray-900">
                               {typeof comm.campaign === 'string'
                                 ? comm.campaign
-                                : (comm.campaign as any).title ||
-                                  'Campaign'}
+                                : comm.campaign.title}
                             </p>
                             <span
-                              className={`text-xs px-2 py-1 rounded-full ${
+                              className={`text-xs px-2 py-1 rounded-full font-semibold ${
                                 comm.status === 'SENT'
                                   ? 'bg-blue-100 text-blue-800'
                                   : comm.status === 'DELIVERED'
@@ -227,7 +236,7 @@ export default function DashboardPage() {
                         </div>
                       ))}
 
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mt-2">
                       {recentCommunications.length > 3 && (
                         <Button
                           variant="link"
@@ -236,6 +245,7 @@ export default function DashboardPage() {
                               !expandedCommunications
                             )
                           }
+                          className="font-semibold"
                         >
                           {expandedCommunications
                             ? 'Show Less'
@@ -246,6 +256,7 @@ export default function DashboardPage() {
                       <Button
                         variant="link"
                         onClick={() => router.push('/communications')}
+                        className="font-semibold"
                       >
                         Go to Communications
                       </Button>

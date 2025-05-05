@@ -45,8 +45,8 @@ export interface PatientProfile {
 
 export interface PatientPreferences {
   preferred_contact_method: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
-  contact_time_preferences: Record<string, any>
-  campaign_preferences: Record<string, any>
+  contact_time_preferences: Record<string, unknown>
+  campaign_preferences: Record<string, unknown>
   language_preference: string
 }
 
@@ -63,7 +63,7 @@ export interface ConsentRecord {
     | 'SENSITIVE_DATA'
     | 'AUTOMATED_DECISION'
   granted: boolean
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
 }
 
 // Campaign Types
@@ -93,13 +93,13 @@ export interface PatientSegment {
   id: string
   name: string
   description: string
-  criteria: Record<string, any>
+  criteria: Record<string, unknown>
   is_active: boolean
 }
 
 export interface CommunicationLog {
   id: string
-  campaign: string | null
+  campaign: string | Campaign
   communication_type: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
   status:
     | 'PENDING'
@@ -113,7 +113,7 @@ export interface CommunicationLog {
   read_at: string | null
   response?: string
   error_message?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   message?: string // For frontend display
 }
 

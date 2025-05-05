@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { AuthService } from '@/lib/auth'
-import { User } from '@/types'
 
 interface ProtectedRouteProps {
   children: React.ReactNode

@@ -19,6 +19,14 @@ import {
   RecentCampaign,
   AnalyticsResponse,
 } from '@/types'
+import {
+  BarChart3,
+  Users,
+  MessageCircle,
+  Settings,
+  FileText,
+  CheckCircle2,
+} from 'lucide-react'
 
 export default function AdminDashboardPage() {
   const router = useRouter()
@@ -121,10 +129,11 @@ export default function AdminDashboardPage() {
   return (
     <ProtectedRoute allowedUserTypes={['STAFF']}>
       <AppLayout userType={user?.user_type}>
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">
-              Admin Dashboard
+        <div className="space-y-10">
+          <div className="flex justify-between items-center mb-2">
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+              <BarChart3 className="h-7 w-7 text-primary-700" /> Admin
+              Dashboard
             </h1>
             <Button
               variant="outline"
@@ -132,81 +141,73 @@ export default function AdminDashboardPage() {
                 AuthService.logout()
                 router.push('/')
               }}
+              className="font-semibold"
             >
               Logout
             </Button>
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-500 p-4 rounded-md">
+            <div className="bg-red-50 text-red-500 p-4 rounded-md font-semibold">
               {error}
             </div>
           )}
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Total Patients
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-primary-700">
-                    {stats?.totalPatients.toLocaleString()}
-                  </p>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            <Card className="rounded-2xl shadow-md border border-gray-100 flex flex-col items-center text-center p-6">
+              <Users className="h-8 w-8 text-primary-700 mb-2" />
+              <CardContent className="pt-2">
+                <p className="text-sm font-medium text-gray-500">
+                  Total Patients
+                </p>
+                <p className="mt-2 text-3xl font-extrabold text-primary-700">
+                  {stats?.totalPatients.toLocaleString()}
+                </p>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Active Campaigns
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-primary-700">
-                    {stats?.activeCampaigns}
-                  </p>
-                </div>
+            <Card className="rounded-2xl shadow-md border border-gray-100 flex flex-col items-center text-center p-6">
+              <MessageCircle className="h-8 w-8 text-secondary-700 mb-2" />
+              <CardContent className="pt-2">
+                <p className="text-sm font-medium text-gray-500">
+                  Active Campaigns
+                </p>
+                <p className="mt-2 text-3xl font-extrabold text-primary-700">
+                  {stats?.activeCampaigns}
+                </p>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Communications Sent
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-primary-700">
-                    {stats?.communicationsSent.toLocaleString()}
-                  </p>
-                </div>
+            <Card className="rounded-2xl shadow-md border border-gray-100 flex flex-col items-center text-center p-6">
+              <FileText className="h-8 w-8 text-accent-700 mb-2" />
+              <CardContent className="pt-2">
+                <p className="text-sm font-medium text-gray-500">
+                  Communications Sent
+                </p>
+                <p className="mt-2 text-3xl font-extrabold text-primary-700">
+                  {stats?.communicationsSent.toLocaleString()}
+                </p>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Response Rate
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-primary-700">
-                    {stats?.responseRate.toFixed(1)}%
-                  </p>
-                </div>
+            <Card className="rounded-2xl shadow-md border border-gray-100 flex flex-col items-center text-center p-6">
+              <CheckCircle2 className="h-8 w-8 text-green-700 mb-2" />
+              <CardContent className="pt-2">
+                <p className="text-sm font-medium text-gray-500">
+                  Response Rate
+                </p>
+                <p className="mt-2 text-3xl font-extrabold text-primary-700">
+                  {stats?.responseRate.toFixed(1)}%
+                </p>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center">
-                  <p className="text-sm font-medium text-gray-500">
-                    Read Rate
-                  </p>
-                  <p className="mt-2 text-3xl font-bold text-primary-700">
-                    {stats?.readRate ? stats.readRate.toFixed(1) : 0}%
-                  </p>
-                </div>
+            <Card className="rounded-2xl shadow-md border border-gray-100 flex flex-col items-center text-center p-6">
+              <BarChart3 className="h-8 w-8 text-accent-700 mb-2" />
+              <CardContent className="pt-2">
+                <p className="text-sm font-medium text-gray-500">
+                  Read Rate
+                </p>
+                <p className="mt-2 text-3xl font-extrabold text-primary-700">
+                  {stats?.readRate ? stats.readRate.toFixed(1) : 0}%
+                </p>
               </CardContent>
             </Card>
           </div>
