@@ -916,3 +916,14 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
                 {"error": f"Failed to send SMS: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+        # # Debug prints instead
+        # print("Would send SMS to:", phone_number)
+        # print("Message content:", message)
+        # return Response(
+        #     {
+        #         "status": "Test SMS simulation successful",
+        #         "phone": phone_number,
+        #         "message": message,
+        #     }
+        # )
