@@ -412,9 +412,9 @@ class CampaignPredictionService:
         )
 
         criteria_score = (
-            (0.4 if matches_age_group else 0)
-            + (0.3 if matches_location else 0)
-            + (0.3 if matches_language else 0)
+            (0.6 if matches_age_group else 0)
+            + (0.2 if matches_location else 0)
+            + (0.2 if matches_language else 0)
         )
 
         if criteria_score > 0.7:
@@ -449,6 +449,7 @@ class CampaignPredictionService:
 
         return key_factors
 
+    @staticmethod
     def predict_inactive_patients(days_threshold=90):
         """
         Identify patients likely to become inactive based on engagement patterns
