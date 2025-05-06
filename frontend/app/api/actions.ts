@@ -15,25 +15,15 @@ import { cookies, cookies as Cookies } from 'next/headers'
 // ----- Patient Actions -----
 
 export async function getPatients(
-  filters?: Record<string, unknown>
+  filter: 'all' | 'active' | 'inactive'
 ): Promise<Patient[]> {
   try {
-    const queryParams = new URLSearchParams()
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, String(value))
-        }
-      })
-    }
+    console.log({ filter })
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
-      `${
-        process.env.NEXT_PUBLIC_API_BASE_URL
-      }/api/patients/?${queryParams.toString()}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/?filter=${filter}`,
       { headers: { Authorization: `Bearer ${accessToken}` } }
     )
-    console.log({ response })
     return response.data.results
   } catch (error) {
     console.error('Error fetching patients:', error)

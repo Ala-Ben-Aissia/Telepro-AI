@@ -8,47 +8,36 @@ export default async function PatientsPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    [key: string]: string | string[] | undefined
+    [key: string]: 'active' | 'inactive' | 'all'
   }>
 }) {
   const params = await searchParams
   // Extract filter params from URL query string
-  const filter =
-    typeof params.filter === 'string' ? params.filter : undefined
+  const filter = params.filter || ''
 
   // Prepare filters for API call
-  const apiFilters: Record<string, unknown> = {}
+  // const apiFilters: Record<string, unknown> = {}
 
-  if (filter === 'inactive') {
-    apiFilters.last_campaign_response_before = new Date(
-      Date.now() - 90 * 24 * 60 * 60 * 1000
-    ).toISOString()
-  } else if (filter === 'active') {
-    apiFilters.last_campaign_response_after = new Date(
-      Date.now() - 90 * 24 * 60 * 60 * 1000
-    ).toISOString()
-  }
+  // // Add more filters based on params
+  // if (typeof params.age_group === 'string') {
+  //   apiFilters.age_group = params.age_group
+  // }
 
-  // Add more filters based on params
-  if (typeof params.age_group === 'string') {
-    apiFilters.age_group = params.age_group
-  }
+  // if (typeof params.gender === 'string') {
+  //   apiFilters.gender = params.gender
+  // }
 
-  if (typeof params.gender === 'string') {
-    apiFilters.gender = params.gender
-  }
+  // if (typeof params.location === 'string') {
+  //   apiFilters.location = params.location
+  // }
 
-  if (typeof params.location === 'string') {
-    apiFilters.location = params.location
-  }
-
-  if (typeof params.has_active_consent === 'string') {
-    apiFilters.has_active_consent =
-      params.has_active_consent === 'true'
-  }
+  // if (typeof params.has_active_consent === 'string') {
+  //   apiFilters.has_active_consent =
+  //     params.has_active_consent === 'true'
+  // }
 
   // Fetch patients with filters
-  const patients = await getPatients(apiFilters)
+  const patients = await getPatients(filter)
 
   return (
     <div className="space-y-8">

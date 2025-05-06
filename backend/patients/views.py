@@ -57,8 +57,14 @@ class PatientViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         # Staff can see all patients, patients only see themselves
+
         if user.user_type == "PATIENT":
             return Patient.objects.filter(user=user)
+        filter = self.request.query_params.get("filter", None)
+        if filter == "active":
+            return Patient.objects.filter(has_active_consent=True)
+        elif filter == "inactive":
+            return Patient.objects.filter(has_active_consent=False)
         return Patient.objects.all()
 
     @action(detail=True, methods=["get"])
