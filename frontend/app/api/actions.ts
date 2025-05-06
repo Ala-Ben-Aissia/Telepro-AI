@@ -121,24 +121,24 @@ export async function updatePatientConsent(
 // ----- Campaign Actions -----
 
 export async function getCampaigns(
-  filters?: Record<string, unknown>
+  is_active?: string
 ): Promise<Campaign[]> {
   try {
-    const queryParams = new URLSearchParams()
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-          queryParams.append(key, String(value))
-        }
-      })
-    }
-
+    const queryParam =
+      is_active === 'all'
+        ? ''
+        : `?active=${is_active === 'active' ? 'True' : 'False'}`
     const response = await apiClient.get(
-      `${
-        process.env.NEXT_PUBLIC_API_BASE_URL
-      }/api/campaigns/?${queryParams.toString()}`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns${queryParam}`,
+      {
+        headers: {
+          Authorization: `Bearer ${
+            (await cookies()).get('accessToken')?.value
+          }`,
+        },
+      }
     )
-    return response.data
+    return response.data.results
   } catch (error) {
     console.error('Error fetching campaigns:', error)
     return []

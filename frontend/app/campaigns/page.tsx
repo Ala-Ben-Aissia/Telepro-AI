@@ -7,25 +7,16 @@ export const revalidate = 0
 export default async function CampaignsPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined }
+  searchParams: Promise<{
+    [key: string]: 'active' | 'inactive' | 'all'
+  }>
 }) {
   // Extract filter params from URL query string
+  const params = await searchParams
   const status =
-    typeof searchParams.status === 'string'
-      ? searchParams.status
-      : undefined
-
-  // Prepare filters for API call
-  const apiFilters: Record<string, unknown> = {}
-
-  if (status === 'active') {
-    apiFilters.is_active = true
-  } else if (status === 'inactive') {
-    apiFilters.is_active = false
-  }
-
+    typeof params.status === 'string' ? params.status : 'all'
   // Fetch campaigns with filters
-  const campaigns = await getCampaigns(apiFilters)
+  const campaigns = await getCampaigns(status)
 
   return (
     <div className="space-y-8">
@@ -42,8 +33,8 @@ export default async function CampaignsPage({
           <div className="flex space-x-2">
             <Link
               href="/campaigns"
-              className={`px-3 py-1 rounded-full text-sm ${
-                !status
+              className={`px-3 p-2 rounded-full text-sm ${
+                status === 'all'
                   ? 'bg-blue-100 text-blue-800'
                   : 'bg-gray-100 text-gray-800'
               }`}
@@ -52,7 +43,7 @@ export default async function CampaignsPage({
             </Link>
             <Link
               href="/campaigns?status=active"
-              className={`px-3 py-1 rounded-full text-sm ${
+              className={`px-3 p-2 rounded-full text-sm ${
                 status === 'active'
                   ? 'bg-green-100 text-green-800'
                   : 'bg-gray-100 text-gray-800'
@@ -62,7 +53,7 @@ export default async function CampaignsPage({
             </Link>
             <Link
               href="/campaigns?status=inactive"
-              className={`px-3 py-1 rounded-full text-sm ${
+              className={`px-3 p-2 rounded-full text-sm ${
                 status === 'inactive'
                   ? 'bg-red-100 text-red-800'
                   : 'bg-gray-100 text-gray-800'
@@ -111,7 +102,7 @@ export default async function CampaignsPage({
                     {campaign.title}
                   </h2>
                   <span
-                    className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    className={`px-2 p-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       campaign.is_active
                         ? 'bg-green-100 text-green-800'
                         : 'bg-gray-100 text-gray-800'
@@ -159,7 +150,7 @@ export default async function CampaignsPage({
                         (age: string) => (
                           <span
                             key={age}
-                            className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs"
+                            className="px-2 p-2 bg-blue-50 text-blue-700 rounded-full text-xs"
                           >
                             {age}
                           </span>
@@ -170,7 +161,7 @@ export default async function CampaignsPage({
                         (lang: string) => (
                           <span
                             key={lang}
-                            className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full text-xs"
+                            className="px-2 p-2 bg-purple-50 text-purple-700 rounded-full text-xs"
                           >
                             {lang}
                           </span>
@@ -181,7 +172,7 @@ export default async function CampaignsPage({
                         (location: string) => (
                           <span
                             key={location}
-                            className="px-2 py-1 bg-yellow-50 text-yellow-700 rounded-full text-xs"
+                            className="px-2 p-2 bg-yellow-50 text-yellow-700 rounded-full text-xs"
                           >
                             {location}
                           </span>
