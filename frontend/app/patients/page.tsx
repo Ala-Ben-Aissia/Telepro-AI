@@ -1,54 +1,54 @@
-import { getPatients } from "@/app/api/actions";
-import Link from "next/link";
+import { getPatients } from '@/app/api/actions'
+import Link from 'next/link'
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function PatientsPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    [key: string]: string | string[] | undefined;
-  }>;
+    [key: string]: string | string[] | undefined
+  }>
 }) {
-  const params = await searchParams;
+  const params = await searchParams
   // Extract filter params from URL query string
   const filter =
-    typeof params.filter === "string" ? params.filter : undefined;
+    typeof params.filter === 'string' ? params.filter : undefined
 
   // Prepare filters for API call
-  const apiFilters: Record<string, any> = {};
+  const apiFilters: Record<string, unknown> = {}
 
-  if (filter === "inactive") {
+  if (filter === 'inactive') {
     apiFilters.last_campaign_response_before = new Date(
       Date.now() - 90 * 24 * 60 * 60 * 1000
-    ).toISOString();
-  } else if (filter === "active") {
+    ).toISOString()
+  } else if (filter === 'active') {
     apiFilters.last_campaign_response_after = new Date(
       Date.now() - 90 * 24 * 60 * 60 * 1000
-    ).toISOString();
+    ).toISOString()
   }
 
   // Add more filters based on params
-  if (typeof params.age_group === "string") {
-    apiFilters.age_group = params.age_group;
+  if (typeof params.age_group === 'string') {
+    apiFilters.age_group = params.age_group
   }
 
-  if (typeof params.gender === "string") {
-    apiFilters.gender = params.gender;
+  if (typeof params.gender === 'string') {
+    apiFilters.gender = params.gender
   }
 
-  if (typeof params.location === "string") {
-    apiFilters.location = params.location;
+  if (typeof params.location === 'string') {
+    apiFilters.location = params.location
   }
 
-  if (typeof params.has_active_consent === "string") {
+  if (typeof params.has_active_consent === 'string') {
     apiFilters.has_active_consent =
-      params.has_active_consent === "true";
+      params.has_active_consent === 'true'
   }
 
   // Fetch patients with filters
-  const patients = await getPatients(apiFilters);
+  const patients = await getPatients(apiFilters)
 
   return (
     <div className="space-y-8">
@@ -66,8 +66,8 @@ export default async function PatientsPage({
             href="/patients"
             className={`px-3 py-1 rounded-full text-sm ${
               !filter
-                ? "bg-blue-100 text-blue-800"
-                : "bg-gray-100 text-gray-800"
+                ? 'bg-blue-100 text-blue-800'
+                : 'bg-gray-100 text-gray-800'
             }`}
           >
             All
@@ -75,9 +75,9 @@ export default async function PatientsPage({
           <Link
             href="/patients?filter=active"
             className={`px-3 py-1 rounded-full text-sm ${
-              filter === "active"
-                ? "bg-green-100 text-green-800"
-                : "bg-gray-100 text-gray-800"
+              filter === 'active'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-gray-100 text-gray-800'
             }`}
           >
             Active
@@ -85,9 +85,9 @@ export default async function PatientsPage({
           <Link
             href="/patients?filter=inactive"
             className={`px-3 py-1 rounded-full text-sm ${
-              filter === "inactive"
-                ? "bg-red-100 text-red-800"
-                : "bg-gray-100 text-gray-800"
+              filter === 'inactive'
+                ? 'bg-red-100 text-red-800'
+                : 'bg-gray-100 text-gray-800'
             }`}
           >
             Inactive
@@ -161,7 +161,7 @@ export default async function PatientsPage({
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {patients.length > 0 ? (
-                patients.map(patient => (
+                patients.map((patient) => (
                   <tr key={patient.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link
@@ -175,26 +175,26 @@ export default async function PatientsPage({
                       {patient.email}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.age_group || "Unknown"}
+                      {patient.age_group || 'Unknown'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.gender || "Unknown"}
+                      {patient.gender || 'Unknown'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {patient.location || "Unknown"}
+                      {patient.location || 'Unknown'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          patient.preferred_contact_method === "EMAIL"
-                            ? "bg-blue-100 text-blue-800"
+                          patient.preferred_contact_method === 'EMAIL'
+                            ? 'bg-blue-100 text-blue-800'
                             : patient.preferred_contact_method ===
-                              "SMS"
-                            ? "bg-green-100 text-green-800"
+                              'SMS'
+                            ? 'bg-green-100 text-green-800'
                             : patient.preferred_contact_method ===
-                              "CALL"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
+                              'CALL'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
                         }`}
                       >
                         {patient.preferred_contact_method}
@@ -206,10 +206,10 @@ export default async function PatientsPage({
                           <div
                             className={`h-2 rounded-full ${
                               patient.engagement_score < 0.3
-                                ? "bg-red-600"
+                                ? 'bg-red-600'
                                 : patient.engagement_score < 0.7
-                                ? "bg-yellow-400"
-                                : "bg-green-600"
+                                ? 'bg-yellow-400'
+                                : 'bg-green-600'
                             }`}
                             style={{
                               width: `${
@@ -230,13 +230,13 @@ export default async function PatientsPage({
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           patient.has_active_consent
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
                         }`}
                       >
                         {patient.has_active_consent
-                          ? "Active"
-                          : "Inactive"}
+                          ? 'Active'
+                          : 'Inactive'}
                       </span>
                     </td>
                   </tr>
@@ -256,5 +256,5 @@ export default async function PatientsPage({
         </div>
       </div>
     </div>
-  );
+  )
 }
