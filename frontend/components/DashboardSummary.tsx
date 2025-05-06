@@ -1,82 +1,82 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 interface Campaign {
-  id: number;
-  title: string;
-  category: string;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  total_communications: number;
-  response_rate: number;
-  read_rate: number;
-  avg_response_time_hours: number;
-  segments: [];
+  id: number
+  title: string
+  category: string
+  start_date: string
+  end_date: string
+  is_active: boolean
+  total_communications: number
+  response_rate: number
+  read_rate: number
+  avg_response_time_hours: number
+  segments: []
 }
 
-type Channel = "EMAIL" | "SMS" | "CALL" | "NONE";
+type Channel = 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
 
 interface ChannelMetric {
-  total: number;
-  responded: number;
-  read: number;
-  response_rate: number;
-  read_rate: number;
-  avg_response_time_hours: number;
+  total: number
+  responded: number
+  read: number
+  response_rate: number
+  read_rate: number
+  avg_response_time_hours: number
 }
 
-type ChannelMetrics = Record<Channel, ChannelMetric>;
+type ChannelMetrics = Record<Channel, ChannelMetric>
 
-type TimePeriod = "morning" | "afternoon" | "evening" | "night";
+type TimePeriod = 'morning' | 'afternoon' | 'evening' | 'night'
 
 interface TimeMetric {
-  total: number;
-  responded: number;
-  read: number;
-  response_rate: number;
-  read_rate: number;
-  avg_response_time_hours: number;
+  total: number
+  responded: number
+  read: number
+  response_rate: number
+  read_rate: number
+  avg_response_time_hours: number
 }
 
-type TimeMetrics = Record<TimePeriod, TimeMetric>;
+type TimeMetrics = Record<TimePeriod, TimeMetric>
 
 interface AnalyticsData {
   engagement_overview: {
-    total_patients: number;
-    active_patients: number;
-    active_percentage: number;
-    high_engagement_patients: number;
-    high_engagement_percentage: number;
-    low_engagement_patients: number;
-    low_engagement_percentage: number;
-    total_communications: number;
-    response_rate: number;
-    read_rate: number;
-    avg_response_time_hours: number;
-    period_days: number;
-  };
+    total_patients: number
+    active_patients: number
+    active_percentage: number
+    high_engagement_patients: number
+    high_engagement_percentage: number
+    low_engagement_patients: number
+    low_engagement_percentage: number
+    total_communications: number
+    response_rate: number
+    read_rate: number
+    avg_response_time_hours: number
+    period_days: number
+  }
   campaign_performance: {
-    campaigns: Campaign[];
+    campaigns: Campaign[]
     overall_metrics: {
-      total_campaigns: number;
-      total_communications: number;
-      overall_response_rate: number;
-      overall_read_rate: number;
-    };
-    period_days: number;
-  };
+      total_campaigns: number
+      total_communications: number
+      overall_response_rate: number
+      overall_read_rate: number
+    }
+    period_days: number
+  }
   communication_channels: {
-    channel_metrics: ChannelMetrics;
-    best_response_channel: Channel | null;
-    fastest_response_channel: Channel | null;
-    period_days: number;
-  };
+    channel_metrics: ChannelMetrics
+    best_response_channel: Channel | null
+    fastest_response_channel: Channel | null
+    period_days: number
+  }
   time_of_day: {
-    time_metrics: TimeMetrics;
-  };
+    time_metrics: TimeMetrics
+  }
   // patientMetrics: {
   //   total_patients: number;
   //   active_patients: number;
@@ -102,34 +102,34 @@ interface AnalyticsData {
 export default function DashboardSummary() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(
     null
-  );
-  const [loading, setLoading] = useState(true);
+  )
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/analytics/dashboard`
-        );
+        )
         if (!response.ok)
-          throw new Error("Failed to fetch dashboard data");
-        const data = await response.json();
+          throw new Error('Failed to fetch dashboard data')
+        const data = await response.json()
 
         setAnalytics({
           engagement_overview: data.engagement_overview || {},
           campaign_performance: data.campaign_performance || {},
           communication_channels: data.communication_channels || {},
           time_of_day: data.time_of_day || {},
-        });
+        })
       } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        console.error('Error fetching dashboard data:', error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchDashboardData();
-  }, []);
+    fetchDashboardData()
+  }, [])
 
   if (loading) {
     return (
@@ -139,7 +139,7 @@ export default function DashboardSummary() {
           <div className="h-4 w-32 mx-auto rounded bg-blue-200"></div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -157,7 +157,7 @@ export default function DashboardSummary() {
           title="Active Campaigns"
           value={
             analytics?.campaign_performance?.campaigns.filter(
-              c => c.is_active
+              (c) => c.is_active
             ).length || 0
           }
           description="Running campaigns"
@@ -167,8 +167,8 @@ export default function DashboardSummary() {
         <StatCard
           title="Response Rate"
           value={`${(
-            analytics?.campaign_performance?.overall_metrics
-              ?.overall_response_rate || 0
+            (analytics?.campaign_performance?.overall_metrics
+              ?.overall_response_rate || 0) * 100
           ).toFixed(1)}%`}
           description="Average across campaigns"
           trend={
@@ -176,8 +176,8 @@ export default function DashboardSummary() {
               .overall_response_rate || 0) *
               100 >
             50
-              ? "up"
-              : "down"
+              ? 'up'
+              : 'down'
           }
           link="/campaigns"
         />
@@ -245,7 +245,7 @@ export default function DashboardSummary() {
               {analytics?.campaign_performance?.campaigns &&
               analytics.campaign_performance.campaigns.length > 0 ? (
                 analytics.campaign_performance.campaigns.map(
-                  campaign => (
+                  (campaign) => (
                     <tr
                       key={Math.random()}
                       className="hover:bg-gray-50"
@@ -262,18 +262,18 @@ export default function DashboardSummary() {
                         <span
                           className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             campaign.is_active
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {campaign.is_active ? "Active" : "Inactive"}
+                          {campaign.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(
                           campaign.start_date
-                        ).toLocaleDateString()}{" "}
-                        -{" "}
+                        ).toLocaleDateString()}{' '}
+                        -{' '}
                         {new Date(
                           campaign.end_date
                         ).toLocaleDateString()}
@@ -285,12 +285,12 @@ export default function DashboardSummary() {
                               className={`h-2.5 rounded-full ${
                                 Number(campaign.response_rate) * 100 <
                                 30
-                                  ? "bg-red-600"
+                                  ? 'bg-red-600'
                                   : Number(campaign.response_rate) *
                                       100 <
                                     70
-                                  ? "bg-yellow-400"
-                                  : "bg-green-600"
+                                  ? 'bg-yellow-400'
+                                  : 'bg-green-600'
                               }`}
                               style={{
                                 width: `${(
@@ -325,15 +325,15 @@ export default function DashboardSummary() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 interface StatCardProps {
-  title: string;
-  value: number | string;
-  description: string;
-  trend: "up" | "down" | "none";
-  link: string;
+  title: string
+  value: number | string
+  description: string
+  trend: 'up' | 'down' | 'none'
+  link: string
 }
 
 function StatCard({
@@ -359,7 +359,7 @@ function StatCard({
             </p>
           </div>
           <div>
-            {trend === "up" && (
+            {trend === 'up' && (
               <span className="inline-flex items-center p-1 rounded-full bg-green-100 text-green-800">
                 <svg
                   className="h-5 w-5"
@@ -376,7 +376,7 @@ function StatCard({
                 </svg>
               </span>
             )}
-            {trend === "down" && (
+            {trend === 'down' && (
               <span className="inline-flex items-center p-1 rounded-full bg-red-100 text-red-800">
                 <svg
                   className="h-5 w-5"
@@ -398,5 +398,5 @@ function StatCard({
         <p className="mt-1 text-sm text-gray-500">{description}</p>
       </div>
     </Link>
-  );
+  )
 }
