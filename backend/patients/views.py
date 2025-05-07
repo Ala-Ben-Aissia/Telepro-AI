@@ -68,6 +68,17 @@ class PatientViewSet(viewsets.ModelViewSet):
         return Patient.objects.all()
 
     @action(detail=True, methods=["get"])
+    def consents(self, request, pk=None):
+        """
+        Return all consent records for this patient.
+        """
+        patient = self.get_object()
+        consent_records = patient.consent_records.all()
+
+        serializer = PatientConsentRecordSerializer(consent_records, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"])
     def communications(self, request, pk):
         """Get communication history for a specific patient"""
         patient = Patient.objects.get(pk=pk)

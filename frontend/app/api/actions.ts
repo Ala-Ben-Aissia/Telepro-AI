@@ -19,7 +19,6 @@ export async function getPatients(
   filter: 'all' | 'active' | 'inactive'
 ): Promise<Patient[]> {
   try {
-    console.log({ filter })
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/?filter=${filter}`,
@@ -36,8 +35,10 @@ export async function getPatient(
   id: string
 ): Promise<Patient | null> {
   try {
+    const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data
   } catch (error) {
@@ -68,8 +69,10 @@ export async function getPatientCommunications(
   id: string
 ): Promise<CommunicationLog[]> {
   try {
+    const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/communications/`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/communications/`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data
   } catch (error) {
@@ -85,8 +88,10 @@ export async function getPatientConsents(
   id: string
 ): Promise<ConsentRecord[]> {
   try {
+    const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/consents/`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/consents/`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data
   } catch (error) {
@@ -382,6 +387,15 @@ export async function getEngagementTrends(
 // ----- Auth Actions -----
 
 type Err = { response?: { data?: { detail: string } } }
+
+export async function register(
+  username: string,
+  email: string,
+  password: string,
+  passwordConfirm: string
+) {
+  console.log(username, email, password, passwordConfirm)
+}
 
 export async function login(
   username: string,

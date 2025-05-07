@@ -2,21 +2,21 @@ import {
   getPatient,
   getPatientCommunications,
   getPatientConsents,
-} from "@/app/api/actions";
-import Link from "next/link";
+} from '@/app/api/actions'
+import Link from 'next/link'
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function PatientDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string }
 }) {
-  const patientId = params.id;
-  const patient = await getPatient(patientId);
-  const communications = await getPatientCommunications(patientId);
-  const consents = await getPatientConsents(patientId);
+  const patientId = params.id
+  const patient = await getPatient(patientId)
+  const communications = await getPatientCommunications(patientId)
+  const consents = await getPatientConsents(patientId)
 
   if (!patient) {
     return (
@@ -32,7 +32,7 @@ export default async function PatientDetailPage({
           Return to Patient List
         </Link>
       </div>
-    );
+    )
   }
 
   return (
@@ -87,7 +87,7 @@ export default async function PatientDetailPage({
                 Phone
               </dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {patient.phone_number || "Not provided"}
+                {patient.phone_number || 'Not provided'}
                 {patient.phone_number && patient.phone_verified && (
                   <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                     Verified
@@ -105,14 +105,14 @@ export default async function PatientDetailPage({
                     <span className="block text-xs text-gray-500">
                       Gender
                     </span>
-                    <span>{patient.gender || "Not specified"}</span>
+                    <span>{patient.gender || 'Not specified'}</span>
                   </div>
                   <div>
                     <span className="block text-xs text-gray-500">
                       Age Group
                     </span>
                     <span>
-                      {patient.age_group || "Not specified"}
+                      {patient.age_group || 'Not specified'}
                     </span>
                   </div>
                   <div>
@@ -120,7 +120,7 @@ export default async function PatientDetailPage({
                       Language
                     </span>
                     <span>
-                      {patient.language_preference || "Not specified"}
+                      {patient.language_preference || 'Not specified'}
                     </span>
                   </div>
                 </div>
@@ -131,7 +131,7 @@ export default async function PatientDetailPage({
                 Location
               </dt>
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                {patient.location || "Not specified"}
+                {patient.location || 'Not specified'}
                 {patient.postal_code && ` (${patient.postal_code})`}
               </dd>
             </div>
@@ -142,13 +142,13 @@ export default async function PatientDetailPage({
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    patient.preferred_contact_method === "EMAIL"
-                      ? "bg-blue-100 text-blue-800"
-                      : patient.preferred_contact_method === "SMS"
-                      ? "bg-green-100 text-green-800"
-                      : patient.preferred_contact_method === "CALL"
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-gray-100 text-gray-800"
+                    patient.preferred_contact_method === 'EMAIL'
+                      ? 'bg-blue-100 text-blue-800'
+                      : patient.preferred_contact_method === 'SMS'
+                      ? 'bg-green-100 text-green-800'
+                      : patient.preferred_contact_method === 'CALL'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-gray-100 text-gray-800'
                   }`}
                 >
                   {patient.preferred_contact_method}
@@ -180,10 +180,10 @@ export default async function PatientDetailPage({
                     <div
                       className={`h-2.5 rounded-full ${
                         patient.engagement_score < 0.3
-                          ? "bg-red-600"
+                          ? 'bg-red-600'
                           : patient.engagement_score < 0.7
-                          ? "bg-yellow-400"
-                          : "bg-green-600"
+                          ? 'bg-yellow-400'
+                          : 'bg-green-600'
                       }`}
                       style={{
                         width: `${patient.engagement_score * 100}%`,
@@ -204,7 +204,7 @@ export default async function PatientDetailPage({
                       ? new Date(
                           patient.last_campaign_response
                         ).toLocaleDateString()
-                      : "Never"}
+                      : 'Never'}
                   </span>
                 </div>
               </dd>
@@ -256,20 +256,20 @@ export default async function PatientDetailPage({
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {consents && consents.length > 0 ? (
-                consents.map(consent => (
-                  <tr key={consent.id}>
+                consents.map((consent) => (
+                  <tr key={consent.pk}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {consent.consent_type.replace("_", " ")}
+                      {consent.consent_type.replace('_', ' ')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           consent.granted
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
                         }`}
                       >
-                        {consent.granted ? "Granted" : "Denied"}
+                        {consent.granted ? 'Granted' : 'Denied'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -278,7 +278,7 @@ export default async function PatientDetailPage({
                       ).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {consent.consent_method.replace("_", " ")}
+                      {consent.consent_method.replace('_', ' ')}
                     </td>
                   </tr>
                 ))
@@ -345,21 +345,21 @@ export default async function PatientDetailPage({
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {communications && communications.length > 0 ? (
-                communications.map(comm => (
+                communications.map((comm) => (
                   <tr key={comm.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {comm.campaign || "Unknown Campaign"}
+                      {comm.campaign || 'Unknown Campaign'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          comm.communication_type === "EMAIL"
-                            ? "bg-blue-100 text-blue-800"
-                            : comm.communication_type === "SMS"
-                            ? "bg-green-100 text-green-800"
-                            : comm.communication_type === "CALL"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-gray-100 text-gray-800"
+                          comm.communication_type === 'EMAIL'
+                            ? 'bg-blue-100 text-blue-800'
+                            : comm.communication_type === 'SMS'
+                            ? 'bg-green-100 text-green-800'
+                            : comm.communication_type === 'CALL'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
                         }`}
                       >
                         {comm.communication_type}
@@ -368,13 +368,13 @@ export default async function PatientDetailPage({
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          comm.status === "DELIVERED" ||
-                          comm.status === "READ" ||
-                          comm.status === "RESPONDED"
-                            ? "bg-green-100 text-green-800"
-                            : comm.status === "FAILED"
-                            ? "bg-red-100 text-red-800"
-                            : "bg-yellow-100 text-yellow-800"
+                          comm.status === 'DELIVERED' ||
+                          comm.status === 'READ' ||
+                          comm.status === 'RESPONDED'
+                            ? 'bg-green-100 text-green-800'
+                            : comm.status === 'FAILED'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
                         }`}
                       >
                         {comm.status}
@@ -383,17 +383,15 @@ export default async function PatientDetailPage({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {comm.sent_at
                         ? new Date(comm.sent_at).toLocaleDateString()
-                        : "Not sent"}
+                        : 'Not sent'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {comm.response ? (
                         <span className="text-green-600 font-medium">
-                          Yes
+                          {comm.response}
                         </span>
                       ) : (
-                        <span className="text-gray-400">
-                          No response
-                        </span>
+                        <span className="text-gray-400">–</span>
                       )}
                     </td>
                   </tr>
@@ -413,5 +411,5 @@ export default async function PatientDetailPage({
         </div>
       </div>
     </div>
-  );
+  )
 }

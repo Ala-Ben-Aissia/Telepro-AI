@@ -17,6 +17,7 @@ class PatientSerializer(serializers.ModelSerializer):
             "language_preference",
             "email_verified",
             "phone_verified",
+            "phone_number",
             "preferred_contact_method",
             "has_active_consent",
             "engagement_score",
@@ -44,5 +45,12 @@ class PatientConsentSerializer(serializers.ModelSerializer):
 class PatientConsentRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConsentRecord
-        fields = ["consent_type", "granted", "metadata"]
+        fields = [
+            "consent_type",
+            "granted",
+            "metadata",
+            "consent_method",
+            "pk",
+            "timestamp",
+        ]
         extra_kwargs = {"metadata": {"required": False}}

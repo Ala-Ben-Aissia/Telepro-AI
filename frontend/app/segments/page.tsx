@@ -153,7 +153,7 @@ export default async function SegmentsPage() {
                               >
                                 {typeof value === 'object'
                                   ? `${key}: ${
-                                      Object.keys(value).length
+                                      Object.keys(value!).length
                                     } filters`
                                   : `${key}: ${String(
                                       value

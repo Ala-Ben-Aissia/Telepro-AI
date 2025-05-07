@@ -34,6 +34,7 @@ export default function MlSegmentationPage() {
       }
 
       const data = await response.json()
+      console.log({ data })
       router.push('/segments')
     } catch (error) {
       console.error('Error creating ML segments:', error)

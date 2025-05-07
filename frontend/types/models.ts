@@ -87,7 +87,7 @@ export interface CommunicationLog {
 
 // Consent Record
 export interface ConsentRecord {
-  id: number
+  pk: number
   patient: string // Patient ID
   consent_type:
     | 'GENERAL'
