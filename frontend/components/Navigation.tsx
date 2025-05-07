@@ -1,5 +1,6 @@
 'use client'
 
+import { logout } from '@/app/api/actions'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
@@ -74,7 +75,7 @@ const LogoutIcon = () => (
 // Navigation items
 const navItems = [
   {
-    href: '/',
+    href: '/dashboard',
     label: 'Dashboard',
     icon: <DashboardIcon />,
   },
@@ -183,6 +184,7 @@ const Navigation = () => {
       <div className="absolute bottom-0 w-full p-4 border-t border-gray-200">
         <button
           className={`flex items-center p-2 w-full text-gray-700 hover:bg-gray-100 rounded-md`}
+          onClick={logout}
         >
           <span className="mr-3">
             <LogoutIcon />

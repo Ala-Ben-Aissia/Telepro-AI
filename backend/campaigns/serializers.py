@@ -31,7 +31,15 @@ class CampaignSerializer(serializers.ModelSerializer):
 class PatientSegmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientSegment
-        fields = ["id", "name", "description", "criteria", "is_active"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "criteria",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class CommunicationLogSerializer(serializers.ModelSerializer):

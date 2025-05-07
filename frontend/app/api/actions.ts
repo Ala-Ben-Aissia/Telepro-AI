@@ -11,6 +11,7 @@ import type {
   DashboardData,
 } from '@/types/models'
 import { cookies, cookies as Cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 // ----- Patient Actions -----
 
@@ -232,9 +233,16 @@ export async function getCampaignPerformance(
 export async function getSegments(): Promise<PatientSegment[]> {
   try {
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/segments/`
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/segments/`,
+      {
+        headers: {
+          Authorization: `Bearer ${
+            (await cookies()).get('accessToken')?.value
+          }`,
+        },
+      }
     )
-    return response.data
+    return response.data.results
   } catch (error) {
     console.error('Error fetching segments:', error)
     return []
@@ -407,15 +415,8 @@ export async function login(
 }
 
 export async function logout(): Promise<boolean> {
-  try {
-    await apiClient.post(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/logout/`
-    )
-    return true
-  } catch (error) {
-    console.error('Error during logout:', error)
-    return false
-  }
+  ;(await cookies()).delete('accessToken')
+  return redirect('/auth/login')
 }
 
 export async function getCurrentUser(): Promise<unknown> {
@@ -427,7 +428,7 @@ export async function getCurrentUser(): Promise<unknown> {
     )
     return response.data
   } catch (error) {
-    console.error('Error fetching current user:', error)
+    console.log('Error fetching current user:', error)
     return null
   }
 }

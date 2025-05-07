@@ -61,7 +61,6 @@ export interface PatientSegment {
   is_active: boolean
   created_at: string // ISO date string
   updated_at: string // ISO date string
-  campaigns?: number[] // Campaign IDs
 }
 
 // Communication Log

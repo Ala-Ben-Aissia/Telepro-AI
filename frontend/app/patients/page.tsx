@@ -1,8 +1,8 @@
 import { getPatients } from '@/app/api/actions'
 import Link from 'next/link'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// export const dynamic = 'force-dynamic'
+// export const revalidate = 0
 
 export default async function PatientsPage({
   searchParams,
@@ -13,7 +13,7 @@ export default async function PatientsPage({
 }) {
   const params = await searchParams
   // Extract filter params from URL query string
-  const filter = params.filter || ''
+  const filter = params.filter || 'all'
 
   // Prepare filters for API call
   // const apiFilters: Record<string, unknown> = {}
