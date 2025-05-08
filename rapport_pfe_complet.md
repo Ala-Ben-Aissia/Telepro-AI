@@ -38,34 +38,34 @@ Enfin, je tiens à exprimer ma reconnaissance envers ma famille et mes amis pour
 **Chapitre 1 : Cadre général du projet** ............................ 3
 1.1 Présentation du contexte ...................................... 3
 1.2 Analyse des besoins ........................................... 4
-   1.2.1 Besoins fonctionnels .................................... 4
-   1.2.2 Besoins non fonctionnels ................................ 6
+1.2.1 Besoins fonctionnels .................................... 4
+1.2.2 Besoins non fonctionnels ................................ 6
 1.3 Contraintes réglementaires .................................... 7
 1.4 Planning prévisionnel ......................................... 8
 
 **Chapitre 2 : État de l'art** ..................................... 10
 2.1 Solutions existantes dans le domaine médical ................. 10
 2.2 Technologies et outils disponibles ........................... 12
-   2.2.1 Intelligence Artificielle et Machine Learning .......... 12
-   2.2.2 Technologies Web et Cloud .............................. 14
-   2.2.3 Sécurité et Conformité ................................. 15
+2.2.1 Intelligence Artificielle et Machine Learning .......... 12
+2.2.2 Technologies Web et Cloud .............................. 14
+2.2.3 Sécurité et Conformité ................................. 15
 2.3 Analyse comparative et choix technologiques .................. 16
 
 **Chapitre 3 : Conception et modélisation** ........................ 18
 3.1 Architecture globale ......................................... 18
-   3.1.1 Architecture système ................................... 18
-   3.1.2 Architecture logicielle ................................ 20
+3.1.1 Architecture système ................................... 18
+3.1.2 Architecture logicielle ................................ 20
 3.2 Modélisation des données ..................................... 21
-   3.2.1 Modèle conceptuel ...................................... 21
-   3.2.2 Structure de la base de données ........................ 22
+3.2.1 Modèle conceptuel ...................................... 21
+3.2.2 Structure de la base de données ........................ 22
 3.3 Conception des interfaces .................................... 24
 3.4 Sécurité et protection des données ........................... 25
 
 **Chapitre 4 : Réalisation et implémentation** ..................... 27
 4.1 Environnement de développement ............................... 27
 4.2 Implémentation du backend .................................... 28
-   4.2.1 Structure du projet Django ............................. 28
-   4.2.2 Modules principaux ..................................... 29
+4.2.1 Structure du projet Django ............................. 28
+4.2.2 Modules principaux ..................................... 29
 4.3 Implémentation du frontend ................................... 32
 4.4 Implémentation ML/IA ......................................... 33
 4.5 Sécurité et conformité RGPD .................................. 35
@@ -186,7 +186,7 @@ Le système de santé tunisien, à l'instar de nombreux pays en développement, 
 Dans ce contexte, la téléprospection intelligente représente une solution prometteuse pour améliorer le suivi des patients tout en optimisant les ressources disponibles. En Tunisie, où la pénétration des smartphones atteint 67,3% de la population et où la couverture mobile dépasse les 95% du territoire, les communications par SMS constituent un canal particulièrement adapté pour toucher un large public, y compris dans les zones rurales.
 
 ![Carte de la couverture mobile en Tunisie](placeholder_figure_1_1.png)
-*Figure 1.1 : Carte de la couverture mobile en Tunisie*
+_Figure 1.1 : Carte de la couverture mobile en Tunisie_
 
 Par ailleurs, l'émergence de l'IoT (Internet des Objets) dans le secteur médical ouvre de nouvelles perspectives pour développer des solutions de communication à coût réduit, adaptées au contexte local. La combinaison de ces technologies avec des algorithmes d'intelligence artificielle permet d'envisager des systèmes de téléprospection plus efficaces et personnalisés.
 
@@ -313,12 +313,14 @@ Ces contraintes réglementaires ont été intégrées dès la phase de conceptio
 Le projet a été planifié selon une approche agile, avec des cycles de développement itératifs permettant d'ajuster régulièrement les priorités en fonction des retours d'expérience. Le planning prévisionnel s'étend sur une période de 26 semaines, décomposée en quatre phases principales :
 
 **Phase 1 : Conception (6 semaines)**
+
 - Analyse des besoins et spécifications (2 semaines)
 - Conception de l'architecture système (2 semaines)
 - Modélisation des données (1 semaine)
 - Conception des interfaces utilisateur (1 semaine)
 
 **Phase 2 : Développement (12 semaines)**
+
 - Développement du backend (4 semaines)
 - Implémentation des algorithmes d'IA/ML (2 semaines)
 - Développement du frontend (3 semaines)
@@ -326,18 +328,20 @@ Le projet a été planifié selon une approche agile, avec des cycles de dévelo
 - Intégration des composants (1 semaine)
 
 **Phase 3 : Tests et validation (4 semaines)**
+
 - Tests unitaires et d'intégration (2 semaines)
 - Tests de performance et de sécurité (1 semaine)
 - Validation utilisateur (1 semaine)
 
 **Phase 4 : Déploiement et documentation (4 semaines)**
+
 - Déploiement pilote (1 semaine)
 - Ajustements post-déploiement (1 semaine)
 - Documentation technique et utilisateur (1 semaine)
 - Formation des utilisateurs (1 semaine)
 
 ![Diagramme de Gantt du projet](placeholder_figure_1_2.png)
-*Figure 1.2 : Diagramme de Gantt du projet*
+_Figure 1.2 : Diagramme de Gantt du projet_
 
 Ce planning a été conçu pour permettre une réalisation progressive du projet, avec des points de contrôle réguliers pour valider chaque étape avant de passer à la suivante.
 
@@ -463,13 +467,13 @@ Le développement d'une plateforme moderne de téléprospection nécessite des t
 
 **Frameworks frontend**
 
-- **React** : Bibliothèque JavaScript pour construire des interfaces utilisateur interactives avec une approche basée sur les composants. Sa grande communauté et son écosystème riche en font un choix solide pour des applications complexes.
+- **Next.js** : Framework React avec rendu côté serveur (SSR) et génération statique (SSG) offrant des avantages significatifs pour le SEO, les performances et la vitesse de développement. Sa structure de routage intégrée et son système d'API simplifient l'architecture de l'application.
 
-- **Vue.js** : Framework progressif combinant les meilleurs aspects de React et Angular avec une courbe d'apprentissage moins abrupte, particulièrement adapté pour des équipes de taille moyenne.
+- **TypeScript** : Surcouche de typage statique pour JavaScript améliorant la robustesse du code et facilitant la maintenance des applications à grande échelle.
 
-- **Angular** : Framework complet proposant une solution intégrée pour le développement frontend. Sa structure rigide facilite la maintenance des grands projets mais peut être excessive pour des applications plus simples.
+- **Tailwind CSS** : Framework CSS utilitaire permettant de construire rapidement des interfaces responsives et personnalisées sans quitter le HTML.
 
-- **Bootstrap/Material-UI** : Frameworks CSS facilitant la création d'interfaces responsives et esthétiques, compatibles avec les frameworks JavaScript mentionnés ci-dessus.
+- **SWR** : Bibliothèque de récupération de données avec mise en cache et revalidation automatique, conçue pour optimiser l'expérience utilisateur.
 
 **Solutions d'hébergement et de déploiement**
 
@@ -550,6 +554,7 @@ Ces critères ont été pondérés selon leur importance relative pour le projet
 Après analyse comparative des options disponibles, les choix technologiques suivants ont été retenus :
 
 **Backend**
+
 - **Framework principal** : Django, choisi pour sa robustesse, son ORM puissant et ses fonctionnalités de sécurité intégrées.
 - **API** : Django REST Framework, offrant des outils complets pour développer des API RESTful sécurisées.
 - **Base de données** : PostgreSQL, sélectionnée pour ses performances, sa fiabilité et son excellent support des requêtes complexes.
@@ -557,13 +562,15 @@ Après analyse comparative des options disponibles, les choix technologiques sui
 - **Tâches asynchrones** : Celery, permettant d'exécuter des tâches en arrière-plan comme l'envoi massif de communications ou l'entraînement de modèles ML.
 
 **Frontend**
-- **Framework** : React, choisi pour sa flexibilité, sa performance et son large écosystème.
-- **UI Components** : Material-UI, offrant des composants prêts à l'emploi respectant les principes du Material Design.
-- **Gestion d'état** : Redux pour les états globaux complexes et Context API pour les états localisés.
-- **Routing** : React Router pour la navigation entre les différentes vues de l'application.
-- **Internationalisation** : react-i18next, facilitant la gestion multilingue (arabe, français, anglais).
+
+- **Framework** : Next.js, choisi pour son rendu hybride (SSR/SSG), sa performance optimisée, le SEO intégré et son écosystème riche.
+- **UI Components** : Composants personnalisés avec Tailwind CSS pour une interface utilisateur flexible et responsive.
+- **Gestion d'état** : SWR pour la récupération de données côté client, combiné avec React Context pour les états localisés.
+- **Routing** : Système de routage intégré de Next.js pour une navigation performante entre les différentes pages.
+- **Formulaires** : React Hook Form avec validation Zod pour la gestion efficace des formulaires et la validation des données.
 
 **Infrastructure**
+
 - **Conteneurisation** : Docker, simplifiant le déploiement et assurant la cohérence entre les environnements.
 - **Orchestration** : Docker Compose pour le développement et Kubernetes pour la production, permettant une scalabilité horizontale.
 - **CI/CD** : GitLab CI/CD, automatisant les tests et le déploiement.
@@ -575,18 +582,22 @@ Après analyse comparative des options disponibles, les choix technologiques sui
 Pour les fonctionnalités d'intelligence artificielle et d'apprentissage automatique, les choix suivants ont été effectués :
 
 **Bibliothèques principales**
-- **scikit-learn** : Pour les algorithmes de classification, régression et clustering, choisi pour sa simplicité d'utilisation et sa maturité.
-- **pandas** : Pour la manipulation et l'analyse de données structurées.
-- **NumPy** : Pour les opérations mathématiques de bas niveau.
-- **XGBoost** : Pour les modèles de gradient boosting offrant d'excellentes performances prédictives.
-- **spaCy** : Pour le traitement du langage naturel, avec support de l'arabe et du français.
 
-**Outils de gestion de modèles**
-- **MLflow** : Pour le suivi des expérimentations, la gestion des versions de modèles et le déploiement.
-- **DVC (Data Version Control)** : Pour versionner les ensembles de données et les pipelines ML.
-- **SHAP** : Pour l'explicabilité des modèles, permettant de comprendre les facteurs influençant les prédictions.
+- **scikit-learn** : Pour les algorithmes de clustering (K-means et DBSCAN) et la segmentation des patients, choisi pour sa simplicité d'utilisation et sa maturité.
+- **pandas** : Pour la manipulation et l'analyse des données patients structurées.
+- **NumPy** : Pour les opérations mathématiques et le traitement des tableaux de données.
+- **Django REST Framework** : Pour l'exposition des données et des fonctionnalités via une API RESTful sécurisée.
+- **Celery** : Pour l'exécution des tâches asynchrones comme l'analyse des données et l'envoi de communications.
+
+**Approche et implémentation ML**
+
+- **Segmentation des patients** : Mise en œuvre d'algorithmes de clustering pour grouper les patients selon leurs caractéristiques.
+- **Traçabilité** : Journalisation détaillée des processus de clustering et des décisions algorithmiques.
+- **Visualisation** : Génération de graphiques pour l'interprétation des résultats de segmentation.
+- **Prétraitement** : Pipeline robuste pour la préparation des données avant l'application des algorithmes.
 
 **Infrastructures de calcul**
+
 - **GPU** : Utilisation de GPU pour l'entraînement de modèles complexes lorsque nécessaire.
 - **Optimisation CPU** : Configuration pour maximaliser les performances sur CPU standard pour le déploiement.
 
@@ -595,12 +606,14 @@ Pour les fonctionnalités d'intelligence artificielle et d'apprentissage automat
 Pour la solution matérielle d'envoi de SMS à coût réduit, les choix suivants ont été effectués :
 
 **Matériel**
+
 - **Microcontrôleur** : ESP32, choisi pour sa puissance de calcul, sa connectivité WiFi/Bluetooth intégrée et son faible coût.
 - **Module de communication** : SIM800L, module GSM/GPRS compact et économique compatible avec les réseaux tunisiens.
 - **Alimentation** : Module d'alimentation stabilisée avec protection contre les surtensions.
 - **Boîtier** : Conception personnalisée imprimée en 3D pour protéger les composants.
 
 **Logiciel embarqué**
+
 - **Environnement de développement** : Arduino IDE avec support ESP32, choisi pour sa simplicité et sa large communauté.
 - **Bibliothèques** : TinyGSM pour la communication avec le module SIM800L et ArduinoJSON pour le traitement des données.
 - **Sécurité** : Implémentation de TLS pour la communication sécurisée avec le backend.
@@ -613,38 +626,45 @@ Les choix technologiques ont été justifiés par une analyse approfondie des av
 **Django vs Alternatives**
 
 Django a été préféré à Flask et Node.js pour plusieurs raisons clés :
+
 - Son ORM puissant facilite la gestion des modèles de données complexes nécessaires pour le projet.
 - Ses fonctionnalités de sécurité intégrées (protection CSRF, gestion des sessions, etc.) réduisent les risques de vulnérabilités.
 - Son panel d'administration personnalisable permet de créer rapidement des interfaces de gestion pour les professionnels de santé.
 - La synergie entre Django et l'écosystème Python pour le ML (scikit-learn, pandas, etc.) simplifie l'intégration des fonctionnalités d'IA.
 
-**React vs Alternatives**
+**Next.js vs Alternatives**
 
-React a été choisi plutôt que Vue.js ou Angular pour les raisons suivantes :
-- Sa flexibilité permet de construire une interface utilisateur modulaire adaptée aux différents rôles (administrateurs, médecins, etc.).
-- Sa grande communauté assure un support continu et la disponibilité de nombreuses bibliothèques tierces.
-- Ses performances optimales, notamment grâce au Virtual DOM, garantissent une expérience utilisateur fluide même avec des données complexes.
-- L'approche basée sur les composants facilite le développement collaboratif et la réutilisation du code.
+Next.js a été choisi plutôt que React, Vue.js ou Angular pour les raisons suivantes :
+
+- Son rendu côté serveur (SSR) et la génération de sites statiques (SSG) améliorent significativement le SEO, crucial pour l'accessibilité du portail patient.
+- Sa structure de fichiers basée sur les routes simplifie le développement et la maintenance de l'application.
+- Ses performances optimisées grâce au préchargement et au découpage automatique du code garantissent une expérience utilisateur fluide.
+- Son intégration native avec TypeScript renforce la robustesse du code et facilite la maintenance à long terme.
+- L'approche basée sur les composants React facilite le développement collaboratif et la réutilisation du code.
 
 **PostgreSQL vs Alternatives**
 
 PostgreSQL a été préféré à MongoDB et MySQL pour les raisons suivantes :
+
 - Ses fonctionnalités avancées (indexes GIN, full-text search, support JSON natif) correspondent parfaitement aux besoins du projet.
 - Sa robustesse et sa conformité ACID garantissent l'intégrité des données médicales sensibles.
 - Ses capacités de scaling vertical et horizontal permettent d'accompagner la croissance du système.
 - Son support natif des types géospatiaux facilite les analyses basées sur la localisation des patients.
 
-**scikit-learn vs Alternatives**
+**scikit-learn avec Django vs Alternatives**
 
-scikit-learn a été privilégié par rapport à TensorFlow ou PyTorch pour l'essentiel des fonctionnalités ML :
-- Sa simplicité d'utilisation permet un développement rapide des modèles de classification et de clustering nécessaires.
-- Son intégration transparente avec pandas et NumPy facilite le prétraitement des données.
-- Ses modèles moins gourmands en ressources sont adaptés aux contraintes d'hébergement.
-- Son API cohérente facilite la maintenance et l'évolution des modèles.
+scikit-learn intégré à Django a été privilégié par rapport à des solutions comme TensorFlow ou des services ML cloud pour plusieurs raisons :
+
+- L'intégration transparente dans l'écosystème Django facilite l'utilisation des données patients directement depuis les modèles.
+- Les algorithmes de clustering (K-means, DBSCAN) répondent parfaitement aux besoins de segmentation des patients.
+- Son API cohérente facilite le développement d'un pipeline ML modulaire et extensible.
+- L'exécution dans le même environnement que l'application principale simplifie le déploiement et la maintenance.
+- Sa légèreté permet une exécution efficace même sans infrastructure ML dédiée.
 
 **ESP32+SIM800L vs Services cloud (Twilio)**
 
 La solution matérielle ESP32+SIM800L a été préférée aux services cloud d'envoi de SMS pour plusieurs raisons :
+
 - Réduction significative des coûts d'exploitation (0,008 DT/SMS vs 0,05-0,10 DT/SMS avec Twilio).
 - Indépendance vis-à-vis des fournisseurs tiers et de leur politique tarifaire.
 - Possibilité d'opérer même en cas de connectivité internet limitée.
@@ -674,7 +694,7 @@ Le système adopte une architecture à quatre niveaux :
 4. **Couche Communication** : Composants responsables de l'envoi et de la réception des messages (email, SMS) incluant le module ESP32/SIM800L.
 
 ![Architecture système de Telepro-AI](placeholder_figure_3_1.png)
-*Figure 3.1 : Architecture système de Telepro-AI*
+_Figure 3.1 : Architecture système de Telepro-AI_
 
 **Organisation des serveurs**
 
@@ -706,6 +726,7 @@ L'architecture a été conçue pour permettre différents modes de déploiement 
 - **Déploiement hybride** : Combinaison d'hébergement local pour les données sensibles et de services cloud pour les composants nécessitant plus de ressources.
 
 La scalabilité est assurée par :
+
 - Scaling horizontal des serveurs web et d'application derrière un équilibreur de charge.
 - Réplication des bases de données avec promotion automatique en cas de défaillance.
 - Architecture en microservices pour certains composants critiques.
@@ -719,29 +740,34 @@ L'architecture logicielle de Telepro-AI s'articule autour de plusieurs composant
 **Backend (Django)**
 
 1. **Module Patient** : Gère les informations des patients, leurs préférences et consentements.
+
    - `Patient Model` : Représentation des données patients avec chiffrement des informations sensibles.
    - `Consent Manager` : Gestion des consentements et des préférences de communication.
    - `Patient API` : Endpoints REST pour accéder et modifier les données patients.
 
 2. **Module Campagne** : Responsable de la création et de l'exécution des campagnes de communication.
-   - `Campaign Model` : Définition des campagnes, critères de ciblage et contenu.
-   - `Segment Manager` : Gestion des segments de patients.
-   - `Campaign Scheduler` : Planification et orchestration des envois.
-   - `Campaign API` : Endpoints pour la gestion des campagnes.
+
+   - `Campaign Model` : Définition des campagnes, critères de ciblage (âge, localisation, langue) et contenu.
+   - `PatientSegment Model` : Gestion des segments de patients avec critères de segmentation.
+   - `CommunicationLog` : Suivi détaillé des communications avec statuts (envoyé, délivré, lu, répondu).
+   - `Campaign API` : Endpoints RESTful pour la gestion complète des campagnes.
 
 3. **Module Analytics** : Analyse des données et mesure de l'efficacité des campagnes.
+
    - `Performance Analyzer` : Calcul des métriques de performance des campagnes.
    - `Engagement Tracker` : Suivi de l'engagement des patients.
    - `Reporting Engine` : Génération de rapports et visualisations.
    - `Analytics API` : Endpoints pour l'accès aux analyses.
 
 4. **Module IA/ML** : Implémentation des algorithmes d'intelligence artificielle.
-   - `Segmentation Engine` : Algorithmes de clustering pour la segmentation automatique.
-   - `Prediction Models` : Modèles prédictifs pour l'identification proactive.
-   - `Personalization Engine` : Personnalisation des messages selon le profil patient.
-   - `ML Pipeline` : Chaîne de traitement pour l'entraînement et l'évaluation des modèles.
+
+   - `PatientClusteringService` : Service de clustering avec K-means et DBSCAN pour la segmentation automatique.
+   - `DataPreprocessingService` : Préparation des données patients pour l'analyse ML.
+   - `ML Pipeline` : Chaîne de traitement pour l'extraction des caractéristiques et l'application des algorithmes.
+   - `Diagnostics` : Outils d'analyse et de visualisation pour interpréter les résultats des modèles.
 
 5. **Module Communication** : Gestion de l'envoi des messages via différents canaux.
+
    - `Message Composer` : Construction des messages selon les modèles définis.
    - `SMS Service` : Service d'envoi de SMS via l'API du module ESP32 ou services tiers.
    - `Email Service` : Service d'envoi d'emails.
@@ -753,14 +779,16 @@ L'architecture logicielle de Telepro-AI s'articule autour de plusieurs composant
    - `Audit Logger` : Journalisation des actions pour audit.
    - `Data Protection` : Mécanismes de protection des données sensibles.
 
-**Frontend (React)**
+**Frontend (Next.js)**
 
 1. **Module Administration** : Interface pour les administrateurs système.
+
    - `Dashboard` : Vue d'ensemble des métriques clés.
    - `User Management` : Gestion des utilisateurs et permissions.
    - `System Configuration` : Paramétrage du système.
 
 2. **Module Médecin** : Interface pour les professionnels de santé.
+
    - `Patient Explorer` : Recherche et visualisation des profils patients.
    - `Campaign Designer` : Création et gestion des campagnes.
    - `Analytics Dashboard` : Visualisation des performances et résultats.
@@ -773,6 +801,7 @@ L'architecture logicielle de Telepro-AI s'articule autour de plusieurs composant
 **Module ESP32/SIM800L**
 
 1. **Firmware** : Logiciel embarqué sur l'ESP32.
+
    - `HTTP Client` : Communication avec le backend via API REST.
    - `GSM Controller` : Gestion du module SIM800L et des commandes AT.
    - `Message Queue` : File d'attente locale pour les SMS à envoyer.
@@ -803,23 +832,27 @@ La modélisation des données de Telepro-AI a été réalisée selon une approch
 **Entités principales**
 
 1. **Patient** : Entité centrale représentant un patient avec ses informations démographiques et médicales.
+
    - Attributs d'identification (identifiant unique, numéro de dossier médical)
    - Données démographiques (âge, genre, localisation)
    - Préférences de communication (canaux préférés, langue, horaires)
    - Historique d'engagement (dernière réponse, score d'engagement)
 
 2. **Consentement** : Enregistre les consentements accordés par les patients.
+
    - Type de consentement (communication marketing, suivi médical, etc.)
    - Date d'octroi et d'expiration
    - Canal de consentement (formulaire web, verbal, etc.)
    - Statut (actif, révoqué, expiré)
 
 3. **Segment** : Groupe de patients partageant des caractéristiques communes.
+
    - Critères de segmentation (règles ou paramètres de clustering)
    - Métadonnées (taille, date de création, créateur)
    - Type (manuel, algorithmique, hybride)
 
 4. **Campagne** : Représente une initiative de communication ciblée.
+
    - Objectif et description
    - Période d'exécution (début et fin)
    - Public cible (segments associés)
@@ -827,6 +860,7 @@ La modélisation des données de Telepro-AI a été réalisée selon une approch
    - Paramètres d'exécution (fréquence, priorité)
 
 5. **Communication** : Enregistre chaque message envoyé à un patient.
+
    - Type de message (SMS, email, etc.)
    - Contenu et métadonnées
    - Horodatage (envoi, lecture, réponse)
@@ -849,7 +883,7 @@ Les relations entre ces entités sont structurées comme suit :
 - Patient ↔ Communication : Relation un-à-plusieurs (un patient reçoit plusieurs communications)
 
 ![Modèle conceptuel de données](placeholder_figure_3_2.png)
-*Figure 3.2 : Modèle conceptuel de données de Telepro-AI*
+_Figure 3.2 : Modèle conceptuel de données de Telepro-AI_
 
 Cette modélisation permet une grande flexibilité dans la gestion des relations patient-établissement tout en assurant la traçabilité complète des interactions.
 
@@ -1006,6 +1040,7 @@ Le schéma comprend également d'autres tables essentielles :
 - `system_audit` : Journalise les actions importantes pour audit
 
 Cette structure de base de données a été optimisée pour :
+
 - Assurer l'intégrité référentielle avec des contraintes adaptées
 - Faciliter les requêtes complexes avec des index stratégiques
 - Permettre une évolution du schéma avec des champs JSONB flexibles
@@ -1020,49 +1055,56 @@ La conception des interfaces utilisateur de Telepro-AI a été guidée par les p
 Le portail patient a été conçu pour être simple, accessible et rassurant :
 
 **Page d'accueil et authentification**
+
 - Interface épurée mettant en avant la sécurité et la confidentialité
 - Processus d'authentification à deux facteurs avec option SMS ou email
 - Support multilingue (arabe, français, anglais) avec détection automatique des préférences
 
 **Centre de préférences**
+
 - Interface intuitive permettant aux patients de définir leurs préférences de communication
 - Visualisation claire des consentements accordés avec possibilité de modification
 - Historique des communications reçues avec options de filtrage
 
 **Gestion de profil**
+
 - Formulaire simplifié pour la mise à jour des informations personnelles
 - Tableau de bord présentant les prochains rendez-vous et rappels
 - Options d'accessibilité pour les patients ayant des besoins spécifiques
 
 ![Maquette du portail patient](placeholder_figure_3_3.png)
-*Figure 3.3 : Maquette du portail patient*
+_Figure 3.3 : Maquette du portail patient_
 
 ### 3.3.2 Interface administrateur
 
 L'interface administrateur a été conçue pour maximiser l'efficacité des professionnels de santé tout en garantissant une prise en main rapide :
 
 **Tableau de bord principal**
+
 - Vue d'ensemble des métriques clés (taux d'engagement, campagnes actives, patients inactifs)
 - Graphiques interactifs permettant d'analyser les tendances
 - Alertes et notifications pour les actions nécessitant une attention immédiate
 
 **Gestion des campagnes**
+
 - Interface de création de campagne avec assistant pas à pas
 - Éditeur de modèles de messages avec prévisualisation en temps réel
 - Tableau de suivi des campagnes avec indicateurs de performance
 
 **Explorateur de patients**
+
 - Recherche avancée avec filtres multiples
 - Vue détaillée des profils patients incluant l'historique des communications
 - Outils de segmentation manuelle et automatique
 
 **Centre d'analyse**
+
 - Rapports prédéfinis pour les métriques essentielles
 - Outil de création de rapports personnalisés
 - Visualisations interactives des données d'engagement
 
 ![Maquette du tableau de bord administrateur](placeholder_figure_3_4.png)
-*Figure 3.4 : Maquette du tableau de bord administrateur*
+_Figure 3.4 : Maquette du tableau de bord administrateur_
 
 La conception des interfaces a été validée par des tests d'utilisabilité impliquant des professionnels de santé et des patients. Les retours ont permis d'affiner l'ergonomie et la disposition des éléments pour une expérience optimale.
 
@@ -1075,31 +1117,37 @@ La protection des données de santé étant une priorité absolue, une architect
 La sécurité de Telepro-AI repose sur plusieurs niveaux de protection :
 
 **Sécurité périmétrique**
+
 - Pare-feu applicatif (WAF) filtrant les requêtes malveillantes
 - Protection contre les attaques DDoS
 - Segmentation réseau isolant les données sensibles
 
 **Sécurité des communications**
+
 - Chiffrement TLS 1.3 pour toutes les communications
 - Authentification mutuelle TLS pour les API sensibles
 - VPN pour les accès administratifs distants
 
 **Sécurité des applications**
+
 - Validation stricte des entrées utilisateur
 - Protection contre les vulnérabilités OWASP Top 10
 - Gestion sécurisée des sessions avec rotation des tokens
 
 **Sécurité des données**
+
 - Chiffrement des données sensibles au repos (AES-256)
 - Hachage des mots de passe avec algorithmes robustes (Argon2)
 - Anonymisation des données utilisées pour l'analyse
 
 **Contrôle d'accès**
+
 - Authentification multi-facteurs pour tous les utilisateurs
 - Principe du moindre privilège pour les autorisations
 - Séparation des rôles avec matrices d'accès détaillées
 
 **Journalisation et audit**
+
 - Journalisation exhaustive des actions sensibles
 - Systèmes de détection d'anomalies
 - Procédures d'audit régulières
@@ -1109,21 +1157,25 @@ La sécurité de Telepro-AI repose sur plusieurs niveaux de protection :
 Plusieurs mécanismes spécifiques ont été implémentés pour la protection des données sensibles :
 
 **Minimisation des données**
+
 - Collecte limitée aux données strictement nécessaires
 - Suppression automatique des données périmées
 - Procédures d'anonymisation pour les analyses
 
 **Cloisonnement**
+
 - Séparation physique des données d'identification et des données médicales
 - Tokenisation des identifiants pour les traitements internes
 - Infrastructure dédiée pour les données les plus sensibles
 
 **Cycle de vie des données**
+
 - Définition de durées de conservation adaptées à chaque type de donnée
 - Procédure de suppression sécurisée garantissant l'effacement complet
 - Mécanismes de portabilité des données pour respecter les droits des patients
 
 **Traçabilité**
+
 - Horodatage infalsifiable des accès aux données sensibles
 - Chaîne de responsabilité documentée pour chaque traitement
 - Journaux d'audit cryptographiquement protégés
@@ -1139,12 +1191,14 @@ L'architecture de sécurité a été conçue pour être conforme aux bonnes prat
 L'environnement de développement de Telepro-AI a été configuré avec soin pour garantir productivité, qualité et collaboration efficace :
 
 **Langages de programmation**
+
 - **Python 3.10** : Langage principal pour le backend, choisi pour sa lisibilité et son écosystème data science
 - **JavaScript (ES6+)** : Pour le développement frontend avec React
 - **SQL** : Pour les requêtes complexes et l'optimisation des performances
 - **C/C++** : Pour le firmware ESP32
 
 **Frameworks et bibliothèques**
+
 - **Django 4.2** : Framework web Python complet pour le backend
 - **Django REST Framework** : Extension pour la création d'API RESTful
 - **React 18** : Bibliothèque JavaScript pour les interfaces utilisateur
@@ -1154,15 +1208,18 @@ L'environnement de développement de Telepro-AI a été configuré avec soin pou
 - **Arduino ESP32** : Framework pour la programmation du module ESP32
 
 **Base de données et stockage**
+
 - **PostgreSQL 14** : SGBD relationnel principal
 - **Redis 7** : Pour le cache et les files d'attente
 - **Amazon S3** (ou équivalent local) : Pour le stockage d'objets
 
 **Outils de conteneurisation et orchestration**
+
 - **Docker** : Pour la création d'environnements de développement cohérents
 - **Docker Compose** : Pour orchestrer les services en développement
 
 **Environnement local**
+
 - **Virtualenv** : Pour l'isolation des dépendances Python
 - **Node.js et npm** : Pour la gestion des dépendances JavaScript
 - **Git** : Pour le contrôle de version
@@ -1172,23 +1229,27 @@ L'environnement de développement de Telepro-AI a été configuré avec soin pou
 Plusieurs outils ont été adoptés pour améliorer la qualité du code et la productivité :
 
 **Éditeurs et IDE**
+
 - **Visual Studio Code** : Éditeur principal pour le développement
 - **PyCharm Professional** : Pour le développement Python avancé
 - **Arduino IDE** : Pour la programmation du module ESP32
 
 **Outils de qualité de code**
+
 - **ESLint** : Linter JavaScript avec configuration personnalisée
 - **Pylint et Flake8** : Linters Python pour maintenir la qualité du code
 - **Black** : Formateur de code Python automatique
 - **Prettier** : Formateur de code JavaScript
 
 **Tests et validation**
+
 - **Jest** : Framework de test pour JavaScript
 - **pytest** : Framework de test pour Python
 - **Postman** : Pour tester les API REST
 - **React Testing Library** : Pour les tests de composants React
 
 **Collaboration et documentation**
+
 - **GitLab** : Pour le versionnement du code et la CI/CD
 - **Sphinx** : Pour la génération de documentation technique
 - **Swagger/OpenAPI** : Pour la documentation des API
@@ -1231,14 +1292,14 @@ class PatientSegmentation:
         self.algorithm = algorithm
         self.model = None
         self.logger = logging.getLogger(__name__)
-        
+
     def segment_patients(self, patients_data):
         """
         Segmente les patients selon les critères définis ou via clustering automatique.
-        
+
         Args:
             patients_data: DataFrame pandas contenant les données des patients
-            
+
         Returns:
             Dict mapping patient_ids to segment_ids
         """
@@ -1246,7 +1307,7 @@ class PatientSegmentation:
             return self._rule_based_segmentation(patients_data)
         else:
             return self._ml_based_segmentation(patients_data)
-            
+
     def _rule_based_segmentation(self, patients_data):
         """Implémente la segmentation basée sur des règles prédéfinies"""
         segments = {}
@@ -1254,12 +1315,12 @@ class PatientSegmentation:
             segment_id = self._evaluate_criteria(patient)
             segments[patient['id']] = segment_id
         return segments
-    
+
     def _ml_based_segmentation(self, patients_data):
         """Implémente la segmentation basée sur des algorithmes de clustering"""
         # Prétraitement
         features = self._extract_features(patients_data)
-        
+
         # Selection du modèle
         if self.algorithm == 'kmeans':
             from sklearn.cluster import KMeans
@@ -1267,10 +1328,10 @@ class PatientSegmentation:
         elif self.algorithm == 'dbscan':
             from sklearn.cluster import DBSCAN
             self.model = DBSCAN(eps=0.5, min_samples=5)
-        
+
         # Entraînement
         self.model.fit(features)
-        
+
         # Assignation des segments
         cluster_labels = self.model.labels_
         return dict(zip(patients_data['id'], cluster_labels))
@@ -1287,63 +1348,63 @@ class ConsentManager:
     def validate_consent(self, patient, consent_type, action):
         """
         Vérifie si un patient a donné son consentement pour un type d'action.
-        
+
         Args:
             patient: Instance du modèle Patient
             consent_type: Type de consentement ('marketing', 'medical', etc.)
             action: Action spécifique ('sms', 'email', etc.)
-            
+
         Returns:
             bool: True si le consentement est valide, False sinon
         """
         active_consents = patient.get_active_consents()
-        
+
         # Vérifier si le type de consentement existe et est actif
         consent_exists = any(
             consent.consent_type == consent_type and consent.granted
             for consent in active_consents
         )
-        
+
         if not consent_exists:
             self.logger.warning(
                 f"Patient {patient.id} n'a pas consenti à {consent_type}"
             )
             return False
-            
+
         # Vérifier si l'action est compatible avec les préférences du patient
         if action == 'sms' and patient.preferred_communication != 'SMS':
             self.logger.info(
                 f"SMS non envoyé - préférence patient: {patient.preferred_communication}"
             )
             return False
-            
+
         return True
-    
+
     def record_consent_action(self, patient, consent_type, granted, source, metadata=None):
         """
         Enregistre une action de consentement (accord ou retrait).
-        
+
         Args:
             patient: Instance du modèle Patient
             consent_type: Type de consentement
             granted: Boolean indiquant si le consentement est accordé
             source: Source du consentement ('web', 'phone', etc.)
             metadata: Informations supplémentaires sur le consentement
-            
+
         Returns:
             ConsentRecord: L'enregistrement de consentement créé
         """
         from django.utils import timezone
-        
+
         metadata = metadata or {}
-        
+
         # Ajouter des informations d'audit
         metadata.update({
             'ip_address': get_client_ip(),
             'timestamp': timezone.now().isoformat(),
             'user_agent': get_user_agent()
         })
-        
+
         # Créer l'enregistrement de consentement
         consent_record = ConsentRecord.objects.create(
             patient=patient,
@@ -1352,12 +1413,12 @@ class ConsentManager:
             source=source,
             metadata=metadata
         )
-        
+
         self.logger.info(
             f"Consentement {consent_type} {'accordé' if granted else 'retiré'} "
             f"par patient {patient.id}"
         )
-        
+
         return consent_record
 ```
 
@@ -1367,230 +1428,119 @@ Ce gestionnaire garantit que les communications ne sont envoyées qu'aux patient
 
 ### 4.3.1 Architecture des composants
 
-Le frontend de Telepro-AI a été développé avec React en suivant une architecture de composants modulaire et réutilisable :
+Le frontend de Telepro-AI a été développé avec Next.js (version 15.3.1) en suivant une architecture de composants modulaire et réutilisable. Next.js a été choisi pour ses avantages significatifs en termes de SEO, de performances, et pour sa capacité à générer des pages statiques et dynamiques, ce qui était essentiel pour notre projet. L'utilisation de Next.js plutôt que React vanilla nous permet également de bénéficier du rendu côté serveur (SSR) et de la génération de sites statiques (SSG), offrant ainsi des temps de chargement optimisés et une meilleure expérience utilisateur.
 
 **Structure des composants**
 
-```
-frontend/
-├── src/
-│   ├── components/     # Composants réutilisables
-│   │   ├── common/     # Éléments UI génériques
-│   │   ├── forms/      # Composants de formulaire
-│   │   ├── layouts/    # Mises en page
-│   │   └── visualizations/ # Graphiques et visualisations
-│   ├── contexts/       # Context API pour l'état global
-│   ├── hooks/          # Hooks personnalisés
-│   ├── pages/          # Pages de l'application
-│   │   ├── admin/      # Pages d'administration
-│   │   ├── doctor/     # Interface médecin
-│   │   └── patient/    # Portail patient
-│   ├── services/       # Services d'intégration API
-│   └── utils/          # Fonctions utilitaires
-```
+L'architecture frontend suit une organisation modulaire et hiérarchique, structurée en plusieurs couches fonctionnelles :
 
-L'architecture suit les principes de conception "Atomic Design", organisant les composants en atomes, molécules, organismes et templates pour faciliter la réutilisation et la maintenance.
+1. **Couche de routage** : Basée sur le système de routage innovant de Next.js, cette couche permet une navigation fluide entre les différentes parties de l'application (authentification, tableau de bord, gestion des patients et des campagnes).
+
+2. **Couche de présentation** : Comprend les composants réutilisables qui définissent l'interface utilisateur, respectant les principes de conception cohérente et d'expérience utilisateur intuitive.
+
+3. **Couche d'utilitaires** : Regroupe les bibliothèques et fonctions partagées qui simplifient le développement et garantissent la cohérence du code.
+
+4. **Couche de ressources statiques** : Contient les éléments graphiques et visuels nécessaires à l'interface utilisateur.
+
+5. **Couche de typage** : Assure l'intégrité et la cohérence des données grâce à un système de typage strict avec TypeScript.
+
+L'architecture suit l'approche moderne de Next.js avec le système de routage basé sur les fichiers et la séparation claire entre les composants clients et serveur. Cette architecture présente plusieurs avantages:
+
+- **Routage automatique**: Les fichiers dans le dossier `app` deviennent automatiquement des routes dans l'application
+- **Composants serveur/client**: Distinction claire entre les composants exécutés côté serveur et côté client
+- **Chargement optimisé**: Utilisation du chargement différé et du pré-chargement des composants
+- **TypeScript intégré**: Typage strict pour réduire les erreurs et améliorer la maintenabilité
 
 ### 4.3.2 Composants principaux
 
 #### Dashboard administrateur
 
-Le tableau de bord administrateur est un composant central permettant aux professionnels de santé de visualiser et analyser les données clés :
+Le tableau de bord administrateur est un composant central permettant aux professionnels de santé de visualiser et analyser les données clés. Il utilise des requêtes asynchrones pour récupérer les données d'analyse:
 
-```jsx
-import React, { useEffect, useState } from 'react';
-import { Grid, Card, Typography, Box } from '@mui/material';
-import { EngagementChart, CampaignPerformance, PatientDistribution } from '../visualizations';
-import { StatsCard, AlertsList } from '../common';
-import { fetchDashboardData } from '../../services/analyticsService';
+**Tableau de bord administrateur**
 
-const AdminDashboard = () => {
-  const [dashboardData, setDashboardData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await fetchDashboardData();
-        setDashboardData(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadDashboardData();
-    // Rafraîchir les données toutes les 5 minutes
-    const interval = setInterval(loadDashboardData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, []);
-  
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorDisplay message={error} />;
-  
-  return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>Tableau de bord</Typography>
-      
-      <Grid container spacing={3}>
-        {/* Statistiques principales */}
-        <Grid item xs={12} md={6} lg={3}>
-          <StatsCard 
-            title="Patients actifs" 
-            value={dashboardData.activePatients}
-            trend={dashboardData.patientTrend}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} lg={3}>
-          <StatsCard 
-            title="Taux de réponse" 
-            value={`${dashboardData.responseRate}%`}
-            trend={dashboardData.responseTrend}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} lg={3}>
-          <StatsCard 
-            title="Campagnes actives" 
-            value={dashboardData.activeCampaigns}
-          />
-        </Grid>
-        <Grid item xs={12} md={6} lg={3}>
-          <StatsCard 
-            title="Messages envoyés" 
-            value={dashboardData.messagesSent}
-            period="7j"
-          />
-        </Grid>
-        
-        {/* Graphiques principaux */}
-        <Grid item xs={12} lg={8}>
-          <Card sx={{ p: 2 }}>
-            <Typography variant="h6">Évolution de l'engagement</Typography>
-            <EngagementChart data={dashboardData.engagementData} />
-          </Card>
-        </Grid>
-        
-        <Grid item xs={12} lg={4}>
-          <Card sx={{ p: 2 }}>
-            <Typography variant="h6">Distribution des patients</Typography>
-            <PatientDistribution data={dashboardData.patientDistribution} />
-          </Card>
-        </Grid>
-        
-        {/* Performance des campagnes */}
-        <Grid item xs={12}>
-          <Card sx={{ p: 2 }}>
-            <Typography variant="h6">Performance des campagnes</Typography>
-            <CampaignPerformance data={dashboardData.campaignPerformance} />
-          </Card>
-        </Grid>
-        
-        {/* Alertes et notifications */}
-        <Grid item xs={12} md={6}>
-          <Card sx={{ p: 2 }}>
-            <Typography variant="h6">Alertes récentes</Typography>
-            <AlertsList alerts={dashboardData.recentAlerts} />
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
-  );
-};
+Le tableau de bord administrateur constitue l'interface centrale permettant aux professionnels de santé de piloter efficacement leurs activités de téléprospection. Développé avec Next.js, ce composant présente plusieurs caractéristiques essentielles :
 
-export default AdminDashboard;
-```
+- **Chargement optimisé** : Utilisation d'indicateurs visuels pendant le chargement des données pour améliorer l'expérience utilisateur
+- **Architecture client** : Composant React côté client ('use client') permettant des interactions dynamiques
+- **Gestion d'état** : Utilisation des hooks React pour gérer le cycle de vie du composant et l'état des données
+- **Récupération asynchrone** : Chargement des données analytiques depuis l'API backend de manière non-bloquante
+- **Modularité** : Utilisation de sous-composants (DashboardSummary) pour une meilleure organisation du code
+
+Ce tableau de bord est conçu pour présenter clairement les métriques cruciales et permettre aux administrateurs d'identifier rapidement les tendances significatives dans les données patients.
+
+Le composant DashboardSummary utilise SWR (Stale-While-Revalidate) pour la récupération de données avec mise en cache et revalidation automatique:
+
+**Composant DashboardSummary**
+
+Le composant DashboardSummary est responsable de l'affichage des indicateurs clés de performance (KPIs) du système. Sa conception reflète plusieurs principes d'ingénierie logicielle avancés :
+
+- **Gestion des données en temps réel** : Utilisation de SWR (Stale-While-Revalidate) pour une stratégie efficace de mise en cache et de rafraîchissement des données
+- **Présentation des données multi-format** : Organisation des métriques en sections distinctes (vue d'ensemble de l'engagement, performance des campagnes, canaux de communication, efficacité selon l'heure d'envoi)
+- **Visualisation adaptative** : Présentation responsive sur différents types d'écrans grâce à une grille dynamique
+- **Navigation contextuelle** : Liens intégrés permettant de naviguer directement vers les détails pertinents (patients, campagnes spécifiques)
+- **Affichage des tendances** : Indicateurs visuels montrant l'évolution des métriques (à la hausse ou à la baisse)
+
+Le composant présente quatre catégories principales de métriques :
+
+1. **Statistiques globales** : nombre total de patients, taux d'engagement, etc.
+2. **Performance des campagnes** : taux de réponse, taux de lecture, campagnes actives
+3. **Efficacité des canaux** : comparaison des performances entre email, SMS et appels
+4. **Historique des campagnes récentes** : tableau récapitulatif des dernières campagnes avec leur statut
 
 Ce composant agrège plusieurs visualisations et métriques pour offrir une vue d'ensemble de l'activité de téléprospection, permettant aux professionnels de santé d'identifier rapidement les tendances et les patients nécessitant une attention particulière.
 
 #### Interface patient
 
-L'interface patient a été conçue pour être simple et accessible :
+L'interface patient a été conçue pour être simple et accessible, utilisant également Next.js et Tailwind CSS:
 
-```jsx
-import React, { useState, useEffect } from 'react';
-import { Container, Tabs, Tab, Box, Typography, Paper } from '@mui/material';
-import { ProfileForm, CommunicationPreferences, ConsentManager } from '../forms';
-import { MessageHistory } from '../visualizations';
-import { fetchPatientProfile } from '../../services/patientService';
-import { useAuth } from '../../contexts/AuthContext';
+**Interface Patient**
 
-const PatientPortal = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const [profile, setProfile] = useState(null);
-  const { currentUser } = useAuth();
-  
-  useEffect(() => {
-    const loadProfile = async () => {
-      const patientProfile = await fetchPatientProfile(currentUser.id);
-      setProfile(patientProfile);
-    };
-    
-    loadProfile();
-  }, [currentUser]);
-  
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-  
-  if (!profile) return <LoadingSpinner />;
-  
-  return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h5" gutterBottom>
-          Bienvenue, {profile.firstName}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Gérez vos préférences de communication et vos informations personnelles
-        </Typography>
-      </Paper>
-      
-      <Paper sx={{ p: 0 }}>
-        <Tabs value={activeTab} onChange={handleTabChange} variant="fullWidth">
-          <Tab label="Profil" />
-          <Tab label="Préférences" />
-          <Tab label="Consentements" />
-          <Tab label="Historique" />
-        </Tabs>
-        
-        <Box sx={{ p: 3 }}>
-          {activeTab === 0 && (
-            <ProfileForm 
-              profile={profile} 
-              onUpdate={(updatedProfile) => setProfile(updatedProfile)} 
-            />
-          )}
-          
-          {activeTab === 1 && (
-            <CommunicationPreferences 
-              preferences={profile.communicationPreferences} 
-              patientId={profile.id}
-            />
-          )}
-          
+L'interface patient est conçue selon les principes d'accessibilité et d'expérience utilisateur (UX) optimale. Cette interface représente le point de contact direct entre les patients et le système de téléprospection, avec un accent particulier sur la transparence et le contrôle du patient sur ses données.
+
+**Caractéristiques principales :**
+
+- **Authentification sécurisée** : Accès protégé aux données personnelles avec gestion des sessions utilisateur
+- **Chargement progressif** : Indicateurs visuels pendant le chargement des données pour une meilleure expérience utilisateur
+- **Profil personnalisé** : Affichage adapté aux informations spécifiques du patient connecté
+- **Gestion des préférences** : Interface intuitive permettant au patient de définir ses préférences de communication (canal préféré, fréquence, etc.)
+- **Historique des communications** : Visualisation chronologique des interactions précédentes avec l'établissement de santé
+- **Conception responsive** : Adaptation automatique à différentes tailles d'écran (mobile, tablette, ordinateur)
+
+Cette interface est structurée en trois sections principales :
+
+1. **En-tête d'accueil** : Salutation personnalisée et présentation des fonctionnalités
+2. **Gestion des préférences** : Paramètres de communication modifiables par le patient
+3. **Historique des interactions** : Journal des communications passées avec détails sur le contenu et les réponses
+
+Cette approche centrée sur le patient favorise la transparence et renforce la confiance dans le système de téléprospection, tout en assurant la conformité avec les exigences RGPD concernant le contrôle des données personnelles.
+preferences={profile.communicationPreferences}
+patientId={profile.id}
+/>
+)}
+
           {activeTab === 2 && (
-            <ConsentManager 
-              consents={profile.consents} 
+            <ConsentManager
+              consents={profile.consents}
               patientId={profile.id}
             />
           )}
-          
+
           {activeTab === 3 && (
-            <MessageHistory 
+            <MessageHistory
               patientId={profile.id}
             />
           )}
         </Box>
       </Paper>
     </Container>
-  );
+
+);
 };
 
 export default PatientPortal;
-```
+
+````
 
 Cette interface permet aux patients de gérer facilement leurs préférences de communication et leurs consentements, favorisant ainsi l'autonomie et la transparence.
 
@@ -1605,51 +1555,51 @@ class MLPipeline:
     def preprocess_data(self, raw_data):
         """
         Prétraite les données brutes pour les préparer à l'entraînement.
-        
+
         Args:
             raw_data: DataFrame pandas avec les données brutes
-            
+
         Returns:
             DataFrame traité et prêt pour l'entraînement
         """
         # Nettoyage des données
         data = raw_data.copy()
         data = data.dropna(subset=['age_group', 'gender'])
-        
+
         # Encodage des variables catégorielles
         for col in ['gender', 'language_preference', 'preferred_communication']:
             if col in data.columns:
                 data[col] = data[col].astype('category').cat.codes
-        
+
         # Extraction d'age numérique à partir de age_group
         data['age_numeric'] = data['age_group'].map({
             '0-18': 15, '19-35': 27, '36-50': 43, '51-65': 58, '65+': 70
         })
-        
+
         # Extraction de features temporelles
         if 'last_campaign_response' in data.columns:
             data['days_since_response'] = (
                 pd.Timestamp.now() - pd.to_datetime(data['last_campaign_response'])
             ).dt.days
-        
+
         return data
-    
+
     def train_model(self, X_train, y_train, model_type='random_forest', params=None):
         """
         Entraîne un modèle ML avec les données préparées.
-        
+
         Args:
             X_train: Features d'entraînement
             y_train: Target d'entraînement
             model_type: Type de modèle à entraîner
             params: Paramètres optionnels pour le modèle
-            
+
         Returns:
             Modèle entraîné
         """
         if params is None:
             params = {}
-        
+
         if model_type == 'random_forest':
             from sklearn.ensemble import RandomForestClassifier
             model = RandomForestClassifier(**params)
@@ -1661,14 +1611,14 @@ class MLPipeline:
             model = LogisticRegression(**params)
         else:
             raise ValueError(f"Type de modèle inconnu: {model_type}")
-        
+
         # Entraînement
         model.fit(X_train, y_train)
-        
+
         # Évaluation basique
         train_score = model.score(X_train, y_train)
         self.logger.info(f"Score d'entraînement: {train_score:.4f}")
-        
+
         return model
 
 ### 4.4.2 Modèles développés
@@ -1689,67 +1639,67 @@ class PatientClusteringModel:
         self.scaler = StandardScaler()
         self.model = None
         self.features = [
-            'age_numeric', 'gender', 'engagement_score', 
+            'age_numeric', 'gender', 'engagement_score',
             'days_since_response', 'communication_count'
         ]
-    
+
     def find_optimal_clusters(self, data, max_clusters=10):
         """Trouve le nombre optimal de clusters avec la méthode du coude"""
         scaled_data = self.scaler.fit_transform(data[self.features])
-        
+
         inertia = []
         silhouette = []
-        
+
         for k in range(2, max_clusters + 1):
             kmeans = KMeans(n_clusters=k, random_state=42)
             kmeans.fit(scaled_data)
             inertia.append(kmeans.inertia_)
-            
+
             # Silhouette score (plus élevé = meilleur)
             score = silhouette_score(scaled_data, kmeans.labels_)
             silhouette.append(score)
-            
+
         # Trouver le "coude" de l'inertie
         deltas = np.diff(inertia)
         optimal_k = np.argmax(np.diff(deltas)) + 2
-        
+
         # Alternative: meilleur score silhouette
         best_silhouette_k = np.argmax(silhouette) + 2
-        
+
         return {
             'optimal_k_elbow': optimal_k,
             'optimal_k_silhouette': best_silhouette_k,
             'inertia': inertia,
             'silhouette': silhouette
         }
-    
+
     def train(self, data, n_clusters=5):
         """Entraîne le modèle de clustering"""
         X = data[self.features]
         X_scaled = self.scaler.fit_transform(X)
-        
+
         self.model = KMeans(n_clusters=n_clusters, random_state=42)
         self.model.fit(X_scaled)
-        
+
         # Analyser les caractéristiques de chaque cluster
         cluster_centers = self.scaler.inverse_transform(self.model.cluster_centers_)
-        
+
         # Ajouter les labels au dataframe
         data['cluster'] = self.model.predict(X_scaled)
-        
+
         return {
             'model': self.model,
             'centers': cluster_centers,
             'silhouette': silhouette_score(X_scaled, self.model.labels_)
         }
-    
+
     def get_segment_characteristics(self, data):
         """Détermine les caractéristiques de chaque segment"""
         segments = {}
-        
+
         for cluster_id in sorted(data['cluster'].unique()):
             cluster_data = data[data['cluster'] == cluster_id]
-            
+
             # Caractéristiques moyennes
             characteristics = {
                 'size': len(cluster_data),
@@ -1759,13 +1709,13 @@ class PatientClusteringModel:
                 'inactive_days': cluster_data['days_since_response'].mean(),
                 'gender_distribution': cluster_data['gender'].value_counts(normalize=True).to_dict()
             }
-            
+
             # Déterminer un nom descriptif pour le segment
             segment_name = self._generate_segment_name(characteristics)
             segments[segment_name] = characteristics
-        
+
         return segments
-    
+
     def _generate_segment_name(self, chars):
         """Génère un nom descriptif pour un segment basé sur ses caractéristiques"""
         if chars['avg_engagement'] > 7:
@@ -1774,23 +1724,23 @@ class PatientClusteringModel:
             engagement = "Modérément engagés"
         else:
             engagement = "Peu engagés"
-            
+
         if chars['inactive_days'] < 30:
             recency = "actifs récemment"
         elif chars['inactive_days'] < 90:
             recency = "partiellement actifs"
         else:
             recency = "inactifs"
-            
+
         if chars['avg_age'] < 30:
             age = "jeunes"
         elif chars['avg_age'] < 50:
             age = "d'âge moyen"
         else:
             age = "seniors"
-            
+
         return f"Patients {age} {engagement} ({recency})"
-```
+````
 
 Cette implémentation permet de créer des segments significatifs basés sur les caractéristiques comportementales et démographiques des patients, avec génération automatique de noms descriptifs facilitant l'interprétation par les professionnels de santé.
 
@@ -1816,34 +1766,34 @@ class EngagementPredictionModel:
             'campaign_count', 'message_length', 'personalized',
             'contains_question', 'time_of_day', 'day_of_week'
         ]
-    
+
     def prepare_features(self, data):
         """Prépare les features pour l'entraînement ou la prédiction"""
         # Encodage des variables catégorielles
         X = pd.get_dummies(data[self.feature_names], drop_first=True)
-        
+
         # Feature engineering supplémentaire
         if 'message_length' in X.columns:
             X['message_length_squared'] = X['message_length'] ** 2
-        
+
         if 'time_of_day' in data.columns:
             # Convertir l'heure en caractéristique cyclique (sin/cos)
             hours = pd.to_datetime(data['time_of_day']).dt.hour
             X['time_sin'] = np.sin(2 * np.pi * hours / 24)
             X['time_cos'] = np.cos(2 * np.pi * hours / 24)
-        
+
         return X
-    
+
     def train(self, data, target='responded', optimize=True):
         """Entraîne le modèle de prédiction d'engagement"""
         X = self.prepare_features(data)
         y = data[target].astype(int)
-        
+
         # Split train/test
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=y
         )
-        
+
         if optimize:
             # Optimisation des hyperparamètres avec GridSearchCV
             param_grid = {
@@ -1852,7 +1802,7 @@ class EngagementPredictionModel:
                 'min_samples_split': [2, 5, 10],
                 'min_samples_leaf': [1, 2, 4]
             }
-            
+
             grid_search = GridSearchCV(
                 RandomForestClassifier(random_state=42),
                 param_grid=param_grid,
@@ -1860,7 +1810,7 @@ class EngagementPredictionModel:
                 scoring='roc_auc',
                 n_jobs=-1
             )
-            
+
             grid_search.fit(X_train, y_train)
             self.model = grid_search.best_estimator_
             print(f"Meilleurs paramètres: {grid_search.best_params_}")
@@ -1868,40 +1818,40 @@ class EngagementPredictionModel:
             # Modèle standard sans optimisation
             self.model = RandomForestClassifier(random_state=42)
             self.model.fit(X_train, y_train)
-        
+
         # Évaluation
         y_pred = self.model.predict(X_test)
         y_prob = self.model.predict_proba(X_test)[:, 1]
-        
+
         results = {
             'classification_report': classification_report(y_test, y_pred),
             'roc_auc': roc_auc_score(y_test, y_prob),
             'feature_importance': dict(zip(X.columns, self.model.feature_importances_))
         }
-        
+
         # Créer un explainer SHAP pour l'interprétabilité
         self.explainer = shap.TreeExplainer(self.model)
-        
+
         return results
-    
+
     def explain_prediction(self, instance):
         """Explique une prédiction spécifique avec SHAP"""
         if not self.explainer:
             raise ValueError("Le modèle doit être entraîné avant de pouvoir expliquer les prédictions")
-            
+
         # Préparer l'instance
         if isinstance(instance, pd.DataFrame) and len(instance) == 1:
             X = self.prepare_features(instance)
         else:
             raise ValueError("L'instance doit être un DataFrame avec une seule ligne")
-            
+
         # Calculer les valeurs SHAP
         shap_values = self.explainer.shap_values(X)
-        
+
         # Format pour l'interprétabilité
         feature_impacts = dict(zip(X.columns, shap_values[1][0]))
         sorted_impacts = dict(sorted(feature_impacts.items(), key=lambda x: abs(x[1]), reverse=True))
-        
+
         return {
             'prediction': self.model.predict_proba(X)[0, 1],
             'feature_impacts': sorted_impacts
@@ -1925,7 +1875,7 @@ import base64
 
 class FieldEncryptor:
     """Classe utilitaire pour chiffrer/déchiffrer les données sensibles"""
-    
+
     @staticmethod
     def get_key():
         """Récupère la clé de chiffrement depuis les paramètres Django"""
@@ -1936,22 +1886,22 @@ class FieldEncryptor:
             import hashlib
             key = hashlib.sha256(key.encode()).digest()
         return base64.urlsafe_b64encode(key)
-    
+
     @staticmethod
     def encrypt(text):
         """Chiffre une valeur textuelle"""
         if not text:
             return text
-            
+
         f = Fernet(FieldEncryptor.get_key())
         return f.encrypt(text.encode()).decode()
-    
+
     @staticmethod
     def decrypt(encrypted_text):
         """Déchiffre une valeur précédemment chiffrée"""
         if not encrypted_text:
             return encrypted_text
-            
+
         f = Fernet(FieldEncryptor.get_key())
         return f.decrypt(encrypted_text.encode()).decode()
 ```
@@ -1965,7 +1915,7 @@ import logging
 
 class SecurityAuditMiddleware:
     """Middleware pour journaliser les accès aux données sensibles"""
-    
+
     def __init__(self, get_response):
         self.get_response = get_response
         self.logger = logging.getLogger('security_audit')
@@ -1974,25 +1924,25 @@ class SecurityAuditMiddleware:
             '/api/campaigns/communications/',
             '/api/analytics/inactive_patients/'
         ]
-    
+
     def __call__(self, request):
         # Exécuter la vue et obtenir la réponse
         response = self.get_response(request)
-        
+
         # Vérifier si c'est une URL sensible
         self._log_sensitive_access(request, response)
-        
+
         return response
-    
+
     def _log_sensitive_access(self, request, response):
         """Journalise les accès aux ressources sensibles"""
         if any(url in request.path for url in self.sensitive_urls):
             # Déterminer le type d'accès
             access_type = self._determine_access_type(request)
-            
+
             # Identifier l'utilisateur
             user_id = request.user.id if request.user.is_authenticated else None
-            
+
             # Journaliser l'accès
             log_entry = {
                 'timestamp': timezone.now().isoformat(),
@@ -2004,9 +1954,9 @@ class SecurityAuditMiddleware:
                 'status_code': response.status_code,
                 'user_agent': request.META.get('HTTP_USER_AGENT', '')
             }
-            
+
             self.logger.info(json.dumps(log_entry))
-    
+
     def _determine_access_type(self, request):
         """Détermine le type d'accès basé sur la méthode HTTP"""
         if request.method == 'GET':
@@ -2018,7 +1968,7 @@ class SecurityAuditMiddleware:
         elif request.method == 'DELETE':
             return 'DELETE'
         return 'UNKNOWN'
-    
+
     def _get_client_ip(self, request):
         """Extrait l'adresse IP réelle du client, en tenant compte des proxys"""
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -2042,72 +1992,72 @@ import logging
 
 class GDPRManager:
     """Gestionnaire des fonctionnalités liées au RGPD"""
-    
+
     def __init__(self):
         self.logger = logging.getLogger('gdpr')
-    
+
     def anonymize_patient(self, patient_id):
         """
         Anonymise les données d'un patient suite à une demande de droit à l'oubli
-        
+
         Args:
             patient_id: UUID du patient à anonymiser
-            
+
         Returns:
             bool: True si l'anonymisation a réussi
         """
         from patients.models import Patient
-        
+
         try:
             patient = Patient.objects.get(id=patient_id)
-            
+
             # Journaliser l'action avant anonymisation pour l'audit
             self.logger.info(
                 f"Début d'anonymisation pour patient {patient_id} "
                 f"à la demande de l'utilisateur {patient.user_id}"
             )
-            
+
             # Exécuter l'anonymisation
             patient.anonymize()
-            
+
             self.logger.info(f"Anonymisation réussie pour patient {patient_id}")
             return True
-            
+
         except Patient.DoesNotExist:
             self.logger.error(f"Échec d'anonymisation: patient {patient_id} introuvable")
             return False
         except Exception as e:
             self.logger.error(f"Erreur lors de l'anonymisation du patient {patient_id}: {str(e)}")
             return False
-    
+
     def schedule_data_deletion(self, patient_id, delay_days=30):
         """
         Planifie la suppression complète des données d'un patient
-        
+
         Args:
             patient_id: UUID du patient
             delay_days: Délai en jours avant suppression définitive
-            
+
         Returns:
             bool: True si la planification a réussi
         """
         from patients.models import Patient
         from django.utils import timezone
-        
+
         try:
             patient = Patient.objects.get(id=patient_id)
             deletion_date = timezone.now() + timedelta(days=delay_days)
-            
+
             # Planifier la suppression
             patient.schedule_deletion(deletion_date)
-            
+
             self.logger.info(
                 f"Suppression planifiée pour patient {patient_id} "
                 f"à la date {deletion_date.isoformat()}"
             )
-            
+
             return True
-            
+
         except Patient.DoesNotExist:
             self.logger.error(f"Échec de planification: patient {patient_id} introuvable")
             return False
@@ -2117,23 +2067,23 @@ class GDPRManager:
                 f"pour patient {patient_id}: {str(e)}"
             )
             return False
-    
+
     def process_data_subject_request(self, request_data):
         """
         Traite une demande de droit RGPD (accès, rectification, effacement)
-        
+
         Args:
             request_data: Données de la demande
-            
+
         Returns:
             dict: Résultat du traitement
         """
         request_type = request_data.get('request_type')
         patient_id = request_data.get('patient_id')
-        
+
         if not patient_id:
             return {'status': 'error', 'message': 'ID patient manquant'}
-            
+
         if request_type == 'access':
             return self._process_access_request(patient_id)
         elif request_type == 'rectification':
@@ -2159,12 +2109,12 @@ L'un des défis majeurs a été d'intégrer harmonieusement le module matériel 
 ```python
 class HardwareIntegration:
     """Interface entre le backend et les modules ESP32"""
-    
+
     def __init__(self):
         self.devices = {}  # Map device_id -> status
         self.message_queue = Queue()
         self.logger = logging.getLogger('hardware')
-    
+
     def register_device(self, device_id, meta_data):
         """Enregistre un nouveau dispositif ESP32"""
         self.devices[device_id] = {
@@ -2175,18 +2125,18 @@ class HardwareIntegration:
             'errors': 0
         }
         self.logger.info(f"Nouveau dispositif enregistré: {device_id}")
-        
+
     def queue_message(self, device_id, phone_number, message_text, priority=1):
         """Ajoute un message à la file d'attente pour un dispositif"""
         if device_id not in self.devices:
             raise ValueError(f"Dispositif inconnu: {device_id}")
-            
+
         if self.devices[device_id]['status'] != 'ONLINE':
             self.logger.warning(
                 f"Dispositif {device_id} n'est pas en ligne. "
                 f"État actuel: {self.devices[device_id]['status']}"
             )
-            
+
         message = {
             'id': str(uuid.uuid4()),
             'device_id': device_id,
@@ -2195,7 +2145,7 @@ class HardwareIntegration:
             'priority': priority,
             'timestamp': timezone.now().isoformat()
         }
-        
+
         self.message_queue.put(message)
         self.logger.debug(f"Message {message['id']} ajouté à la file pour {device_id}")
         return message['id']
@@ -2208,24 +2158,24 @@ Les algorithmes de machine learning présentaient des problèmes de performance 
 ```python
 class MLOptimizer:
     """Optimise les performances des modèles ML"""
-    
+
     @staticmethod
     def batch_processing(model, data, batch_size=1000):
         """Traite les données par lots pour éviter les problèmes de mémoire"""
         results = []
         total_batches = len(data) // batch_size + (1 if len(data) % batch_size else 0)
-        
+
         for i in range(total_batches):
             start_idx = i * batch_size
             end_idx = min((i + 1) * batch_size, len(data))
             batch = data[start_idx:end_idx]
-            
+
             # Traiter le lot
             batch_results = model.predict(batch)
             results.extend(batch_results)
-            
+
         return results
-    
+
     @staticmethod
     def selective_features(data, most_important_features, threshold=0.9):
         """Réduit la dimensionnalité en gardant uniquement les features importantes"""
@@ -2235,19 +2185,19 @@ class MLOptimizer:
             key=lambda x: x[1],
             reverse=True
         )
-        
+
         # Calculer l'importance cumulée
         total = sum(most_important_features.values())
         cumulative = 0
         selected_features = []
-        
+
         for feature, importance in sorted_features:
             cumulative += importance / total
             selected_features.append(feature)
-            
+
             if cumulative >= threshold:
                 break
-                
+
         return data[selected_features]
 ```
 
@@ -2262,10 +2212,10 @@ La personnalisation efficace des messages tout en respectant les contraintes de 
 ```python
 class MessagePersonalizer:
     """Personnalise les messages selon le profil patient"""
-    
+
     def __init__(self, template_engine=None):
         self.template_engine = template_engine or django.template.engines['django'].engine
-        
+
     def personalize(self, template, patient_data, max_length=160):
         """
         Personnalise un modèle de message selon les données patient
@@ -2273,18 +2223,18 @@ class MessagePersonalizer:
         """
         # Créer un contexte avec les données patient
         context = django.template.Context(patient_data)
-        
+
         # Rendre le template avec le contexte
         template_obj = self.template_engine.from_string(template)
         personalized_message = template_obj.render(context)
-        
+
         # Vérifier la longueur et adapter si nécessaire
         if len(personalized_message) <= max_length:
             return personalized_message
-            
+
         # Si trop long, appliquer des stratégies de réduction
         return self._adapt_length(personalized_message, max_length)
-        
+
     def _adapt_length(self, message, max_length):
         """Adapte un message pour respecter la longueur maximale"""
         # Stratégies progressives de réduction
@@ -2293,28 +2243,28 @@ class MessagePersonalizer:
             self._abbreviate_common_words,  # Abréger certains mots courants
             self._truncate_with_ellipsis    # Tronquer avec ellipse en dernier recours
         ]
-        
+
         current_message = message
-        
+
         for strategy in strategies:
             if len(current_message) <= max_length:
                 break
-                
+
             current_message = strategy(current_message)
-            
+
         return current_message[:max_length]
-    
+
     def _remove_pleasantries(self, message):
         """Supprime les formules de politesse pour réduire la longueur"""
         pleasantries = [
             "Cher ", "Chère ", "Cordialement", "Bien à vous",
             "Nous espérons que vous allez bien", "Merci de votre attention"
         ]
-        
+
         result = message
         for phrase in pleasantries:
             result = result.replace(phrase, "")
-            
+
         return result.strip()
 ```
 
@@ -2347,19 +2297,19 @@ Le module matériel est constitué des éléments suivants :
 - **Connecteurs et interfaces** : Ports série, connecteurs d'antenne et LEDs d'état
 
 ![Schéma du module ESP32+SIM800L](placeholder_figure_5_1.png)
-*Figure 5.1 : Schéma du module ESP32+SIM800L*
+_Figure 5.1 : Schéma du module ESP32+SIM800L_
 
 **Avantages économiques**
 
 Une analyse comparative des coûts d'envoi de SMS montre l'intérêt économique considérable de cette approche :
 
-| Solution | Coût par SMS | Coût mensuel (1000 SMS) | Coût annuel (12000 SMS) |
-|----------|--------------|-------------------------|-------------------------|
-| Twilio | 0,070 DT | 70 DT | 840 DT |
-| Bulk SMS | 0,050 DT | 50 DT | 600 DT |
-| ESP32+SIM800L | 0,008 DT | 8 DT | 96 DT |
+| Solution      | Coût par SMS | Coût mensuel (1000 SMS) | Coût annuel (12000 SMS) |
+| ------------- | ------------ | ----------------------- | ----------------------- |
+| Twilio        | 0,070 DT     | 70 DT                   | 840 DT                  |
+| Bulk SMS      | 0,050 DT     | 50 DT                   | 600 DT                  |
+| ESP32+SIM800L | 0,008 DT     | 8 DT                    | 96 DT                   |
 
-*Tableau 5.1 : Comparaison des coûts d'envoi de SMS*
+_Tableau 5.1 : Comparaison des coûts d'envoi de SMS_
 
 Cette approche permet une réduction de coût d'environ 87% par rapport aux solutions cloud traditionnelles, rendant le système accessible à un plus grand nombre d'établissements de santé.
 
@@ -2378,7 +2328,7 @@ Le circuit électronique comprend plusieurs éléments clés :
 - **Connecteurs d'extension** : Headers pour le branchement de capteurs ou modules additionnels
 
 ![Schéma électronique du module](placeholder_figure_5_2.png)
-*Figure 5.2 : Schéma électronique du module ESP32+SIM800L*
+_Figure 5.2 : Schéma électronique du module ESP32+SIM800L_
 
 **Conception mécanique**
 
@@ -2427,7 +2377,7 @@ La connexion entre l'ESP32 et le SIM800L nécessite plusieurs considérations te
 - **Isolation** : Option d'isolation optique pour renforcer la protection contre les perturbations
 
 ![Circuit d'interfaçage ESP32-SIM800L](placeholder_figure_5_3.png)
-*Figure 5.3 : Circuit d'interfaçage entre ESP32 et SIM800L*
+_Figure 5.3 : Circuit d'interfaçage entre ESP32 et SIM800L_
 
 **Gestion de la carte SIM**
 
@@ -2474,20 +2424,20 @@ private:
     bool _isInitialized;
     int _powerPin;
     int _statusPin;
-    
+
     // File d'attente interne des SMS
     QueueHandle_t _smsQueue;
-    
+
     // Sémaphore pour l'accès au module
     SemaphoreHandle_t _sim800lMutex;
-    
+
 public:
     SIM800L_Controller(HardwareSerial* serial, int powerPin, int statusPin);
     bool init();
     bool sendSMS(const char* phoneNumber, const char* message);
     bool checkNetworkStatus();
     int getSignalQuality();
-    
+
     // Gestionnaire de tâche FreeRTOS pour l'envoi en arrière-plan
     static void smsProcessorTask(void* parameter);
 };
@@ -2495,20 +2445,20 @@ public:
 // Implémentation de la méthode d'envoi de SMS
 bool SIM800L_Controller::sendSMS(const char* phoneNumber, const char* message) {
     if (!_isInitialized) return false;
-    
+
     // Structure de message SMS
     SMS_Message* sms = new SMS_Message;
     strncpy(sms->phoneNumber, phoneNumber, MAX_PHONE_LENGTH);
     strncpy(sms->message, message, MAX_MESSAGE_LENGTH);
     sms->timestamp = millis();
     sms->retries = 0;
-    
+
     // Ajout à la file d'attente
     if (xQueueSend(_smsQueue, &sms, pdMS_TO_TICKS(100)) != pdPASS) {
         delete sms;
         return false;
     }
-    
+
     return true;
 }
 ```
@@ -2521,7 +2471,7 @@ Le firmware utilise le système d'exploitation temps réel FreeRTOS intégré à
 // Configuration des tâches FreeRTOS
 void setup() {
     // Initialisation des composants...
-    
+
     // Création des tâches
     xTaskCreate(
         networkManagerTask,   // Fonction de la tâche
@@ -2531,7 +2481,7 @@ void setup() {
         2,                    // Priorité
         &networkTaskHandle    // Handle de la tâche
     );
-    
+
     xTaskCreate(
         apiClientTask,
         "APIClient",
@@ -2540,7 +2490,7 @@ void setup() {
         1,
         &apiTaskHandle
     );
-    
+
     xTaskCreate(
         SIM800L_Controller::smsProcessorTask,
         "SMSProcessor",
@@ -2549,7 +2499,7 @@ void setup() {
         3,  // Priorité plus élevée pour l'envoi des SMS
         &smsTaskHandle
     );
-    
+
     // Tâche de surveillance
     xTaskCreate(
         watchdogTask,
@@ -2560,9 +2510,11 @@ void setup() {
         &watchdogTaskHandle
     );
 }
+
 ```
 
 Cette approche multi-tâches permet :
+
 - L'envoi de SMS en arrière-plan sans bloquer les autres opérations
 - La surveillance continue de la connexion réseau
 - La synchronisation régulière avec le backend
@@ -2577,11 +2529,11 @@ Pour optimiser l'autonomie en cas d'alimentation par batterie, le firmware impl�
 void managePower(bool isIdle) {
     static unsigned long lastActivityTime = 0;
     const unsigned long IDLE_TIMEOUT = 300000; // 5 minutes
-    
+
     if (!isIdle) {
         // Activité détectée, réinitialiser le compteur
         lastActivityTime = millis();
-        
+
         // Assurer que le système est en mode pleine puissance
         if (currentPowerMode != POWER_MODE_NORMAL) {
             // Transition vers mode normal
@@ -2616,7 +2568,7 @@ La communication repose sur une API REST sécurisée, avec les caractéristiques
 - **Métriques** : Transmission régulière des statistiques d'utilisation et de l'état du module
 
 ![Architecture de communication backend-ESP32](placeholder_figure_5_4.png)
-*Figure 5.4 : Architecture de communication entre le backend et l'ESP32*
+_Figure 5.4 : Architecture de communication entre le backend et l'ESP32_
 
 **API Client embarqué**
 
@@ -2631,24 +2583,24 @@ private:
     String _deviceId;
     WiFiClientSecure _wifiClient;
     HTTPClient _http;
-    
+
     // Cache pour limiter les requêtes
     unsigned long _lastStatusUpdate;
     unsigned long _lastMessageFetch;
-    
+
 public:
     APIClient(const String& serverUrl, const String& apiKey, const String& deviceId);
     bool init();
-    
+
     // Récupération des messages à envoyer
     MessageBatch fetchPendingMessages();
-    
+
     // Notification de statut d'envoi
     bool reportMessageStatus(const String& messageId, MessageStatus status);
-    
+
     // Mise à jour du statut du dispositif
     bool updateDeviceStatus(DeviceStatus status);
-    
+
     // Enregistrement initial du dispositif
     bool registerDevice();
 };
@@ -2656,36 +2608,36 @@ public:
 // Implémentation de la méthode de récupération des messages
 MessageBatch APIClient::fetchPendingMessages() {
     MessageBatch batch;
-    
+
     // Limiter la fréquence des requêtes
     unsigned long currentTime = millis();
     if (currentTime - _lastMessageFetch < MIN_FETCH_INTERVAL) {
         return batch; // Retourner un lot vide
     }
     _lastMessageFetch = currentTime;
-    
+
     // Préparer la requête
     _http.begin(_wifiClient, _serverUrl + "/api/hardware/messages/pending");
     _http.addHeader("Content-Type", "application/json");
     _http.addHeader("Authorization", "Bearer " + _apiKey);
     _http.addHeader("Device-ID", _deviceId);
-    
+
     // Paramètres de capacité
-    String payload = "{\"max_messages\":10,\"battery_level\":" + 
-                     String(getBatteryLevel()) + 
-                     ",\"signal_strength\":" + 
+    String payload = "{\"max_messages\":10,\"battery_level\":" +
+                     String(getBatteryLevel()) +
+                     ",\"signal_strength\":" +
                      String(getSignalStrength()) + "}";
-    
+
     // Exécuter la requête
     int httpCode = _http.POST(payload);
-    
+
     if (httpCode == HTTP_CODE_OK) {
         String response = _http.getString();
-        
+
         // Parser la réponse JSON
         DynamicJsonDocument doc(8192);
         DeserializationError error = deserializeJson(doc, response);
-        
+
         if (!error) {
             JsonArray messages = doc["messages"];
             for (JsonObject message : messages) {
@@ -2700,7 +2652,7 @@ MessageBatch APIClient::fetchPendingMessages() {
             batch.size = batch.messages.size();
         }
     }
-    
+
     _http.end();
     return batch;
 }
@@ -2725,10 +2677,10 @@ void setupSecureClient() {
     "MIIDdzCCAl+gAwIBAgIEAgAAuTANBgkqhkiG9w0BAQUFADBaMQswCQYDVQQGEwJJ\n" \
     // ... certificat tronqué ...
     "-----END CERTIFICATE-----\n";
-    
+
     // Configuration du client WiFi sécurisé
     _wifiClient.setCACert(rootCA);
-    
+
     // Options de sécurité supplémentaires
     _wifiClient.setHandshakeTimeout(30000); // 30 secondes max pour handshake
     _wifiClient.setInsecure(false); // Exiger la validation du certificat
@@ -2763,30 +2715,30 @@ Plusieurs optimisations ont été apportées au firmware suite aux tests :
 
 Les tests ont permis d'établir les performances réelles du module :
 
-| Métrique | Valeur mesurée |
-|----------|----------------|
-| Débit d'envoi | 1,8 SMS/sec |
-| Temps moyen d'envoi | 557ms/SMS |
-| Consommation moyenne | 85mA (idle), 380mA (transmission) |
-| Fiabilité d'envoi | 99,7% (conditions réseau normales) |
-| Taux d'erreur | 0,3% (principalement dû à la couverture réseau) |
-| Autonomie batterie | 22h en usage normal (batterie 2000mAh) |
+| Métrique             | Valeur mesurée                                  |
+| -------------------- | ----------------------------------------------- |
+| Débit d'envoi        | 1,8 SMS/sec                                     |
+| Temps moyen d'envoi  | 557ms/SMS                                       |
+| Consommation moyenne | 85mA (idle), 380mA (transmission)               |
+| Fiabilité d'envoi    | 99,7% (conditions réseau normales)              |
+| Taux d'erreur        | 0,3% (principalement dû à la couverture réseau) |
+| Autonomie batterie   | 22h en usage normal (batterie 2000mAh)          |
 
-*Tableau 5.2 : Métriques de performance du module ESP32+SIM800L*
+_Tableau 5.2 : Métriques de performance du module ESP32+SIM800L_
 
 **Comparaison de consommation avec les alternatives cloud**
 
 La comparaison avec les solutions cloud ne se limite pas au coût par SMS, mais inclut également la consommation de bande passante et d'énergie :
 
-| Paramètre | Solution ESP32+SIM800L | Solution Cloud |
-|-----------|------------------------|----------------|
-| Bande passante Internet | ~0,5 Mo/jour | ~5 Mo/jour |
-| Consommation électrique | 7,2 Wh/jour | N/A (serveur distant) |
-| Latence moyenne | 0,5-2s | 1-5s |
-| Dépendance Internet | Modérée (pour sync) | Totale |
-| Résilience hors connexion | Élevée (file d'attente locale) | Nulle |
+| Paramètre                 | Solution ESP32+SIM800L         | Solution Cloud        |
+| ------------------------- | ------------------------------ | --------------------- |
+| Bande passante Internet   | ~0,5 Mo/jour                   | ~5 Mo/jour            |
+| Consommation électrique   | 7,2 Wh/jour                    | N/A (serveur distant) |
+| Latence moyenne           | 0,5-2s                         | 1-5s                  |
+| Dépendance Internet       | Modérée (pour sync)            | Totale                |
+| Résilience hors connexion | Élevée (file d'attente locale) | Nulle                 |
 
-*Tableau 5.3 : Comparaison avec les alternatives cloud*
+_Tableau 5.3 : Comparaison avec les alternatives cloud_
 
 Ces résultats confirment l'intérêt pratique de la solution matérielle, non seulement pour son coût réduit, mais également pour sa résilience et sa consommation optimisée.
 
@@ -2810,7 +2762,7 @@ La stratégie de test adoptée repose sur une approche pyramidale, combinant dif
 Cette approche permet de détecter les défauts à différents niveaux de granularité, réduisant ainsi le coût de correction et augmentant la confiance dans le système.
 
 ![Pyramide de tests](placeholder_figure_6_1.png)
-*Figure 6.1 : Pyramide de tests appliquée au projet Telepro-AI*
+_Figure 6.1 : Pyramide de tests appliquée au projet Telepro-AI_
 
 **Principes directeurs**
 
@@ -2827,18 +2779,21 @@ Plusieurs principes ont guidé l'élaboration de la stratégie de test :
 Trois environnements distincts ont été mis en place pour les différentes phases de test :
 
 **Environnement de développement**
+
 - **Infrastructure** : Machines locales des développeurs
 - **Base de données** : Instance SQLite locale
 - **Données** : Jeu de données synthétiques limité
 - **Objectif** : Tests unitaires et développement rapide
 
 **Environnement de test**
+
 - **Infrastructure** : Serveurs dédiés aux tests
 - **Base de données** : Instance PostgreSQL répliquée
 - **Données** : Jeu de données représentatif anonymisé
 - **Objectif** : Tests d'intégration, fonctionnels et de performance
 
 **Environnement de préproduction**
+
 - **Infrastructure** : Configuration identique à la production
 - **Base de données** : Clone de la base de production anonymisée
 - **Données** : Données proches de la réalité
@@ -2870,13 +2825,13 @@ class TestConsentManager:
             expires_at=timezone.now() + timedelta(days=30)
         )
         consent_manager = ConsentManager()
-        
+
         # Action
         result = consent_manager.validate_consent(patient, 'marketing', 'sms')
-        
+
         # Assertion
         assert result is True
-    
+
     def test_validate_consent_with_expired_consent(self):
         # Arrangement
         patient = PatientFactory(preferred_communication='SMS')
@@ -2887,10 +2842,10 @@ class TestConsentManager:
             expires_at=timezone.now() - timedelta(days=1)
         )
         consent_manager = ConsentManager()
-        
+
         # Action
         result = consent_manager.validate_consent(patient, 'marketing', 'sms')
-        
+
         # Assertion
         assert result is False
 ```
@@ -2907,33 +2862,39 @@ describe('CommunicationPreferences', () => {
     const mockPreferences = {
       preferred_channel: 'EMAIL',
       preferred_time: 'MORNING',
-      opt_in_marketing: true
-    };
-    const mockUpdateFn = jest.fn().mockResolvedValue({ success: true });
-    
+      opt_in_marketing: true,
+    }
+    const mockUpdateFn = jest
+      .fn()
+      .mockResolvedValue({ success: true })
+
     render(
-      <CommunicationPreferences 
+      <CommunicationPreferences
         preferences={mockPreferences}
         patientId="test-id"
         onUpdate={mockUpdateFn}
-      />
-    );
-    
+      />,
+    )
+
     // Action
-    const channelSelect = screen.getByLabelText(/canal préféré/i);
-    await fireEvent.change(channelSelect, { target: { value: 'SMS' } });
-    
-    const submitButton = screen.getByRole('button', { name: /enregistrer/i });
-    await fireEvent.click(submitButton);
-    
+    const channelSelect = screen.getByLabelText(/canal préféré/i)
+    await fireEvent.change(channelSelect, {
+      target: { value: 'SMS' },
+    })
+
+    const submitButton = screen.getByRole('button', {
+      name: /enregistrer/i,
+    })
+    await fireEvent.click(submitButton)
+
     // Assertion
-    expect(mockUpdateFn).toHaveBeenCalledWith("test-id", {
+    expect(mockUpdateFn).toHaveBeenCalledWith('test-id', {
       preferred_channel: 'SMS',
       preferred_time: 'MORNING',
-      opt_in_marketing: true
-    });
-  });
-});
+      opt_in_marketing: true,
+    })
+  })
+})
 ```
 
 **Tests des modèles ML**
@@ -2945,16 +2906,16 @@ def test_patient_segmentation_clustering():
     # Arrangement
     data = pd.read_csv('tests/fixtures/patient_sample.csv')
     model = PatientClusteringModel()
-    
+
     # Action
     result = model.train(data, n_clusters=4)
     segments = model.get_segment_characteristics(data)
-    
+
     # Assertions
     assert result['model'] is not None
     assert result['silhouette'] > 0.5  # Bon score de silhouette
     assert len(segments) == 4  # Quatre segments créés
-    
+
     # Vérifier que les segments ont des caractéristiques distinctes
     avg_engagements = [s['avg_engagement'] for s in segments.values()]
     assert max(avg_engagements) - min(avg_engagements) > 2  # Écart significatif
@@ -2977,7 +2938,7 @@ class TestCampaignAPI:
         # Créer des segments préalables
         segment1 = PatientSegmentFactory(name="Seniors")
         segment2 = PatientSegmentFactory(name="Diabétiques")
-        
+
         # Données de la campagne
         campaign_data = {
             "title": "Campagne de vaccination automne",
@@ -2988,17 +2949,17 @@ class TestCampaignAPI:
             "sms_template": "Rappel: votre vaccination est prévue le {{date}}",
             "segment_ids": [segment1.id, segment2.id]
         }
-        
+
         # Envoi de la requête
         response = authenticated_client.post(
-            "/api/campaigns/", 
+            "/api/campaigns/",
             data=json.dumps(campaign_data),
             content_type="application/json"
         )
-        
+
         # Vérifications
         assert response.status_code == 201
-        
+
         # Vérifier que la campagne a bien été liée aux segments
         campaign_id = response.json()["id"]
         campaign = Campaign.objects.get(id=campaign_id)
@@ -3015,19 +2976,19 @@ class TestHardwareIntegration:
     def test_sms_delivery_through_hardware(self, mock_hardware):
         # Configuration du mock matériel
         mock_hardware.register_response(
-            "sendSMS", 
+            "sendSMS",
             {"status": "success", "message_id": "test123"}
         )
-        
+
         # Service d'envoi de SMS
         sms_service = SMSService()
-        
+
         # Envoi d'un SMS via le service
         result = sms_service.send_sms(
-            "+21612345678", 
+            "+21612345678",
             "Message de test d'intégration"
         )
-        
+
         # Vérifications
         assert result["status"] == "success"
         assert mock_hardware.get_last_request("sendSMS")["phone"] == "+21612345678"
@@ -3044,6 +3005,7 @@ Des tests de charge ont été réalisés pour évaluer les performances du syst�
 **Méthodologie**
 
 Les tests ont été effectués avec l'outil Locust, simulant jusqu'à 1000 utilisateurs concurrents avec les scénarios suivants :
+
 - Navigation dans l'interface administrateur
 - Création et envoi de campagnes
 - Consultation des analytics
@@ -3051,15 +3013,15 @@ Les tests ont été effectués avec l'outil Locust, simulant jusqu'à 1000 utili
 
 **Résultats**
 
-| Métrique | Valeur cible | Valeur mesurée |
-|----------|--------------|----------------|
-| Temps de réponse moyen | < 300ms | 215ms |
-| Temps de réponse 95ème percentile | < 1s | 780ms |
-| Capacité de traitement | > 50 req/sec | 87 req/sec |
-| Utilisateurs simultanés max | 500 | 750 |
-| Taux d'erreur sous charge | < 1% | 0.3% |
+| Métrique                          | Valeur cible | Valeur mesurée |
+| --------------------------------- | ------------ | -------------- |
+| Temps de réponse moyen            | < 300ms      | 215ms          |
+| Temps de réponse 95ème percentile | < 1s         | 780ms          |
+| Capacité de traitement            | > 50 req/sec | 87 req/sec     |
+| Utilisateurs simultanés max       | 500          | 750            |
+| Taux d'erreur sous charge         | < 1%         | 0.3%           |
 
-*Tableau 6.1 : Résultats des tests de charge*
+_Tableau 6.1 : Résultats des tests de charge_
 
 **Optimisations réalisées**
 
@@ -3091,23 +3053,23 @@ Plusieurs techniques complémentaires ont été utilisées :
 
 Le tableau suivant résume les principales vulnérabilités identifiées et les mesures correctives appliquées :
 
-| Type de vulnérabilité | Niveau de risque | Mesure corrective |
-|-----------------------|------------------|-------------------|
-| Injection SQL | Élevé | Paramétrage systématique des requêtes |
-| XSS (Cross-Site Scripting) | Moyen | Échappement HTML et Content Security Policy |
-| CSRF (Cross-Site Request Forgery) | Moyen | Tokens anti-CSRF sur tous les formulaires |
-| Fuite d'informations dans les logs | Moyen | Masquage des données sensibles |
-| Dépendances obsolètes | Faible | Mise à jour des packages vulnérables |
-| Exposition d'informations dans les réponses d'API | Moyen | Refactorisation des endpoints sensibles |
+| Type de vulnérabilité                             | Niveau de risque | Mesure corrective                           |
+| ------------------------------------------------- | ---------------- | ------------------------------------------- |
+| Injection SQL                                     | Élevé            | Paramétrage systématique des requêtes       |
+| XSS (Cross-Site Scripting)                        | Moyen            | Échappement HTML et Content Security Policy |
+| CSRF (Cross-Site Request Forgery)                 | Moyen            | Tokens anti-CSRF sur tous les formulaires   |
+| Fuite d'informations dans les logs                | Moyen            | Masquage des données sensibles              |
+| Dépendances obsolètes                             | Faible           | Mise à jour des packages vulnérables        |
+| Exposition d'informations dans les réponses d'API | Moyen            | Refactorisation des endpoints sensibles     |
 
-*Tableau 6.2 : Vulnérabilités identifiées et corrigées*
+_Tableau 6.2 : Vulnérabilités identifiées et corrigées_
 
 **Score de sécurité**
 
 Un audit de sécurité complet a été réalisé par un consultant externe, aboutissant à un score global de sécurité de 91/100, au-dessus de l'objectif initial de 85/100.
 
 ![Résultats de l'audit de sécurité](placeholder_figure_6_2.png)
-*Figure 6.2 : Résultats de l'audit de sécurité externe*
+_Figure 6.2 : Résultats de l'audit de sécurité externe_
 
 ## 6.4 Validation utilisateur
 
@@ -3118,6 +3080,7 @@ La validation finale du système a été réalisée par les utilisateurs finaux 
 **Méthodologie**
 
 Les tests d'acceptance ont impliqué 18 utilisateurs représentatifs des différents profils :
+
 - 8 professionnels de santé (médecins et administrateurs)
 - 5 assistants médicaux
 - 3 responsables informatiques
@@ -3128,6 +3091,7 @@ Chaque participant a reçu un scénario de test comprenant 15 tâches représent
 **Critères d'acceptance**
 
 Pour chaque fonctionnalité, trois critères ont été évalués :
+
 - **Utilisabilité** : Facilité de réalisation de la tâche
 - **Efficacité** : Précision et complétude du résultat
 - **Satisfaction** : Appréciation subjective de l'utilisateur
@@ -3136,23 +3100,25 @@ Pour chaque fonctionnalité, trois critères ont été évalués :
 
 Le taux de réussite global des tests d'acceptance a atteint 92%, dépassant l'objectif initial de 85%.
 
-| Fonctionnalité | Taux de réussite | Temps moyen | Satisfaction (1-5) |
-|----------------|------------------|-------------|-------------------|
-| Création de campagne | 100% | 4m12s | 4.7 |
-| Segmentation de patients | 88% | 5m35s | 4.2 |
-| Analyse de performance | 94% | 3m20s | 4.5 |
-| Gestion des consentements | 89% | 2m45s | 4.0 |
-| Configuration du module ESP32 | 78% | 8m20s | 3.6 |
+| Fonctionnalité                | Taux de réussite | Temps moyen | Satisfaction (1-5) |
+| ----------------------------- | ---------------- | ----------- | ------------------ |
+| Création de campagne          | 100%             | 4m12s       | 4.7                |
+| Segmentation de patients      | 88%              | 5m35s       | 4.2                |
+| Analyse de performance        | 94%              | 3m20s       | 4.5                |
+| Gestion des consentements     | 89%              | 2m45s       | 4.0                |
+| Configuration du module ESP32 | 78%              | 8m20s       | 3.6                |
 
-*Tableau 6.3 : Résultats des tests d'acceptance par fonctionnalité*
+_Tableau 6.3 : Résultats des tests d'acceptance par fonctionnalité_
 
 Les retours qualitatifs ont également mis en évidence plusieurs points positifs :
+
 - Interface intuitive et claire
 - Processus de création de campagne bien guidé
 - Visualisations d'analytics pertinentes et lisibles
 - Bon temps de réponse général du système
 
 Des axes d'amélioration ont également été identifiés :
+
 - Simplification de la configuration matérielle
 - Clarification de certains termes techniques
 - Ajout de fonctionnalités d'aide contextuelle
@@ -3181,7 +3147,7 @@ Les premières mesures d'efficacité opérationnelle sont encourageantes :
 - **Précision du ciblage** : 92% des messages envoyés à des patients correspondant précisément aux critères visés
 
 ![Évolution de l'efficacité opérationnelle](placeholder_figure_6_3.png)
-*Figure 6.3 : Évolution de l'efficacité opérationnelle sur la période pilote*
+_Figure 6.3 : Évolution de l'efficacité opérationnelle sur la période pilote_
 
 **Satisfaction des utilisateurs**
 
@@ -3235,19 +3201,17 @@ Ces impacts démontrent la valeur ajoutée substantielle du système pour les é
 
 ### Améliorations techniques
 
-Plusieurs axes d'amélioration technique ont été identifiés pour les futures versions du système :
+Plusieurs axes d'amélioration technique ont été identifiés pour les prochaines phases du développement, basés sur l'état actuel du projet et les technologies implémentées :
 
-1. **Automatisation avancée** : Intégration de Celery pour l'automatisation des tâches d'entraînement des modèles ML et l'optimisation des traitements asynchrones.
+1. **Optimisation du frontend Next.js** : Amélioration des performances avec l'utilisation plus poussée des fonctionnalités de rendu statique, server components et l'optimisation du chargement des données avec SWR.
 
-2. **Intelligence artificielle** : Enrichissement des modèles prédictifs avec des techniques d'apprentissage profond pour améliorer encore la précision des prédictions d'engagement.
+2. **Dashboard avancé** : Développement de visualisations interactives supplémentaires dans l'interface Next.js pour une meilleure analyse des données et suivi des campagnes.
 
-3. **Intégration IoT étendue** : Développement de modules complémentaires pour collecter des données de santé via des capteurs connectés, enrichissant ainsi les profils patients.
+3. **Extension des capacités AI/ML** : Enrichissement des modèles de segmentation et de prédiction déjà implémentés avec des techniques d'apprentissage plus avancées pour améliorer la précision.
 
-4. **API publique** : Création d'une API documentée permettant l'intégration avec d'autres systèmes d'information médicale.
+4. **Amélioration de la documentation API** : Enrichissement de la documentation générée par drf-spectacular pour faciliter l'extension et l'intégration du système.
 
-5. **Infrastructure multi-cloud** : Évolution vers une architecture hybride multi-cloud pour une meilleure résilience et flexibilité de déploiement.
-
-6. **Internationalisation** : Extension du support multilingue et adaptation aux spécificités réglementaires d'autres pays.
+5. **Optimisation des performances backend** : Amélioration des requêtes de base de données et mise en place de caching plus sophistiqué pour supporter un volume croissant de données patients et de campagnes.
 
 ### Développements futurs
 
@@ -3271,37 +3235,37 @@ Le projet Telepro-AI constitue ainsi une base solide pour continuer à innover d
 
 # Bibliographie
 
-1. Aggarwal, C. C. (2023). *Machine Learning for Healthcare Analytics*. Springer International Publishing.
+1. Aggarwal, C. C. (2023). _Machine Learning for Healthcare Analytics_. Springer International Publishing.
 
-2. Al-Turjman, F. (2022). *Internet of Medical Things: Paradigm of Wearable Devices*. CRC Press.
+2. Al-Turjman, F. (2022). _Internet of Medical Things: Paradigm of Wearable Devices_. CRC Press.
 
-3. Braunstein, M. L. (2022). *Health Informatics on FHIR: How HL7's API is Transforming Healthcare*. Springer.
+3. Braunstein, M. L. (2022). _Health Informatics on FHIR: How HL7's API is Transforming Healthcare_. Springer.
 
-4. Dhingra, D., & Agarwal, S. (2023). "Machine Learning-Based Patient Segmentation for Personalized Healthcare Interventions". *Journal of Healthcare Engineering*, 2023, 1-15.
+4. Dhingra, D., & Agarwal, S. (2023). "Machine Learning-Based Patient Segmentation for Personalized Healthcare Interventions". _Journal of Healthcare Engineering_, 2023, 1-15.
 
-5. Espinoza, J., & Martínez, F. (2024). "Cost-Effective SMS Communication Solutions for Healthcare in Developing Countries". *Global Health: Science and Practice*, 12(1), 78-92.
+5. Espinoza, J., & Martínez, F. (2024). "Cost-Effective SMS Communication Solutions for Healthcare in Developing Countries". _Global Health: Science and Practice_, 12(1), 78-92.
 
-6. García-Peñalvo, F. J., & Franco-Martín, M. A. (2023). *Digital Health Tools for Mental Healthcare*. Elsevier.
+6. García-Peñalvo, F. J., & Franco-Martín, M. A. (2023). _Digital Health Tools for Mental Healthcare_. Elsevier.
 
-7. Howell, E. A., & Peterson, E. B. (2023). "Patient Engagement Through Digital Communication: A Systematic Review". *BMJ Open*, 13(5), e067321.
+7. Howell, E. A., & Peterson, E. B. (2023). "Patient Engagement Through Digital Communication: A Systematic Review". _BMJ Open_, 13(5), e067321.
 
-8. Kolachalama, V. B., & Garg, P. S. (2022). *Machine Learning and AI for Healthcare*. Springer.
+8. Kolachalama, V. B., & Garg, P. S. (2022). _Machine Learning and AI for Healthcare_. Springer.
 
-9. López-Martínez, F., & Núñez-Valdez, E. R. (2024). "ESP32-Based IoT Solutions for Rural Healthcare: Challenges and Opportunities". *Internet of Things*, 25, 100523.
+9. López-Martínez, F., & Núñez-Valdez, E. R. (2024). "ESP32-Based IoT Solutions for Rural Healthcare: Challenges and Opportunities". _Internet of Things_, 25, 100523.
 
-10. Mahmoud, M. H., & Alazzam, M. B. (2023). "GDPR Compliance in Healthcare Mobile Applications: A Technical and Legal Perspective". *International Journal of Information Management Data Insights*, 3(1), 100160.
+10. Mahmoud, M. H., & Alazzam, M. B. (2023). "GDPR Compliance in Healthcare Mobile Applications: A Technical and Legal Perspective". _International Journal of Information Management Data Insights_, 3(1), 100160.
 
-11. Morrison, C., & Iosifidis, A. (2024). "Explainable AI for Healthcare: Methods, Applications and Challenges". *Artificial Intelligence in Medicine*, 141, 102569.
+11. Morrison, C., & Iosifidis, A. (2024). "Explainable AI for Healthcare: Methods, Applications and Challenges". _Artificial Intelligence in Medicine_, 141, 102569.
 
-12. Rajeshwari, K., & Sekar, K. (2023). "Low-cost SMS Gateway Implementation Using ESP32 and SIM800L for Healthcare Applications". *International Journal of Embedded Systems*, 15(2), 142-154.
+12. Rajeshwari, K., & Sekar, K. (2023). "Low-cost SMS Gateway Implementation Using ESP32 and SIM800L for Healthcare Applications". _International Journal of Embedded Systems_, 15(2), 142-154.
 
-13. Rieke, N., Hancox, J., Li, W., et al. (2023). "The Future of Digital Health with Federated Learning". *NPJ Digital Medicine*, 3, 119.
+13. Rieke, N., Hancox, J., Li, W., et al. (2023). "The Future of Digital Health with Federated Learning". _NPJ Digital Medicine_, 3, 119.
 
-14. Topol, E. J. (2022). *Deep Medicine: How Artificial Intelligence Can Make Healthcare Human Again*. Basic Books.
+14. Topol, E. J. (2022). _Deep Medicine: How Artificial Intelligence Can Make Healthcare Human Again_. Basic Books.
 
-15. World Health Organization. (2022). *Global Strategy on Digital Health 2020-2025*. WHO Press.
+15. World Health Organization. (2022). _Global Strategy on Digital Health 2020-2025_. WHO Press.
 
-16. Zhao, J., Zhang, Y., Wen, K., et al. (2023). "Django-Based Healthcare Information Systems: Security Considerations and Best Practices". *Health Informatics Journal*, 29(2), 14604582231151641.
+16. Zhao, J., Zhang, Y., Wen, K., et al. (2023). "Django-Based Healthcare Information Systems: Security Considerations and Best Practices". _Health Informatics Journal_, 29(2), 14604582231151641.
 
 # Annexes
 
@@ -3312,6 +3276,7 @@ Le projet Telepro-AI constitue ainsi une base solide pour continuer à innover d
 Pour installer le système Telepro-AI, les prérequis suivants sont nécessaires :
 
 **Environnement serveur**
+
 - Système d'exploitation : Linux (Ubuntu 20.04 LTS ou supérieur recommandé)
 - Python 3.10 ou supérieur
 - Node.js 16.x ou supérieur
@@ -3320,12 +3285,14 @@ Pour installer le système Telepro-AI, les prérequis suivants sont nécessaires
 - Serveur web Nginx
 
 **Matériel recommandé**
+
 - Processeur : 4 cœurs ou plus
 - Mémoire RAM : 8 Go minimum (16 Go recommandé)
 - Espace disque : 50 Go minimum
 - Connexion internet stable
 
 **Pour le module ESP32**
+
 - ESP32 (modèle avec au moins 4MB de mémoire flash)
 - Module SIM800L
 - Arduino IDE avec support ESP32
@@ -3360,7 +3327,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-**Frontend (React)**
+**Frontend (Next.js)**
 
 ```bash
 # Naviguer vers le répertoire frontend
@@ -3398,11 +3365,13 @@ Des instructions d'installation détaillées sont disponibles dans la documentat
 L'interface administrateur permet de gérer l'ensemble des fonctionnalités du système :
 
 **Tableau de bord principal**
+
 - Vue d'ensemble des métriques clés
 - Accès rapide aux fonctionnalités principales
 - Alertes et notifications
 
 **Gestion des campagnes**
+
 1. Créer une nouvelle campagne
 2. Définir les critères de ciblage
 3. Créer ou sélectionner des modèles de message
@@ -3410,12 +3379,14 @@ L'interface administrateur permet de gérer l'ensemble des fonctionnalités du s
 5. Suivre les résultats
 
 **Segmentation des patients**
+
 1. Utiliser les segments prédéfinis
 2. Créer des segments personnalisés
 3. Lancer une segmentation automatique par IA
 4. Analyser les caractéristiques des segments
 
 **Analytics**
+
 1. Visualiser les performances des campagnes
 2. Analyser l'engagement des patients
 3. Identifier les patients nécessitant un suivi
@@ -3426,20 +3397,24 @@ L'interface administrateur permet de gérer l'ensemble des fonctionnalités du s
 Le portail patient offre une expérience simplifiée aux utilisateurs finaux :
 
 **Gestion du profil**
+
 1. Mettre à jour les informations personnelles
 2. Définir les préférences de langue
 
 **Préférences de communication**
+
 1. Choisir les canaux de communication préférés
 2. Définir les plages horaires acceptables
 3. Sélectionner les types de communications souhaités
 
 **Gestion des consentements**
+
 1. Consulter les consentements actifs
 2. Accorder ou retirer son consentement
 3. Consulter l'historique des modifications
 
 **Historique des communications**
+
 1. Consulter les messages reçus
 2. Filtrer par type de communication
 3. Répondre aux demandes en attente
@@ -3451,21 +3426,25 @@ Le portail patient offre une expérience simplifiée aux utilisateurs finaux :
 La documentation technique complète décrit en détail l'architecture du système :
 
 **Diagrammes d'architecture**
+
 - Diagramme de déploiement
 - Diagramme de composants
 - Diagramme de séquence pour les processus clés
 
 **Modèles de données**
+
 - Schéma complet de la base de données
 - Description des entités et relations
 - Stratégies d'indexation et d'optimisation
 
 **Flux de données**
+
 - Flux d'acquisition et de traitement
 - Pipelines d'intelligence artificielle
 - Flux de communication et de notification
 
 **Sécurité**
+
 - Mécanismes d'authentification et d'autorisation
 - Chiffrement et protection des données
 - Journalisation et audit
@@ -3475,6 +3454,7 @@ La documentation technique complète décrit en détail l'architecture du systè
 L'API du système est entièrement documentée :
 
 **Endpoints publics**
+
 - `/api/auth/` - Authentification et gestion des utilisateurs
 - `/api/patients/` - Gestion des profils patients
 - `/api/campaigns/` - Gestion des campagnes
@@ -3482,16 +3462,19 @@ L'API du système est entièrement documentée :
 - `/api/hardware/` - Interface avec les modules ESP32
 
 **Formats des données**
+
 - Structures JSON pour chaque ressource
 - Paramètres de requête acceptés
 - Codes de retour et gestion des erreurs
 
 **Authentication**
+
 - Mécanisme d'authentification JWT
 - Gestion des tokens et rafraîchissement
 - Contrôle d'accès basé sur les rôles
 
 **Webhooks**
+
 - Points d'intégration pour événements externes
 - Format des notifications
 - Configuration et sécurisation
