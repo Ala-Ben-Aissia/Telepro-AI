@@ -31,7 +31,9 @@ export async function getPatients(
   }
 }
 
-export async function getPatient(id: string): Promise<Patient | null> {
+export async function getPatient(
+  id: string,
+): Promise<Patient | null> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
@@ -74,12 +76,17 @@ export async function getPatientCommunications(
     )
     return response.data
   } catch (error) {
-    console.error(`Error fetching communications for patient ${id}:`, error)
+    console.error(
+      `Error fetching communications for patient ${id}:`,
+      error,
+    )
     return []
   }
 }
 
-export async function getPatientConsents(id: string): Promise<ConsentRecord[]> {
+export async function getPatientConsents(
+  id: string,
+): Promise<ConsentRecord[]> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
@@ -109,14 +116,19 @@ export async function updatePatientConsent(
     revalidatePath(`/patients/${patientId}`)
     return response.data
   } catch (error) {
-    console.error(`Error updating consent for patient ${patientId}:`, error)
+    console.error(
+      `Error updating consent for patient ${patientId}:`,
+      error,
+    )
     return null
   }
 }
 
 // ----- Campaign Actions -----
 
-export async function getCampaigns(is_active?: string): Promise<Campaign[]> {
+export async function getCampaigns(
+  is_active?: string,
+): Promise<Campaign[]> {
   try {
     const queryParam =
       is_active === 'all'
@@ -139,10 +151,19 @@ export async function getCampaigns(is_active?: string): Promise<Campaign[]> {
   }
 }
 
-export async function getCampaign(id: number): Promise<Campaign | null> {
+export async function getCampaign(
+  id: number,
+): Promise<Campaign | null> {
+  const access = (await cookies()).get('accessToken')?.value
+  if (!access) return null
   try {
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/${id}/`,
+      {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      },
     )
     return response.data
   } catch (error) {
@@ -202,14 +223,72 @@ export async function sendCampaign(
   }
 }
 
-export async function getCampaignPerformance(id: number): Promise<unknown> {
+type CampaignPerformance = {
+  total_sent: number
+  delivered: number
+  responded: number
+  failed: number
+  response_rate: number
+}
+
+type Channel = 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
+
+type ChannelMetrics = {
+  total: number
+  responded: number
+  read: number
+  response_rate: number
+  read_rate: number
+  avg_response_time_hours: number
+}
+
+type CampaignChannels = {
+  [key in Channel]?: ChannelMetrics
+}
+
+type CampaignChannelMetrics = {
+  channel_metrics: CampaignChannels
+  best_response_channel: Channel
+  fastest_response_channel: Channel | null
+  period_days: number
+}
+
+export async function getCampaignPerformance(
+  id: number,
+): Promise<CampaignPerformance | null> {
   try {
+    const access = (await cookies()).get('accessToken')?.value
+    if (!access) return null
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/${id}/performance/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/${id}/effectiveness`,
+      { headers: { Authorization: `Bearer ${access}` } },
     )
     return response.data
   } catch (error) {
-    console.error(`Error fetching performance for campaign ${id}:`, error)
+    console.error(
+      `Error fetching performance for campaign ${id}:`,
+      error,
+    )
+    return null
+  }
+}
+
+export async function getCampaignChannelMetrics(
+  id: string,
+): Promise<CampaignChannelMetrics | null> {
+  try {
+    const access = (await cookies()).get('accessToken')?.value
+    if (!access) return null
+    const response = await apiClient.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/analytics/channel-metrics?campaign_id=${id}`,
+      { headers: { getAuthorization: `Bearer ${access}` } },
+    )
+    return response.data
+  } catch (error) {
+    console.error(
+      `Error fetching channel metrics for campaign ${id}:`,
+      error,
+    )
     return null
   }
 }
@@ -235,7 +314,9 @@ export async function getSegments(): Promise<PatientSegment[]> {
   }
 }
 
-export async function getSegment(id: number): Promise<PatientSegment | null> {
+export async function getSegment(
+  id: number,
+): Promise<PatientSegment | null> {
   try {
     const response = await apiClient.get(`/api/segments/${id}/`)
     return response.data
@@ -263,7 +344,10 @@ export async function updateSegment(
   data: Partial<PatientSegment>,
 ): Promise<PatientSegment | null> {
   try {
-    const response = await apiClient.patch(`/api/segments/${id}/`, data)
+    const response = await apiClient.patch(
+      `/api/segments/${id}/`,
+      data,
+    )
     revalidatePath(`/segments/${id}`)
     revalidatePath('/segments')
     return response.data
@@ -273,7 +357,9 @@ export async function updateSegment(
   }
 }
 
-export async function getSegmentPatients(id: number): Promise<Patient[]> {
+export async function getSegmentPatients(
+  id: number,
+): Promise<Patient[]> {
   try {
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/segments/${id}/patients/`,
@@ -368,7 +454,20 @@ export async function register(
   password: string,
   passwordConfirm: string,
 ) {
-  console.log(username, email, password, passwordConfirm)
+  try {
+    await apiClient.post(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/accounts/register/`,
+      {
+        username,
+        email,
+        password,
+        password_confirm: passwordConfirm,
+      },
+    )
+    return true
+  } catch {
+    return false
+  }
 }
 
 export async function login(

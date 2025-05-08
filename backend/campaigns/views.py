@@ -849,13 +849,15 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
         - days: Number of days to look back (default: 90)
         """
         days = request.query_params.get("days", 90)
-
+        campaign_id = request.query_params.get("campaign_id")
         try:
             days = int(days)
         except (TypeError, ValueError):
             days = 90
 
-        results = EnhancedAnalyticsService.get_communication_channel_metrics(days=days)
+        results = EnhancedAnalyticsService.get_communication_channel_metrics(
+            campaign_id=campaign_id, days=days
+        )
 
         return Response(results)
 

@@ -43,7 +43,7 @@ export function middleware(request: NextRequest) {
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!accessToken) {
       const loginUrl = new URL('/auth/login', request.url)
-      loginUrl.searchParams.set('next', pathname)
+      // loginUrl.searchParams.set('next', pathname)
       return NextResponse.redirect(loginUrl)
     }
   }

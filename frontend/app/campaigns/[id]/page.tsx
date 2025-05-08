@@ -1,5 +1,6 @@
 import {
   getCampaign,
+  getCampaignChannelMetrics,
   getCampaignPerformance,
   getSegments,
 } from '@/app/api/actions'
@@ -11,11 +12,14 @@ export const revalidate = 0
 export default async function CampaignDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const campaignId = parseInt(params.id, 10)
+  const campaignId = parseInt((await params).id, 10)
   const campaign = await getCampaign(campaignId)
   const performance = await getCampaignPerformance(campaignId)
+  const channelMetrics = await getCampaignChannelMetrics(
+    String(campaignId),
+  )
   const segments = await getSegments()
 
   if (!campaign) {
@@ -79,8 +83,8 @@ export default async function CampaignDetailPage({
                 timeStatus === 'Completed'
                   ? 'bg-blue-100 text-blue-800'
                   : timeStatus === 'In Progress'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-purple-100 text-purple-800'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-purple-100 text-purple-800'
               }`}
             >
               {timeStatus}
@@ -173,7 +177,7 @@ export default async function CampaignDetailPage({
                               >
                                 {age}
                               </span>
-                            )
+                            ),
                           )
                         ) : (
                           <span className="text-gray-500">
@@ -196,7 +200,7 @@ export default async function CampaignDetailPage({
                               >
                                 {lang}
                               </span>
-                            )
+                            ),
                           )
                         ) : (
                           <span className="text-gray-500">
@@ -219,7 +223,7 @@ export default async function CampaignDetailPage({
                               >
                                 {location}
                               </span>
-                            )
+                            ),
                           )
                         ) : (
                           <span className="text-gray-500">
@@ -293,14 +297,19 @@ export default async function CampaignDetailPage({
                         <div
                           className="bg-blue-600 h-2.5 rounded-full"
                           style={{
-                            width: `${
-                              performance.delivery_rate || 0
-                            }%`,
+                            width: `${(
+                              (performance.delivered /
+                                performance.total_sent || 0) * 100
+                            ).toFixed(1)}%`,
                           }}
                         ></div>
                       </div>
                       <span>
-                        {performance.delivery_rate?.toFixed(1) || 0}%
+                        {(
+                          (performance.delivered /
+                            performance.total_sent || 0) * 100
+                        ).toFixed(1)}
+                        %
                       </span>
                     </dd>
                   </div>
@@ -313,59 +322,65 @@ export default async function CampaignDetailPage({
                         <div
                           className="bg-green-600 h-2.5 rounded-full"
                           style={{
-                            width: `${
-                              performance.response_rate || 0
-                            }%`,
+                            width: `${performance.response_rate * 100 || 0}%`,
                           }}
                         ></div>
                       </div>
                       <span>
-                        {performance.response_rate?.toFixed(1) || 0}%
+                        {(performance.response_rate * 100).toFixed(
+                          1,
+                        ) || 0}
+                        %
                       </span>
                     </dd>
                   </div>
 
-                  {performance.channel_metrics && (
+                  {channelMetrics?.channel_metrics && (
                     <div className="pt-4 border-t border-gray-200">
                       <dt className="text-sm font-medium text-gray-500 mb-2">
                         Channel Performance
                       </dt>
                       <dd className="space-y-2">
                         {Object.entries(
-                          performance.channel_metrics
-                        ).map(
-                          ([channel, metrics]: [string, unknown]) => (
+                          channelMetrics?.channel_metrics,
+                        ).map(([channel, metrics]) => {
+                          console.log({ channel, metrics })
+                          return (
                             <div key={channel}>
                               <div className="flex justify-between text-xs">
                                 <span className="capitalize">
                                   {channel}
                                 </span>
                                 <span>
-                                  {metrics.response_rate?.toFixed(
-                                    1
-                                  ) || 0}
+                                  {(
+                                    metrics.response_rate * 100
+                                  )?.toFixed(1) || 0}
                                   %
                                 </span>
                               </div>
                               <div className="w-full bg-gray-200 rounded-full h-2">
                                 <div
                                   className={`h-2 rounded-full ${
-                                    channel === 'email'
+                                    channel === 'EMAIL'
                                       ? 'bg-blue-600'
-                                      : channel === 'sms'
-                                      ? 'bg-green-600'
-                                      : 'bg-yellow-600'
+                                      : channel === 'SMS'
+                                        ? 'bg-green-600'
+                                        : 'bg-yellow-600'
                                   }`}
                                   style={{
                                     width: `${
-                                      metrics.response_rate || 0
+                                      (
+                                        metrics.response_rate * 100
+                                      )?.toFixed(1) ||
+                                      0 ||
+                                      0
                                     }%`,
                                   }}
                                 ></div>
                               </div>
                             </div>
                           )
-                        )}
+                        })}
                       </dd>
                     </div>
                   )}
@@ -389,12 +404,12 @@ export default async function CampaignDetailPage({
             <div className="px-6 py-5">
               {segments &&
               segments.filter((segment) =>
-                segment.campaigns?.includes(campaignId)
+                segment.campaigns?.includes(campaignId),
               ).length > 0 ? (
                 <ul className="divide-y divide-gray-200">
                   {segments
                     .filter((segment) =>
-                      segment.campaigns?.includes(campaignId)
+                      segment.campaigns?.includes(campaignId),
                     )
                     .map((segment) => (
                       <li key={segment.id} className="py-3">

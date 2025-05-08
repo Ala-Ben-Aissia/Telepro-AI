@@ -413,7 +413,7 @@ class EnhancedAnalyticsService:
         }
 
     @staticmethod
-    def get_communication_channel_metrics(days=90):
+    def get_communication_channel_metrics(campaign_id, days=90):
         """
         Get performance metrics for different communication channels.
 
@@ -427,7 +427,12 @@ class EnhancedAnalyticsService:
         threshold_date = timezone.now() - timedelta(days=days)
 
         # Get logs for the period
-        logs = CommunicationLog.objects.filter(sent_at__gte=threshold_date)
+        if campaign_id:
+            logs = CommunicationLog.objects.filter(
+                sent_at__gte=threshold_date, campaign=campaign_id
+            )
+        else:
+            logs = CommunicationLog.objects.filter(sent_at__gte=threshold_date)
 
         # Group by communication type
         channel_metrics = {}

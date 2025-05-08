@@ -12,13 +12,13 @@ export const revalidate = 0
 export default async function SegmentDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const segmentId = parseInt(params.id, 10)
+  const segmentId = parseInt((await params).id, 10)
   const segment = await getSegment(segmentId)
   const patients = await getSegmentPatients(segmentId)
   const analysis = await analyzeSegment(segmentId)
-  const campaigns = await getCampaigns({ segment_id: segmentId })
+  const campaigns = await getCampaigns()
 
   if (!segment) {
     return (
@@ -120,7 +120,7 @@ export default async function SegmentDetailPage({
                         </span>
                         <span>
                           {new Date(
-                            segment.created_at
+                            segment.created_at,
                           ).toLocaleDateString()}
                         </span>
                       </div>
@@ -130,7 +130,7 @@ export default async function SegmentDetailPage({
                         </span>
                         <span>
                           {new Date(
-                            segment.updated_at
+                            segment.updated_at,
                           ).toLocaleDateString()}
                         </span>
                       </div>
@@ -226,8 +226,8 @@ export default async function SegmentDetailPage({
                                   patient.engagement_score < 0.3
                                     ? 'bg-red-600'
                                     : patient.engagement_score < 0.7
-                                    ? 'bg-yellow-400'
-                                    : 'bg-green-600'
+                                      ? 'bg-yellow-400'
+                                      : 'bg-green-600'
                                 }`}
                                 style={{
                                   width: `${
@@ -320,11 +320,12 @@ export default async function SegmentDetailPage({
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.demographics.age_distribution
+                                analysis.demographics
+                                  .age_distribution,
                               ).map(
                                 ([age, percentage]: [
                                   string,
-                                  unknown
+                                  unknown,
                                 ]) => (
                                   <div
                                     key={age}
@@ -343,7 +344,7 @@ export default async function SegmentDetailPage({
                                     </div>
                                     <span>{percentage}%</span>
                                   </div>
-                                )
+                                ),
                               )}
                             </div>
                           </div>
@@ -358,11 +359,11 @@ export default async function SegmentDetailPage({
                             <div className="space-y-1">
                               {Object.entries(
                                 analysis.demographics
-                                  .gender_distribution
+                                  .gender_distribution,
                               ).map(
                                 ([gender, percentage]: [
                                   string,
-                                  unknown
+                                  unknown,
                                 ]) => (
                                   <div
                                     key={gender}
@@ -381,7 +382,7 @@ export default async function SegmentDetailPage({
                                     </div>
                                     <span>{percentage}%</span>
                                   </div>
-                                )
+                                ),
                               )}
                             </div>
                           </div>
@@ -396,13 +397,13 @@ export default async function SegmentDetailPage({
                             <div className="space-y-1">
                               {Object.entries(
                                 analysis.demographics
-                                  .location_distribution
+                                  .location_distribution,
                               )
                                 .slice(0, 3)
                                 .map(
                                   ([location, percentage]: [
                                     string,
-                                    unknown
+                                    unknown,
                                   ]) => (
                                     <div
                                       key={location}
@@ -421,7 +422,7 @@ export default async function SegmentDetailPage({
                                       </div>
                                       <span>{percentage}%</span>
                                     </div>
-                                  )
+                                  ),
                                 )}
                             </div>
                           </div>
@@ -448,9 +449,9 @@ export default async function SegmentDetailPage({
                                     .average_engagement < 0.3
                                     ? 'bg-red-600'
                                     : analysis.engagement_metrics
-                                        .average_engagement < 0.7
-                                    ? 'bg-yellow-400'
-                                    : 'bg-green-600'
+                                          .average_engagement < 0.7
+                                      ? 'bg-yellow-400'
+                                      : 'bg-green-600'
                                 }`}
                                 style={{
                                   width: `${
@@ -476,7 +477,7 @@ export default async function SegmentDetailPage({
                           </span>
                           <span className="text-2xl font-medium">
                             {analysis.engagement_metrics.response_rate?.toFixed(
-                              1
+                              1,
                             ) || 0}
                             %
                           </span>
@@ -491,11 +492,11 @@ export default async function SegmentDetailPage({
                             <div className="space-y-1">
                               {Object.entries(
                                 analysis.engagement_metrics
-                                  .preferred_channels
+                                  .preferred_channels,
                               ).map(
                                 ([channel, percentage]: [
                                   string,
-                                  unknown
+                                  unknown,
                                 ]) => (
                                   <div
                                     key={channel}
@@ -510,8 +511,8 @@ export default async function SegmentDetailPage({
                                           channel === 'EMAIL'
                                             ? 'bg-blue-600'
                                             : channel === 'SMS'
-                                            ? 'bg-green-600'
-                                            : 'bg-yellow-600'
+                                              ? 'bg-green-600'
+                                              : 'bg-yellow-600'
                                         }`}
                                         style={{
                                           width: `${percentage}%`,
@@ -520,7 +521,7 @@ export default async function SegmentDetailPage({
                                     </div>
                                     <span>{percentage}%</span>
                                   </div>
-                                )
+                                ),
                               )}
                             </div>
                           </div>
@@ -584,11 +585,11 @@ export default async function SegmentDetailPage({
                             </span>
                             <span className="text-xs text-gray-500 ml-2">
                               {new Date(
-                                campaign.start_date
+                                campaign.start_date,
                               ).toLocaleDateString()}{' '}
                               -{' '}
                               {new Date(
-                                campaign.end_date
+                                campaign.end_date,
                               ).toLocaleDateString()}
                             </span>
                           </div>
