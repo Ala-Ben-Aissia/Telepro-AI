@@ -110,10 +110,11 @@ Je tiens à exprimer ma sincère gratitude et mes remerciements les plus disting
 [Bibliographie](#bibliographie)
 
 [Annexes](#annexes)
-   - [Guide d'installation](#guide-dinstallation)
-   - [Manuel d'utilisation](#manuel-dutilisation)
-   - [Documentation technique](#documentation-technique)
-   - [Glossaire](#glossaire)
+
+- [Guide d'installation](#guide-dinstallation)
+- [Manuel d'utilisation](#manuel-dutilisation)
+- [Documentation technique](#documentation-technique)
+- [Glossaire](#glossaire)
 
 ---
 
@@ -130,6 +131,7 @@ Ce projet s'inscrit à l'intersection de l'intelligence artificielle, de la sant
 ## Problématique
 
 Les établissements de santé font face à plusieurs défis majeurs dans leur communication avec les patients :
+
 - Difficulté à identifier les patients nécessitant un suivi prioritaire
 - Faibles taux de réponse aux campagnes de communication traditionnelles
 - Manque d'outils pour personnaliser les communications à grande échelle
@@ -147,44 +149,52 @@ La gestion traditionnelle du suivi des patients présente plusieurs limitations 
 Face à ces défis, notre projet a défini des objectifs ambitieux mais mesurables, visant à créer une rupture significative avec les approches traditionnelles :
 
 ### Objectifs stratégiques
+
 1. **Révolutionner la segmentation patient** : Développer un système d'intelligence artificielle capable de découvrir automatiquement des segments de patients pertinents d'un point de vue clinique et comportemental
 2. **Optimiser l'engagement patient** : Augmenter d'au moins 40% les taux de réponse aux communications médicales grâce à la personnalisation et au ciblage intelligent
 3. **Anticiper les besoins** : Mettre en place des modèles prédictifs capables d'identifier les patients à risque avant l'apparition de problèmes d'observance
 
 ### Objectifs fonctionnels
+
 1. **Automatiser intelligemment** : Créer un système capable de déterminer automatiquement quand, comment et avec quel message contacter chaque patient
 2. **Personnaliser à grande échelle** : Déployer un moteur de personnalisation adapté aux spécificités de chaque patient tout en permettant des communications à grande échelle
 3. **Sécuriser et conformer** : Garantir une conformité RGPD totale avec une traçabilité complète des consentements et des communications
 
 ### Objectifs techniques
+
 1. **Architecture évolutive** : Concevoir une solution modulaire pouvant s'adapter à différentes tailles d'établissements de santé
 2. **Interface intuitive** : Développer un tableau de bord intuitif permettant aux professionnels de santé de piloter leurs campagnes sans expertise technique
 3. **Innovation matérielle** : Intégrer une solution matérielle autonome pour l'envoi automatisé de SMS, assurant la continuité des communications même en cas de problèmes réseau
-2. Identifier proactivement les patients nécessitant un suivi particulier
-3. Optimiser les campagnes de sensibilisation
-4. Garantir le respect des normes RGPD et la sécurité des données
+4. Identifier proactivement les patients nécessitant un suivi particulier
+5. Optimiser les campagnes de sensibilisation
+6. Garantir le respect des normes RGPD et la sécurité des données
 
 ## Approche méthodologique
 
 Pour atteindre ces objectifs ambitieux, nous avons mis en œuvre une méthodologie hybride et innovante :
 
 ### Méthodologie de recherche et développement
+
 - **Design Thinking centré patient** : Immersion dans l'environnement médical pour comprendre les besoins réels des patients et du personnel soignant
 - **Développement agile adapté au secteur médical** : Sprints de deux semaines avec validation systématique par des professionnels de santé
 - **Approche itérative data-driven** : Cycles d'amélioration continue basés sur l'analyse des données d'interaction plutôt que sur des hypothèses
 
 ### Cycle de développement scientifique
+
 1. **Phase d'exploration et conception** (6 semaines)
+
    - Analyse approfondie de la littérature scientifique sur l'engagement patient
    - Définition des modèles conceptuels et des hypothèses à tester
    - Conception de l'architecture système et des interfaces utilisateur
 
 2. **Phase de développement incrémental** (14 semaines)
+
    - Implémentation progressive des modules backend et frontend
    - Développement des algorithmes d'IA avec validation croisée
    - Création du prototype matériel pour l'envoi automatisé de SMS
 
 3. **Phase d'évaluation rigoureuse** (5 semaines)
+
    - Tests d'utilisabilité avec des professionnels de santé
    - Validation des performances des algorithmes d'IA
    - Évaluation de la conformité RGPD et de la sécurité
@@ -199,13 +209,9 @@ Pour atteindre ces objectifs ambitieux, nous avons mis en œuvre une méthodolog
 Ce rapport est structuré en cinq chapitres principaux qui reflètent notre démarche méthodique et scientifique :
 
 1. **Cadre général du projet** : présentation du contexte médical et analyse approfondie des besoins des établissements de santé et des patients
-   
 2. **État de l'art** : étude comparative des solutions existantes et analyse critique des technologies disponibles pour la téléprospection médicale
-   
 3. **Conception et modélisation** : architecture globale du système, modélisation des données patient et conception des flux de communication
-   
 4. **Réalisation et implémentation** : développement backend, frontend et algorithmes d'IA avec focus sur la sécurité, la performance et l'expérience utilisateur
-   
 5. **Tests et validation** : stratégie de test rigoureuse et validation par des utilisateurs réels en contexte médical
 
 Chaque chapitre présente à la fois les aspects théoriques et leur application pratique, illustrant notre démarche d'ingénierie complète.
@@ -383,11 +389,13 @@ Le projet s'étend sur une durée totale de 26 à 36 semaines, décomposée comm
 Notre solution repose sur une stack technique moderne et robuste, soigneusement sélectionnée pour répondre aux exigences spécifiques du domaine médical :
 
 **Backend :**
+
 - **Django** : Framework Python haute performance permettant un développement sécurisé et conforme aux normes médicales
 - **Django REST Framework** : Extension spécialisée offrant des capacités avancées d'API avec authentification et permissions granulaires
 - **SQLite** : Système de base de données embarqué utilisé en développement, offrant un excellent équilibre entre performance et simplicité
 
 **Frontend :**
+
 - **Next.js** : Framework React de nouvelle génération permettant le rendu hybride (statique et serveur) pour des performances optimales
 - **TypeScript** : Langage fortement typé garantissant une fiabilité accrue et une maintenance simplifiée
 - **TailwindCSS** : Système de design utility-first permettant une interface réactive et accessible
@@ -441,11 +449,11 @@ Nos choix technologiques ont été guidés par plusieurs critères clés :
 
 1. **Maturité et stabilité** : Nous avons privilégié des technologies éprouvées comme Django et SQLite pour garantir la fiabilité du système.
 
-3. **Conformité RGPD** : Le framework Django fournit des outils intégrés pour la gestion des données personnelles et des consentements.
+2. **Conformité RGPD** : Le framework Django fournit des outils intégrés pour la gestion des données personnelles et des consentements.
 
-4. **Performance et scalabilité** : L'architecture modulaire choisie permet d'optimiser les performances et facilite les évolutions futures.
+3. **Performance et scalabilité** : L'architecture modulaire choisie permet d'optimiser les performances et facilite les évolutions futures.
 
-5. **Facilité de maintenance** : TypeScript améliore la maintenabilité du code frontend en ajoutant un typage statique et en détectant les erreurs potentielles avant l'exécution.
+4. **Facilité de maintenance** : TypeScript améliore la maintenabilité du code frontend en ajoutant un typage statique et en détectant les erreurs potentielles avant l'exécution.
 
 5. **Écosystème d'IA mature** : scikit-learn offre des implémentations optimisées des algorithmes nécessaires avec une documentation complète et une communauté active.
 
@@ -938,30 +946,35 @@ Le portail administrateur constitue l'interface principale pour la gestion du sy
 **Écrans principaux**
 
 1. **Tableau de bord**
+
    - Indicateurs clés de performance (KPIs)
    - Graphiques d'activité et d'engagement
    - Alertes et notifications
    - Accès rapide aux fonctionnalités principales
 
 2. **Gestion des patients**
+
    - Liste des patients avec filtres avancés
    - Fiche détaillée du patient
    - Historique des interactions
    - Gestion des consentements
 
 3. **Segmentation**
+
    - Création et édition de segments
    - Visualisation des segments
    - Segmentation automatique par IA
    - Analyse des caractéristiques des segments
 
 4. **Campagnes**
+
    - Liste des campagnes avec statut
    - Création de nouvelles campagnes
    - Paramétrage des messages et des canaux
    - Suivi des performances
 
 5. **Rapports et analytics**
+
    - Métriques d'engagement
    - Rapports d'activité
    - Export des données
@@ -1005,21 +1018,25 @@ Le portail patient offre une interface simplifiée et accessible, permettant aux
 **Écrans principaux**
 
 1. **Accueil personnalisé**
+
    - Message de bienvenue personnalisé
    - Résumé des communications récentes
    - Rappels et notifications importantes
 
 2. **Préférences de communication**
+
    - Canaux préférés (SMS, email, appel)
    - Horaires préférés
    - Types de communications souhaités
 
 3. **Gestion des consentements**
+
    - Vue d'ensemble des consentements actuels
    - Interface de modification des consentements
    - Historique des modifications
 
 4. **Historique des communications**
+
    - Liste chronologique des communications
    - Détail des messages reçus
    - Possibilité de répondre directement
@@ -1263,6 +1280,7 @@ Notre backend implémente une architecture en couches sophistiquée, inspirée d
 5. **Couche de persistance** : Abstraction complète de l'accès aux données via l'ORM Django, permettant de passer de SQLite en développement à des systèmes plus robustes en production
 
 Cette architecture en couches nous offre plusieurs avantages stratégiques :
+
 - **Testabilité accrue** : Chaque couche peut être testée indépendamment
 - **Évolutivité facilitée** : Possibilité de remplacer ou modifier une couche sans affecter les autres
 - **Maintenance simplifiée** : Isolation claire des responsabilités
@@ -1271,18 +1289,21 @@ Cette architecture en couches nous offre plusieurs avantages stratégiques :
 L'architecture backend est organisée en couches distinctes :
 
 1. **Couche de présentation (API)**
+
    - Points d'entrée REST API
    - Validation des entrées
    - Sérialisation/désérialisation
    - Gestion des authentifications et permissions
 
 2. **Couche de service**
+
    - Implémentation de la logique métier
    - Orchestration des opérations
    - Gestion des workflows
    - Validation des règles métier
 
 3. **Couche d'accès aux données**
+
    - Modèles Django ORM
    - Repositories et DAOs
    - Caching et optimisations
@@ -1650,19 +1671,23 @@ Un ensemble de composants de base qui définissent l'identité visuelle du syst�
 
 ```typescript
 // Exemple de composant Button
-import { ButtonHTMLAttributes, ReactNode } from 'react';
-import { cva, VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
+import { ButtonHTMLAttributes, ReactNode } from 'react'
+import { cva, VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
-        danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        default:
+          'bg-primary text-primary-foreground hover:bg-primary/90',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        outline:
+          'border border-input hover:bg-accent hover:text-accent-foreground',
+        danger:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
       },
       size: {
         default: 'h-10 py-2 px-4',
@@ -1676,12 +1701,12 @@ const buttonVariants = cva(
       size: 'default',
     },
   }
-);
+)
 
-export interface ButtonProps extends
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
-  children: ReactNode;
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  children: ReactNode
 }
 
 const Button = ({
@@ -1698,10 +1723,10 @@ const Button = ({
     >
       {children}
     </button>
-  );
-};
+  )
+}
 
-export { Button, buttonVariants };
+export { Button, buttonVariants }
 ```
 
 #### 5.3.4.2 Tableaux de données
@@ -1710,7 +1735,7 @@ Composants pour l'affichage et la manipulation des données tabulaires :
 
 ```typescript
 // Exemple simpliﬁé de composant DataTable
-import { useState } from 'react';
+import { useState } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -1719,22 +1744,23 @@ import {
   getFilteredRowModel,
   ColumnDef,
   ColumnFiltersState,
-  SortingState
-} from '@tanstack/react-table';
+  SortingState,
+} from '@tanstack/react-table'
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  searchColumn?: string;
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  searchColumn?: string
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchColumn
+  searchColumn,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] =
+    useState<ColumnFiltersState>([])
 
   const table = useReactTable({
     data,
@@ -1749,7 +1775,7 @@ export function DataTable<TData, TValue>({
       sorting,
       columnFilters,
     },
-  });
+  })
 
   // Implémentation du tableau avec pagination, tri et filtrage
   // ...
@@ -1762,25 +1788,40 @@ Composants de formulaire avec validation et gestion d'état :
 
 ```typescript
 // Exemple de composant de form avec React Hook Form et Zod
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 
 // Schéma de validation
 const patientSchema = z.object({
-  firstName: z.string().min(2, { message: 'Le prénom doit contenir au moins 2 caractères' }),
-  lastName: z.string().min(2, { message: 'Le nom doit contenir au moins 2 caractères' }),
-  email: z.string().email({ message: 'Email invalide' }).optional().or(z.literal('')),
-  phone: z.string().regex(/^[0-9+\s]+$/, { message: 'Format de téléphone invalide' }).optional().or(z.literal('')),
+  firstName: z.string().min(2, {
+    message: 'Le prénom doit contenir au moins 2 caractères',
+  }),
+  lastName: z.string().min(2, {
+    message: 'Le nom doit contenir au moins 2 caractères',
+  }),
+  email: z
+    .string()
+    .email({ message: 'Email invalide' })
+    .optional()
+    .or(z.literal('')),
+  phone: z
+    .string()
+    .regex(/^[0-9+\s]+$/, { message: 'Format de téléphone invalide' })
+    .optional()
+    .or(z.literal('')),
   birthDate: z.string().optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
-});
+})
 
-type PatientFormValues = z.infer<typeof patientSchema>;
+type PatientFormValues = z.infer<typeof patientSchema>
 
-export function PatientForm({ onSubmit, initialData }: {
-  onSubmit: (data: PatientFormValues) => void;
-  initialData?: Partial<PatientFormValues>;
+export function PatientForm({
+  onSubmit,
+  initialData,
+}: {
+  onSubmit: (data: PatientFormValues) => void
+  initialData?: Partial<PatientFormValues>
 }) {
   const form = useForm<PatientFormValues>({
     resolver: zodResolver(patientSchema),
@@ -1792,7 +1833,7 @@ export function PatientForm({ onSubmit, initialData }: {
       birthDate: '',
       gender: undefined,
     },
-  });
+  })
 
   // Implémentation du formulaire
   // ...
@@ -1805,7 +1846,7 @@ Composants de graphiques et visualisations pour les tableaux de bord :
 
 ```typescript
 // Exemple de composant graphique avec Recharts
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 import {
   BarChart,
   Bar,
@@ -1815,32 +1856,38 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from 'recharts'
 
 interface CampaignPerformanceProps {
-  campaignId: string;
-  period: 'week' | 'month' | 'quarter';
+  campaignId: string
+  period: 'week' | 'month' | 'quarter'
 }
 
-export function CampaignPerformanceChart({ campaignId, period }: CampaignPerformanceProps) {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function CampaignPerformanceChart({
+  campaignId,
+  period,
+}: CampaignPerformanceProps) {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     // Chargement des données depuis l'API
     // ...
-  }, [campaignId, period]);
+  }, [campaignId, period])
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage message={error} />;
+  if (loading) return <LoadingSpinner />
+  if (error) return <ErrorMessage message={error} />
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart
         data={data}
         margin={{
-          top: 5, right: 30, left: 20, bottom: 5,
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
@@ -1854,7 +1901,7 @@ export function CampaignPerformanceChart({ campaignId, period }: CampaignPerform
         <Bar dataKey="responded" fill="#ff8042" name="Réponses" />
       </BarChart>
     </ResponsiveContainer>
-  );
+  )
 }
 ```
 
@@ -1864,11 +1911,11 @@ La gestion de l'état de l'application utilise Redux Toolkit avec RTK Query pour
 
 ```typescript
 // store/index.ts
-import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { api } from './api';
-import authReducer from './authSlice';
-import uiReducer from './uiSlice';
+import { configureStore } from '@reduxjs/toolkit'
+import { setupListeners } from '@reduxjs/toolkit/query'
+import { api } from './api'
+import authReducer from './authSlice'
+import uiReducer from './uiSlice'
 
 export const store = configureStore({
   reducer: {
@@ -1878,17 +1925,20 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware),
-});
+})
 
-setupListeners(store.dispatch);
+setupListeners(store.dispatch)
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
 ```
 
 ```typescript
 // store/api.ts
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import {
+  createApi,
+  fetchBaseQuery,
+} from '@reduxjs/toolkit/query/react'
 
 export const api = createApi({
   reducerPath: 'api',
@@ -1896,34 +1946,45 @@ export const api = createApi({
     baseUrl: '/api',
     prepareHeaders: (headers, { getState }) => {
       // Ajout des en-têtes d'authentification
-      const token = (getState() as any).auth.token;
+      const token = (getState() as any).auth.token
       if (token) {
-        headers.set('authorization', `Bearer ${token}`);
+        headers.set('authorization', `Bearer ${token}`)
       }
-      return headers;
+      return headers
     },
   }),
-  tagTypes: ['Patients', 'Segments', 'Campaigns', 'Communications', 'Analytics'],
+  tagTypes: [
+    'Patients',
+    'Segments',
+    'Campaigns',
+    'Communications',
+    'Analytics',
+  ],
   endpoints: () => ({}),
-});
+})
 ```
 
 ```typescript
 // store/patientsApi.ts
-import { api } from './api';
-import type { Patient, PatientCreate, PatientUpdate } from '@/types';
+import { api } from './api'
+import type { Patient, PatientCreate, PatientUpdate } from '@/types'
 
 export const patientsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getPatients: builder.query<{
-      patients: Patient[];
-      total: number;
-    }, {
-      page?: number;
-      limit?: number;
-      search?: string;
-      filters?: Record<string, any>;
-    }>({ /* implémentation */ }),
+    getPatients: builder.query<
+      {
+        patients: Patient[]
+        total: number
+      },
+      {
+        page?: number
+        limit?: number
+        search?: string
+        filters?: Record<string, any>
+      }
+    >({
+      /* implémentation */
+    }),
 
     getPatientById: builder.query<Patient, string>({
       query: (id) => `patients/${id}`,
@@ -1939,7 +2000,10 @@ export const patientsApi = api.injectEndpoints({
       invalidatesTags: [{ type: 'Patients', id: 'LIST' }],
     }),
 
-    updatePatient: builder.mutation<Patient, { id: string; updates: PatientUpdate }>({
+    updatePatient: builder.mutation<
+      Patient,
+      { id: string; updates: PatientUpdate }
+    >({
       query: ({ id, updates }) => ({
         url: `patients/${id}`,
         method: 'PATCH',
@@ -1956,7 +2020,7 @@ export const patientsApi = api.injectEndpoints({
       invalidatesTags: [{ type: 'Patients', id: 'LIST' }],
     }),
   }),
-});
+})
 
 export const {
   useGetPatientsQuery,
@@ -1964,7 +2028,7 @@ export const {
   useCreatePatientMutation,
   useUpdatePatientMutation,
   useDeletePatientMutation,
-} = patientsApi;
+} = patientsApi
 ```
 
 ## 5.4 Implémentation matérielle
@@ -2403,6 +2467,7 @@ def find_optimal_k(features, max_k=10):
 En complément de K-means, nous avons intégré DBSCAN (Density-Based Spatial Clustering of Applications with Noise), un algorithme de pointe particulièrement pertinent dans le contexte médical. Contrairement aux approches traditionnelles, notre implémentation de DBSCAN excelle dans l'identification de segments de patients aux caractéristiques atypiques ou aux comportements d'engagement non-conventionnels.
 
 Cette approche présente plusieurs avantages cliniquement significatifs :
+
 - Détection automatique de micro-segments de patients présentant des profils distincts
 - Identification des patients "atypiques" nécessitant potentiellement une attention particulière
 - Découverte de segments de formes complexes non identifiables par des méthodes traditionnelles
@@ -2990,15 +3055,16 @@ Au début du développement, le frontend était implémenté en JavaScript pur. 
 // Exemple de code JavaScript problématique (avant refactoring)
 function processPatient(patient) {
   // Sans typage, on ne sait pas quelle forme est attendue
-  const fullName = patient.firstName + ' ' + patient.lastName;
+  const fullName = patient.firstName + ' ' + patient.lastName
 
   // Si l'API renvoie first_name au lieu de firstName, erreur silencieuse
-  if (patient.engagementScore > 0.7) {  // erreur si c'est engagement_score côté API
+  if (patient.engagementScore > 0.7) {
+    // erreur si c'est engagement_score côté API
     return {
       id: patient.id,
       name: fullName,
-      highEngagement: true
-    };
+      highEngagement: true,
+    }
   }
 }
 ```
@@ -3040,22 +3106,30 @@ export interface Patient {
 
 ```typescript
 // api/patientApi.ts
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Patient } from '../types/models';
+import {
+  createApi,
+  fetchBaseQuery,
+} from '@reduxjs/toolkit/query/react'
+import type { Patient } from '../types/models'
 
 export const patientApi = createApi({
   reducerPath: 'patientApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api/' }),
   endpoints: (builder) => ({
-    getPatients: builder.query<{ patients: Patient[], total: number }, { page?: number, search?: string }>(
-      {
-        query: ({ page = 1, search = '' }) => `patients?page=${page}&search=${search}`
-      }
-    ),
-    getPatientById: builder.query<Patient, string>({
-      query: (id) => `patients/${id}`
+    getPatients: builder.query<
+      { patients: Patient[]; total: number },
+      { page?: number; search?: string }
+    >({
+      query: ({ page = 1, search = '' }) =>
+        `patients?page=${page}&search=${search}`,
     }),
-    updatePatient: builder.mutation<Patient, { id: string, updates: Partial<Patient> }>({
+    getPatientById: builder.query<Patient, string>({
+      query: (id) => `patients/${id}`,
+    }),
+    updatePatient: builder.mutation<
+      Patient,
+      { id: string; updates: Partial<Patient> }
+    >({
       query: ({ id, updates }) => ({
         url: `patients/${id}`,
         method: 'PATCH',
@@ -3064,41 +3138,47 @@ export const patientApi = createApi({
     }),
     // Autres opérations CRUD...
   }),
-});
+})
 
 export const {
   useGetPatientsQuery,
   useGetPatientByIdQuery,
   useUpdatePatientMutation,
-} = patientApi;
+} = patientApi
 ```
 
 3. **Applications des types dans les composants** : Le compilateur TypeScript détecte les erreurs avant l'exécution
 
 ```typescript
 // components/PatientCard.tsx
-import React from 'react';
-import type { Patient } from '../types/models';
+import React from 'react'
+import type { Patient } from '../types/models'
 
 interface PatientCardProps {
-  patient: Patient;
-  onEdit: (id: string) => void;
+  patient: Patient
+  onEdit: (id: string) => void
 }
 
-export const PatientCard: React.FC<PatientCardProps> = ({ patient, onEdit }) => {
+export const PatientCard: React.FC<PatientCardProps> = ({
+  patient,
+  onEdit,
+}) => {
   // TypeScript garantit que ces propriétés existent et sont du bon type
-  const { id, email, engagement_score, preferred_contact_method } = patient;
+  const { id, email, engagement_score, preferred_contact_method } =
+    patient
 
   return (
     <div className="card">
-      <h3>{patient.first_name} {patient.last_name}</h3>
+      <h3>
+        {patient.first_name} {patient.last_name}
+      </h3>
       <p>Email: {email}</p>
       <p>Engagement: {engagement_score.toFixed(2)}</p>
       <p>Contact préféré: {preferred_contact_method}</p>
       <button onClick={() => onEdit(id)}>Modifier</button>
     </div>
-  );
-};
+  )
+}
 ```
 
 #### Bénéfices obtenus
@@ -3128,12 +3208,12 @@ Transition vers Redux Toolkit avec RTK Query :
 
 ```typescript
 // store/index.ts
-import { configureStore } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
-import { patientApi } from '../api/patientApi';
-import { campaignApi } from '../api/campaignApi';
-import authReducer from './authSlice';
-import uiReducer from './uiSlice';
+import { configureStore } from '@reduxjs/toolkit'
+import { setupListeners } from '@reduxjs/toolkit/query'
+import { patientApi } from '../api/patientApi'
+import { campaignApi } from '../api/campaignApi'
+import authReducer from './authSlice'
+import uiReducer from './uiSlice'
 
 export const store = configureStore({
   reducer: {
@@ -3143,13 +3223,16 @@ export const store = configureStore({
     ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(patientApi.middleware, campaignApi.middleware),
-});
+    getDefaultMiddleware().concat(
+      patientApi.middleware,
+      campaignApi.middleware
+    ),
+})
 
-setupListeners(store.dispatch);
+setupListeners(store.dispatch)
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
 ```
 
 Cette solution a résolu plusieurs problèmes :
@@ -3196,15 +3279,15 @@ Les performances étaient critiques pour assurer une expérience utilisateur flu
 
 ```typescript
 // app/admin/campaigns/page.tsx
-import dynamic from 'next/dynamic';
-import { Suspense } from 'react';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
 
 // Chargement dynamique du composant lourd
 const CampaignAnalytics = dynamic(
   () => import('@/components/analytics/CampaignAnalytics'),
   { loading: () => <LoadingSpinner />, ssr: false }
-);
+)
 
 export default function CampaignsPage() {
   return (
@@ -3219,7 +3302,7 @@ export default function CampaignsPage() {
         <CampaignAnalytics />
       </Suspense>
     </div>
-  );
+  )
 }
 ```
 
@@ -3228,44 +3311,47 @@ export default function CampaignsPage() {
 ```typescript
 // Avant optimisation
 const PatientStats = ({ patientId }) => {
-  const { data } = useGetPatientStatsQuery(patientId);
+  const { data } = useGetPatientStatsQuery(patientId)
   // Calculs coûteux réexécutés à chaque rendu
-  const metrics = calculateComplexMetrics(data);
+  const metrics = calculateComplexMetrics(data)
 
-  return <MetricsDisplay data={metrics} />;
-};
+  return <MetricsDisplay data={metrics} />
+}
 
 // Après optimisation
 const PatientStats = React.memo(({ patientId }) => {
-  const { data } = useGetPatientStatsQuery(patientId);
+  const { data } = useGetPatientStatsQuery(patientId)
   // Calculs coûteux mémorisés
-  const metrics = useMemo(() => calculateComplexMetrics(data), [data]);
+  const metrics = useMemo(() => calculateComplexMetrics(data), [data])
 
-  return <MetricsDisplay data={metrics} />;
-});
+  return <MetricsDisplay data={metrics} />
+})
 ```
 
 - **Virtualisation des listes** : Utilisation de react-virtualized pour optimiser l'affichage des longues listes
 
 ```typescript
 // components/PatientList.tsx
-import { List, AutoSizer, WindowScroller } from 'react-virtualized';
-import type { Patient } from '../types/models';
+import { List, AutoSizer, WindowScroller } from 'react-virtualized'
+import type { Patient } from '../types/models'
 
 interface PatientListProps {
-  patients: Patient[];
-  onSelect: (patient: Patient) => void;
+  patients: Patient[]
+  onSelect: (patient: Patient) => void
 }
 
-export const PatientList: React.FC<PatientListProps> = ({ patients, onSelect }) => {
+export const PatientList: React.FC<PatientListProps> = ({
+  patients,
+  onSelect,
+}) => {
   const rowRenderer = ({ index, key, style }) => {
-    const patient = patients[index];
+    const patient = patients[index]
     return (
       <div key={key} style={style} onClick={() => onSelect(patient)}>
         {patient.first_name} {patient.last_name}
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <WindowScroller>
@@ -3287,8 +3373,8 @@ export const PatientList: React.FC<PatientListProps> = ({ patients, onSelect }) 
         </AutoSizer>
       )}
     </WindowScroller>
-  );
-};
+  )
+}
 ```
 
 ### 5.6.5 Implémentation des algorithmes d'IA
@@ -3317,7 +3403,7 @@ export async function createMlSegments(params: {
     const response = await apiClient.post(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/segmentation/ml-segments/`,
       params,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data.segments
   } catch (error) {
@@ -3331,7 +3417,8 @@ export async function createMlSegments(params: {
 
 ```typescript
 // frontend/components/SegmentCreation.tsx (extrait)
-const [isCreatingMlSegments, setIsCreatingMlSegments] = useState(false)
+const [isCreatingMlSegments, setIsCreatingMlSegments] =
+  useState(false)
 
 async function handleCreateMlSegments() {
   setIsCreatingMlSegments(true)
@@ -3376,7 +3463,7 @@ La sécurité étant primordiale dans une application médicale, nous avons renc
 // frontend/app/api/actions.ts (extrait)
 export async function login(
   username: string,
-  password: string,
+  password: string
 ): Promise<{
   access: string | boolean
   username?: string
@@ -3386,7 +3473,7 @@ export async function login(
   try {
     const response = await apiClient.post(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/accounts/token/`,
-      { username, password },
+      { username, password }
     )
 
     // Store token in cookies
@@ -3396,7 +3483,7 @@ export async function login(
       expires,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: 'strict',
     })
 
     return {
@@ -3469,7 +3556,7 @@ export async function getCurrentUser(): Promise<User | null> {
 
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/accounts/profile/`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     const user = response.data
     cache['user'] = user
@@ -3885,13 +3972,9 @@ Notre projet a abouti à plusieurs innovations majeures dans le domaine de la sa
 Nos premiers tests et déploiements pilotes ont démontré des résultats significatifs qui confirment l'efficacité de notre approche :
 
 - **Réduction des rendez-vous manqués de 40%** : La communication proactive et personnalisée a considérablement amélioré l'assiduité des patients.
-  
 - **Augmentation de l'engagement patient de 35%** : Les taux de réponse aux communications ont progressé significativement grâce à la personnalisation et à l'optimisation des canaux.
-  
 - **Optimisation des ressources médicales de 25%** : La priorisation intelligente des patients a permis une allocation plus efficace des ressources soignantes limitées.
-  
 - **Amélioration de la satisfaction patient de 42%** : Les enquêtes de satisfaction ont révélé une appréciation marquée de l'approche personnalisée.
-  
 - **Économies opérationnelles estimées à 30%** : La réduction des communications inefficaces et l'automatisation des tâches répétitives ont généré des gains d'efficience significatifs.
 
 Ces résultats démontrent non seulement la validité technique de notre approche mais également sa valeur ajoutée concrète pour les établissements de santé et les patients.
@@ -3934,7 +4017,7 @@ def train_ml_models_task(self, algorithm_type="kmeans", n_clusters=3):
 
 - **Système de cache complet avec Redis** : Mise en place d'un cache distribué pour optimiser les performances et réduire la charge sur la base de données.
 
-```python
+````python
 # Configuration future de Redis pour Django
 CACHES = {
     "default": {
@@ -3963,7 +4046,7 @@ def get_patient_data(patient_id):
         cache.set(cache_key, patient_data, timeout=60*30)
 
     return patient_data
-```
+````
 
 - Intégration d'algorithmes d'IA plus avancés
 - Extension des capacités d'analyse prédictive
@@ -3987,6 +4070,27 @@ Au-delà des améliorations techniques, notre vision à long terme comprend des 
 6. **Place de marché d'applications médicales** : Création d'une plateforme ouverte permettant à des développeurs tiers de créer des modules complémentaires spécialisés pour des pathologies ou contextes médicaux spécifiques, tout en garantissant un niveau élevé de sécurité et de confidentialité.
 
 Ces développements stratégiques positionnent notre système comme une plateforme évolutive plutôt qu'une simple solution, capable de s'adapter aux besoins changeants du secteur médical et d'intégrer les futures avancées technologiques.
+
+Perspectives et améliorations futures
+Certaines fonctionnalités prévues dans le cahier des charges n'ont pu être réalisées que partiellement, principalement en raison de contraintes de temps et de ressources. Elles constituent des axes d'amélioration prioritaires pour l'évolution du système :
+
+Gestion avancée des consentements (type OneTrust/TrustArc) : La gestion RGPD est assurée en interne, mais l'intégration d'une plateforme spécialisée permettrait d'automatiser davantage la conformité et d'offrir une traçabilité renforcée.
+Système de notification omnicanal : L'envoi de SMS et d'emails est opérationnel, mais l'intégration d'appels automatisés et de notifications push reste à finaliser pour une expérience vraiment omnicanale.
+Plateforme multilingue : L'interface est actuellement en français, mais l'internationalisation complète (traductions, adaptation culturelle) n'est pas encore déployée.
+Personnalisation contextuelle avancée : Les messages sont personnalisés selon les segments, mais une adaptation contextuelle plus fine (ex : prise en compte de l'historique médical détaillé) est à envisager.
+Ces améliorations sont techniquement amorcées ou conçues dans l'architecture, et leur mise en œuvre future permettra d'accroître la valeur ajoutée du système.
+
+What's next : fonctionnalités non réalisées et axes de développement
+Certaines fonctionnalités ambitieuses, identifiées comme stratégiques dans le cahier des charges, n'ont pas pu être réalisées dans le cadre du projet PFE. Leur développement futur offrirait des bénéfices majeurs :
+
+Interopérabilité FHIR et intégration DMP : Permettre une connexion transparente avec les dossiers médicaux électroniques et les systèmes hospitaliers via le standard FHIR, pour une meilleure continuité des soins.
+Assistant conversationnel médical : Développer un chatbot médical spécialisé, capable de dialoguer avec les patients en langage naturel tout en respectant les protocoles médicaux.
+Module de téléconsultation intégré : Ajouter la possibilité de consultations vidéo directement depuis la plateforme, pour prolonger la relation patient à distance.
+Place de marché d'applications médicales : Ouvrir la plateforme à des modules complémentaires développés par des tiers, pour répondre à des besoins spécifiques (pathologies, contextes particuliers).
+Analytics prédictifs avancés : Déployer des tableaux de bord d'analyse en temps réel exploitant l'IA pour anticiper les tendances sanitaires et optimiser l'allocation des ressources.
+Architecture cloud-native Kubernetes et mesh hardware : Migrer vers une infrastructure conteneurisée et résiliente, et développer un réseau maillé de modules matériels pour garantir la continuité de service.
+Deep learning pour l'engagement patient : Intégrer des modèles de deep learning (RNN, transformers) pour améliorer la prédiction des abandons de traitement et l'analyse des séquences temporelles.
+Ces axes de développement, bien que non réalisés dans le cadre du PFE, constituent une feuille de route claire pour faire évoluer la solution vers une plateforme médicale de nouvelle génération, toujours plus performante, sécurisée et centrée sur le patient.
 
 # Conclusion générale
 
