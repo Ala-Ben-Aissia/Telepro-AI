@@ -14,8 +14,8 @@ import { getCurrentUser } from '@/app/api/actions'
 type User = {
   id: string
   email: string
-  is_staff: boolean
-  is_superuser: boolean
+  username: string
+  user_type: 'PATIENT' | 'STAFF'
 } | null
 
 type AuthContextType = {
@@ -40,8 +40,9 @@ export function Providers({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function loadUserFromServer() {
+      let userData
       try {
-        const userData = await getCurrentUser()
+        userData = await getCurrentUser()
         setUser(userData)
       } catch (error) {
         console.error('Failed to load user data:', error)

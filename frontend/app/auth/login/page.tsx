@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getCurrentUser, login } from '@/app/api/actions'
+import { login } from '@/app/api/actions'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -13,11 +13,6 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    const user = await getCurrentUser()
-    if (user) {
-      router.push('/dashboard')
-    }
-    // TODO: Replace with your DRF login endpoint
     const res = await login(username, password)
     if (res.access) {
       router.push('/dashboard')
