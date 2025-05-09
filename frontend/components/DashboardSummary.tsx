@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 interface Campaign {
-  id: number
+  campaign_id: number
   title: string
   category: string
   start_date: string
@@ -247,12 +247,12 @@ export default function DashboardSummary() {
                 analytics.campaign_performance.campaigns.map(
                   (campaign) => (
                     <tr
-                      key={Math.random()}
+                      key={campaign.campaign_id}
                       className="hover:bg-gray-50"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Link
-                          href={`/campaigns/${campaign.id}`}
+                          href={`/campaigns/${campaign.campaign_id}`}
                           className="text-sm font-medium text-blue-600 hover:text-blue-900"
                         >
                           {campaign.title}

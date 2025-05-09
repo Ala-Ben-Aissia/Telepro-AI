@@ -295,15 +295,17 @@ export async function getCampaignChannelMetrics(
 
 // ----- Segment Actions -----
 
-export async function getSegments(): Promise<PatientSegment[]> {
+export async function getSegments(): Promise<
+  PatientSegment[] | null
+> {
   try {
+    const access = (await cookies()).get('accessToken')?.value
+    if (!access) return null
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/segments/`,
       {
         headers: {
-          Authorization: `Bearer ${
-            (await cookies()).get('accessToken')?.value
-          }`,
+          Authorization: `Bearer ${access}`,
         },
       },
     )
@@ -317,8 +319,15 @@ export async function getSegments(): Promise<PatientSegment[]> {
 export async function getSegment(
   id: number,
 ): Promise<PatientSegment | null> {
+  const access = (await cookies()).get('accessToken')?.value
+  if (!access) return null
   try {
-    const response = await apiClient.get(`/api/segments/${id}/`)
+    const response = await apiClient.get(
+      `/api/campaigns/segments/${id}/`,
+      {
+        headers: { Authorization: `Bearer ${access}` },
+      },
+    )
     return response.data
   } catch (error) {
     console.error(`Error fetching segment ${id}:`, error)
@@ -359,12 +368,15 @@ export async function updateSegment(
 
 export async function getSegmentPatients(
   id: number,
-): Promise<Patient[]> {
+): Promise<Patient[] | null> {
   try {
+    const access = (await cookies()).get('accessToken')?.value
+    if (!access) return null
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/segments/${id}/patients/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/segments/${id}/patients/`,
+      { headers: { Authorization: `Bearer ${access}` } },
     )
-    return response.data
+    return response.data.results
   } catch (error) {
     console.error(`Error fetching patients for segment ${id}:`, error)
     return []
@@ -373,8 +385,11 @@ export async function getSegmentPatients(
 
 export async function analyzeSegment(id: number): Promise<unknown> {
   try {
+    const access = (await cookies()).get('accessToken')?.value
+    if (!access) return null
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/segments/${id}/analyze/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/segments/${id}/analyze/`,
+      { headers: { Authorization: `Bearer ${access}` } },
     )
     return response.data
   } catch (error) {
