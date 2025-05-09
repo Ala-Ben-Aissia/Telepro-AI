@@ -383,7 +383,50 @@ export async function getSegmentPatients(
   }
 }
 
-export async function analyzeSegment(id: number): Promise<unknown> {
+type SegmentStats = {
+  status: 'success'
+  segment_id: number
+  segment_name: string
+  patient_count: number
+  basic_stats: {
+    total_patients: number
+    by_age_group: {
+      [ageGroup: string]: {
+        count: number
+        percentage: number
+      }
+    }
+    by_gender: {
+      [gender: string]: {
+        count: number
+        percentage: number
+      }
+    }
+    by_language: {
+      [languageCode: string]: {
+        count: number
+        percentage: number
+      }
+    }
+  }
+  engagement_metrics: {
+    avg_engagement_score: number
+    high_engagement_count: number
+    medium_engagement_count: number
+    low_engagement_count: number
+  }
+  communication_preferences: {
+    email: number
+    sms: number
+    call: number
+    none: number
+  }
+  campaign_history: Record<string, Campaign> // or {} if it's always an empty object
+}
+
+export async function analyzeSegment(
+  id: number,
+): Promise<SegmentStats | null> {
   try {
     const access = (await cookies()).get('accessToken')?.value
     if (!access) return null

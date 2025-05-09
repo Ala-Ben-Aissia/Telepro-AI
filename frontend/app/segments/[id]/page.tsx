@@ -148,7 +148,7 @@ export default async function SegmentDetailPage({
                 Patients in Segment
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                Showing {patients.length} patients matching this
+                Showing {patients?.length} patients matching this
                 segment's criteria
               </p>
             </div>
@@ -195,8 +195,8 @@ export default async function SegmentDetailPage({
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {patients.length > 0 ? (
-                    patients.map((patient) => (
+                  {patients!.length > 0 ? (
+                    patients?.map((patient) => (
                       <tr
                         key={patient.id}
                         className="hover:bg-gray-50"
@@ -273,7 +273,7 @@ export default async function SegmentDetailPage({
                 </tbody>
               </table>
             </div>
-            {patients.length > 10 && (
+            {patients!.length > 10 && (
               <div className="px-6 py-4 border-t border-gray-200">
                 <Link
                   href={`/patients?segmentId=${segmentId}`}
@@ -307,64 +307,51 @@ export default async function SegmentDetailPage({
                     </dd>
                   </div>
 
-                  {analysis.demographics && (
+                  {analysis.basic_stats && (
                     <div className="pt-4 border-t border-gray-200">
                       <dt className="text-sm font-medium text-gray-500 mb-2">
                         Demographics
                       </dt>
                       <dd className="space-y-3">
-                        {analysis.demographics.age_distribution && (
+                        {analysis.basic_stats.by_age_group && (
                           <div>
                             <span className="block text-xs text-gray-500 mb-1">
                               Age Distribution
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.demographics
-                                  .age_distribution,
-                              ).map(
-                                ([age, percentage]: [
-                                  string,
-                                  unknown,
-                                ]) => (
-                                  <div
-                                    key={age}
-                                    className="flex items-center text-xs"
-                                  >
-                                    <span className="w-16">
-                                      {age}
-                                    </span>
-                                    <div className="w-full bg-gray-200 rounded-full h-2 mx-2">
-                                      <div
-                                        className="bg-blue-600 h-2 rounded-full"
-                                        style={{
-                                          width: `${percentage}%`,
-                                        }}
-                                      ></div>
-                                    </div>
-                                    <span>{percentage}%</span>
+                                analysis.basic_stats.by_age_group,
+                              ).map(([age, { percentage }]) => (
+                                <div
+                                  key={age}
+                                  className="flex items-center text-xs"
+                                >
+                                  <span className="w-16">{age}</span>
+                                  <div className="w-full bg-gray-200 rounded-full h-2 mx-2">
+                                    <div
+                                      className="bg-blue-600 h-2 rounded-full"
+                                      style={{
+                                        width: `${percentage}%`,
+                                      }}
+                                    ></div>
                                   </div>
-                                ),
-                              )}
+                                  <span>{percentage}%</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         )}
 
-                        {analysis.demographics
-                          .gender_distribution && (
+                        {analysis.basic_stats.by_gender && (
                           <div>
                             <span className="block text-xs text-gray-500 mb-1">
                               Gender Distribution
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.demographics
-                                  .gender_distribution,
-                              ).map(
-                                ([gender, percentage]: [
-                                  string,
-                                  unknown,
-                                ]) => (
+                                analysis.basic_stats.by_gender,
+                              ).map(([gender, stats]) => {
+                                return (
                                   <div
                                     key={gender}
                                     className="flex items-center text-xs"
@@ -376,41 +363,36 @@ export default async function SegmentDetailPage({
                                       <div
                                         className="bg-purple-600 h-2 rounded-full"
                                         style={{
-                                          width: `${percentage}%`,
+                                          width: `${stats.percentage}%`,
                                         }}
                                       ></div>
                                     </div>
-                                    <span>{percentage}%</span>
+                                    <span>{stats.percentage}%</span>
                                   </div>
-                                ),
-                              )}
+                                )
+                              })}
                             </div>
                           </div>
                         )}
 
-                        {analysis.demographics
-                          .location_distribution && (
+                        {analysis.basic_stats.by_language && (
                           <div>
                             <span className="block text-xs text-gray-500 mb-1">
                               Top Locations
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.demographics
-                                  .location_distribution,
+                                analysis.basic_stats.by_language,
                               )
                                 .slice(0, 3)
                                 .map(
-                                  ([location, percentage]: [
-                                    string,
-                                    unknown,
-                                  ]) => (
+                                  ([language, { _, percentage }]) => (
                                     <div
-                                      key={location}
+                                      key={language}
                                       className="flex items-center text-xs"
                                     >
                                       <span className="w-16 truncate">
-                                        {location}
+                                        {language}
                                       </span>
                                       <div className="w-full bg-gray-200 rounded-full h-2 mx-2">
                                         <div
@@ -446,17 +428,17 @@ export default async function SegmentDetailPage({
                               <div
                                 className={`h-2.5 rounded-full ${
                                   analysis.engagement_metrics
-                                    .average_engagement < 0.3
+                                    .avg_engagement_score < 0.3
                                     ? 'bg-red-600'
                                     : analysis.engagement_metrics
-                                          .average_engagement < 0.7
+                                          .avg_engagement_score < 0.7
                                       ? 'bg-yellow-400'
                                       : 'bg-green-600'
                                 }`}
                                 style={{
                                   width: `${
                                     analysis.engagement_metrics
-                                      .average_engagement * 100
+                                      .avg_engagement_score * 100
                                   }%`,
                                 }}
                               ></div>
@@ -464,7 +446,7 @@ export default async function SegmentDetailPage({
                             <span className="text-sm font-medium">
                               {(
                                 analysis.engagement_metrics
-                                  .average_engagement * 100
+                                  .avg_engagement_score * 100
                               ).toFixed(1)}
                               %
                             </span>
@@ -476,14 +458,14 @@ export default async function SegmentDetailPage({
                             Response Rate
                           </span>
                           <span className="text-2xl font-medium">
-                            {analysis.engagement_metrics.response_rate?.toFixed(
-                              1,
-                            ) || 0}
+                            {Object.entries(
+                              analysis.campaign_history,
+                            )[1]?.response_rate || 0}
                             %
                           </span>
                         </div>
 
-                        {analysis.engagement_metrics
+                        {/* {analysis.engagement_metrics
                           .preferred_channels && (
                           <div>
                             <span className="block text-xs text-gray-500 mb-1">
@@ -525,7 +507,7 @@ export default async function SegmentDetailPage({
                               )}
                             </div>
                           </div>
-                        )}
+                        )} */}
                       </dd>
                     </div>
                   )}

@@ -191,7 +191,7 @@ export default async function PatientDetailPage({
                     ></div>
                   </div>
                   <span className="ml-2 text-sm font-medium text-gray-700">
-                    {(patient.engagement_score * 100).toFixed(0)}%
+                    {(patient.engagement_score * 100).toFixed(1)}%
                   </span>
                 </div>
 
