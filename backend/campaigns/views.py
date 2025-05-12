@@ -906,26 +906,26 @@ class StaffAnalyticsViewSet(viewsets.ViewSet):
             )
 
         # Import the SMS service
-        from services.communications import SMSService
+        # from services.communications import SMSService
 
         # Send the test SMS
-        try:
-            result = SMSService.send_test_sms(phone_number, message)
-            print("To: ", phone_number)
-            return Response(result)
-        except Exception as e:
-            return Response(
-                {"error": f"Failed to send SMS: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
+        # try:
+        #     result = SMSService.send_test_sms(phone_number, message)
+        #     print("To: ", phone_number)
+        #     return Response(result)
+        # except Exception as e:
+        #     return Response(
+        #         {"error": f"Failed to send SMS: {str(e)}"},
+        #         status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #     )
 
-        # # Debug prints instead
-        # print("Would send SMS to:", phone_number)
-        # print("Message content:", message)
-        # return Response(
-        #     {
-        #         "status": "Test SMS simulation successful",
-        #         "phone": phone_number,
-        #         "message": message,
-        #     }
-        # )
+        # Debug prints instead
+        print("Would send SMS to:", phone_number)
+        print("Message content:", message)
+        return Response(
+            {
+                "status": "Test SMS simulation successful",
+                "phone": phone_number,
+                "message": message,
+            }
+        )

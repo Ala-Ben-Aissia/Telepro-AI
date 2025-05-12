@@ -101,7 +101,7 @@ export interface AnalyticsData {
 
 export default function DashboardSummary() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(
-    null,
+    null
   )
   const [loading, setLoading] = useState(true)
 
@@ -109,7 +109,7 @@ export default function DashboardSummary() {
     const fetchDashboardData = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/analytics/dashboard`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/analytics/dashboard`
         )
         if (!response.ok)
           throw new Error('Failed to fetch dashboard data')
@@ -157,7 +157,7 @@ export default function DashboardSummary() {
           title="Active Campaigns"
           value={
             analytics?.campaign_performance?.campaigns.filter(
-              (c) => c.is_active,
+              (c) => c.is_active
             ).length || 0
           }
           description="Running campaigns"
@@ -271,11 +271,11 @@ export default function DashboardSummary() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(
-                          campaign.start_date,
+                          campaign.start_date
                         ).toLocaleDateString()}{' '}
                         -{' '}
                         {new Date(
-                          campaign.end_date,
+                          campaign.end_date
                         ).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -287,10 +287,10 @@ export default function DashboardSummary() {
                                 30
                                   ? 'bg-red-600'
                                   : Number(campaign.response_rate) *
-                                        100 <
-                                      70
-                                    ? 'bg-yellow-400'
-                                    : 'bg-green-600'
+                                      100 <
+                                    70
+                                  ? 'bg-yellow-400'
+                                  : 'bg-green-600'
                               }`}
                               style={{
                                 width: `${(
@@ -308,7 +308,7 @@ export default function DashboardSummary() {
                         </div>
                       </td>
                     </tr>
-                  ),
+                  )
                 )
               ) : (
                 <tr>
