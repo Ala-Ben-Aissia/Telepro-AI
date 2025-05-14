@@ -55,7 +55,7 @@ export default async function DashboardPage() {
           <ResourceCard
             title="API Documentation"
             description="Technical details for integrating with our API"
-            link="#"
+            link="http://localhost:8000/api/redoc"
           />
           <ResourceCard
             title="Best Practices"

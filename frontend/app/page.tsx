@@ -144,7 +144,7 @@ export default function HomePage() {
                 {
                   title: 'Secure & Compliant',
                   description:
-                    'HIPAA-compliant platform with enterprise-grade security for patient data protection.',
+                    'GDPR-compliant platform with enterprise-grade security for patient data protection.',
                   icon: '/globe.svg',
                 },
               ].map((feature, idx) => (
@@ -187,10 +187,10 @@ export default function HomePage() {
             <figure className="mt-10">
               <blockquote className="text-center text-xl font-semibold leading-8 text-gray-900 sm:text-2xl sm:leading-9">
                 <p>
-                  "Telepro-AI has revolutionized how we approach
-                  patient outreach. We've seen a 40% increase in
+                  &quot;Telepro-AI has revolutionized how we approach
+                  patient outreach. We&apos;ve seen a 40% increase in
                   preventive care appointments and significantly
-                  improved patient satisfaction scores."
+                  improved patient satisfaction scores.&quot;
                 </p>
               </blockquote>
               <figcaption className="mt-10">
@@ -251,16 +251,26 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between text-center md:text-left">
             <p className="text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} Telepro-AI. All rights reserved.
+              &copy; {new Date().getFullYear()} Telepro-AI. All rights
+              reserved.
             </p>
             <div className="mt-4 md:mt-0 flex justify-center md:justify-end space-x-6">
-              <a href="#" className="text-gray-400 hover:text-indigo-600 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-indigo-600 transition-colors"
+              >
                 Terms of Service
               </a>
-              <a href="#" className="text-gray-400 hover:text-indigo-600 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-indigo-600 transition-colors"
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="text-gray-400 hover:text-indigo-600 transition-colors">
+              <a
+                href="#"
+                className="text-gray-400 hover:text-indigo-600 transition-colors"
+              >
                 Contact
               </a>
             </div>

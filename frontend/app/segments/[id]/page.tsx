@@ -120,7 +120,7 @@ export default async function SegmentDetailPage({
                         </span>
                         <span>
                           {new Date(
-                            segment.created_at,
+                            segment.created_at
                           ).toLocaleDateString()}
                         </span>
                       </div>
@@ -130,7 +130,7 @@ export default async function SegmentDetailPage({
                         </span>
                         <span>
                           {new Date(
-                            segment.updated_at,
+                            segment.updated_at
                           ).toLocaleDateString()}
                         </span>
                       </div>
@@ -149,7 +149,7 @@ export default async function SegmentDetailPage({
               </h3>
               <p className="mt-1 text-sm text-gray-500">
                 Showing {patients?.length} patients matching this
-                segment's criteria
+                segment&apos;s criteria
               </p>
             </div>
             <div className="overflow-x-auto">
@@ -226,8 +226,8 @@ export default async function SegmentDetailPage({
                                   patient.engagement_score < 0.3
                                     ? 'bg-red-600'
                                     : patient.engagement_score < 0.7
-                                      ? 'bg-yellow-400'
-                                      : 'bg-green-600'
+                                    ? 'bg-yellow-400'
+                                    : 'bg-green-600'
                                 }`}
                                 style={{
                                   width: `${
@@ -265,7 +265,7 @@ export default async function SegmentDetailPage({
                         colSpan={6}
                         className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
                       >
-                        No patients found matching this segment's
+                        No patients found matching this segment&apos;s
                         criteria
                       </td>
                     </tr>
@@ -320,7 +320,7 @@ export default async function SegmentDetailPage({
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.basic_stats.by_age_group,
+                                analysis.basic_stats.by_age_group
                               ).map(([age, { percentage }]) => (
                                 <div
                                   key={age}
@@ -349,7 +349,7 @@ export default async function SegmentDetailPage({
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.basic_stats.by_gender,
+                                analysis.basic_stats.by_gender
                               ).map(([gender, stats]) => {
                                 return (
                                   <div
@@ -382,29 +382,34 @@ export default async function SegmentDetailPage({
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.basic_stats.by_language,
+                                analysis.basic_stats.by_language
                               )
                                 .slice(0, 3)
                                 .map(
-                                  ([language, { _, percentage }]) => (
-                                    <div
-                                      key={language}
-                                      className="flex items-center text-xs"
-                                    >
-                                      <span className="w-16 truncate">
-                                        {language}
-                                      </span>
-                                      <div className="w-full bg-gray-200 rounded-full h-2 mx-2">
-                                        <div
-                                          className="bg-yellow-600 h-2 rounded-full"
-                                          style={{
-                                            width: `${percentage}%`,
-                                          }}
-                                        ></div>
+                                  (
+                                    [language, { percentage }],
+                                    index
+                                  ) => {
+                                    return (
+                                      <div
+                                        key={index}
+                                        className="flex items-center text-xs"
+                                      >
+                                        <span className="w-16 truncate">
+                                          {language}
+                                        </span>
+                                        <div className="w-full bg-gray-200 rounded-full h-2 mx-2">
+                                          <div
+                                            className="bg-yellow-600 h-2 rounded-full"
+                                            style={{
+                                              width: `${percentage}%`,
+                                            }}
+                                          ></div>
+                                        </div>
+                                        <span>{percentage}%</span>
                                       </div>
-                                      <span>{percentage}%</span>
-                                    </div>
-                                  ),
+                                    )
+                                  }
                                 )}
                             </div>
                           </div>
@@ -431,9 +436,9 @@ export default async function SegmentDetailPage({
                                     .avg_engagement_score < 0.3
                                     ? 'bg-red-600'
                                     : analysis.engagement_metrics
-                                          .avg_engagement_score < 0.7
-                                      ? 'bg-yellow-400'
-                                      : 'bg-green-600'
+                                        .avg_engagement_score < 0.7
+                                    ? 'bg-yellow-400'
+                                    : 'bg-green-600'
                                 }`}
                                 style={{
                                   width: `${
@@ -453,61 +458,55 @@ export default async function SegmentDetailPage({
                           </div>
                         </div>
 
-                        <div>
-                          <span className="block text-xs text-gray-500 mb-1">
-                            Response Rate
-                          </span>
-                          <span className="text-2xl font-medium">
-                            {Object.entries(
-                              analysis.campaign_history,
-                            )[1]?.response_rate || 0}
-                            %
-                          </span>
-                        </div>
-
-                        {/* {analysis.engagement_metrics
-                          .preferred_channels && (
+                        {analysis.communication_preferences && (
                           <div>
                             <span className="block text-xs text-gray-500 mb-1">
                               Preferred Channels
                             </span>
                             <div className="space-y-1">
                               {Object.entries(
-                                analysis.engagement_metrics
-                                  .preferred_channels,
-                              ).map(
-                                ([channel, percentage]: [
-                                  string,
-                                  unknown,
-                                ]) => (
-                                  <div
-                                    key={channel}
-                                    className="flex items-center text-xs"
-                                  >
-                                    <span className="w-16 capitalize">
-                                      {channel.toLowerCase()}
-                                    </span>
-                                    <div className="w-full bg-gray-200 rounded-full h-2 mx-2">
-                                      <div
-                                        className={`h-2 rounded-full ${
-                                          channel === 'EMAIL'
-                                            ? 'bg-blue-600'
-                                            : channel === 'SMS'
-                                              ? 'bg-green-600'
-                                              : 'bg-yellow-600'
-                                        }`}
-                                        style={{
-                                          width: `${percentage}%`,
-                                        }}
-                                      ></div>
-                                    </div>
-                                    <span>{percentage}%</span>
+                                analysis.communication_preferences
+                              ).map(([channel, count]) => (
+                                <div
+                                  key={channel}
+                                  className="flex items-center text-xs"
+                                >
+                                  <span className="w-16 capitalize">
+                                    {channel.toLowerCase()}
+                                  </span>
+                                  <div className="w-full bg-gray-200 rounded-full h-2 mx-2">
+                                    <div
+                                      className={`h-2 rounded-full ${
+                                        channel === 'email'
+                                          ? 'bg-blue-600'
+                                          : channel === 'sms'
+                                          ? 'bg-green-600'
+                                          : channel == 'call'
+                                          ? 'bg-yellow-300'
+                                          : 'bg-yellow-800'
+                                      }`}
+                                      style={{
+                                        width: `${
+                                          (count /
+                                            analysis.patient_count) *
+                                          100
+                                        }%`,
+                                      }}
+                                    ></div>
                                   </div>
-                                ),
-                              )}
+                                  <span>
+                                    {Math.ceil(
+                                      (count /
+                                        analysis.patient_count) *
+                                        100
+                                    ).toFixed(1)}
+                                    %
+                                  </span>
+                                </div>
+                              ))}
                             </div>
                           </div>
-                        )} */}
+                        )}
                       </dd>
                     </div>
                   )}
@@ -543,56 +542,58 @@ export default async function SegmentDetailPage({
             <div className="px-6 py-5">
               {campaigns && campaigns.length > 0 ? (
                 <ul className="divide-y divide-gray-200">
-                  {campaigns.map((campaign) => (
-                    <li key={campaign.id} className="py-3">
-                      <Link
-                        href={`/campaigns/${campaign.id}`}
-                        className="flex justify-between items-center hover:bg-gray-50 p-2 rounded"
-                      >
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {campaign.title}
-                          </p>
-                          <div className="flex items-center mt-1">
-                            <span
-                              className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                campaign.is_active
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-gray-100 text-gray-800'
-                              }`}
-                            >
-                              {campaign.is_active
-                                ? 'Active'
-                                : 'Inactive'}
-                            </span>
-                            <span className="text-xs text-gray-500 ml-2">
-                              {new Date(
-                                campaign.start_date,
-                              ).toLocaleDateString()}{' '}
-                              -{' '}
-                              {new Date(
-                                campaign.end_date,
-                              ).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 text-gray-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                  {campaigns.map((campaign) => {
+                    return (
+                      <li key={campaign.id} className="py-3">
+                        <Link
+                          href={`/campaigns/${campaign.id}`}
+                          className="flex justify-between items-center hover:bg-gray-50 p-2 rounded"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </Link>
-                    </li>
-                  ))}
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">
+                              {campaign.title}
+                            </p>
+                            <div className="flex items-center mt-1">
+                              <span
+                                className={`px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                  campaign.is_active
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-gray-100 text-gray-800'
+                                }`}
+                              >
+                                {campaign.is_active
+                                  ? 'Active'
+                                  : 'Inactive'}
+                              </span>
+                              <span className="text-xs text-gray-500 ml-2">
+                                {new Date(
+                                  campaign.start_date
+                                ).toLocaleDateString()}{' '}
+                                -{' '}
+                                {new Date(
+                                  campaign.end_date
+                                ).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 text-gray-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </Link>
+                      </li>
+                    )
+                  })}
                 </ul>
               ) : (
                 <div className="text-center py-6">

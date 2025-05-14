@@ -27,7 +27,7 @@ export interface Patient {
 
 // Campaign model
 export interface Campaign {
-  campagin_id: number
+  id: number
   title: string
   category?: number // FK to CampaignCategory
   description: string
