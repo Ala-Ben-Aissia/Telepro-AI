@@ -147,7 +147,10 @@ class Patient(models.Model):
     )
 
     # Campaign and communication related fields
-    campaign_preferences = models.JSONField(
+    campaign_preferences = models.ManyToManyField(
+        "campaigns.Campaign",
+        blank=True,
+        related_name="patient",
         default=dict,
         help_text="Patient preferences for different campaign types",
     )

@@ -55,7 +55,7 @@ class PatientAdmin(admin.ModelAdmin):
                 )
             },
         ),
-        ("Consent", {"fields": ("has_active_consent",)}),
+        ("Consent", {"fields": ("has_active_consent", "campaign_preferences")}),
         (
             "System",
             {

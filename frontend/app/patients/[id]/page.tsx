@@ -1,7 +1,7 @@
 import {
   getPatient,
   getPatientCommunications,
-  getPatientConsents,
+  getPatientPreferences,
 } from '@/app/api/actions'
 import Link from 'next/link'
 
@@ -16,7 +16,7 @@ export default async function PatientDetailPage({
   const patientId = (await params).id
   const patient = await getPatient(patientId)
   const communications = await getPatientCommunications(patientId)
-  const consents = await getPatientConsents(patientId)
+  const { consents } = await getPatientPreferences(patientId)
 
   if (!patient) {
     return (

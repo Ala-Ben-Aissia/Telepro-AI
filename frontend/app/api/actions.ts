@@ -65,6 +65,25 @@ export async function updatePatient(
   }
 }
 
+export async function getPatientCampaigns(
+  id: string,
+): Promise<Campaign[]> {
+  try {
+    const accessToken = (await cookies()).get('accessToken')?.value
+    const response = await apiClient.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/campaigns/`,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    )
+    return response.data
+  } catch (error) {
+    console.error(
+      `Error fetching communications for patient ${id}:`,
+      error,
+    )
+    return []
+  }
+}
+
 export async function getPatientCommunications(
   id: string,
 ): Promise<CommunicationLog[]> {
@@ -84,13 +103,20 @@ export async function getPatientCommunications(
   }
 }
 
-export async function getPatientConsents(
+export type Preferences = {
+  preferred_contact_method: Channel | null
+  contact_time_preferences: Record<string, unknown>
+  campaign_preferences: number[]
+  language_preference: string
+}
+
+export async function getPatientPreferences(
   id: string,
-): Promise<ConsentRecord[]> {
+): Promise<Preferences[]> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/consents/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/preferences/`,
       { headers: { Authorization: `Bearer ${accessToken}` } },
     )
     return response.data
@@ -100,16 +126,31 @@ export async function getPatientConsents(
   }
 }
 
-export async function updatePatientConsent(
+export async function getPatientConsents(
+  id: string,
+): Promise<ConsentRecord> {
+  try {
+    const accessToken = (await cookies()).get('accessToken')?.value
+    const response = await apiClient.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/preferences/`,
+      { headers: { Authorization: `Bearer ${accessToken}` } },
+    )
+    return response.data
+  } catch (error) {
+    console.error(`Error fetching consents for patient ${id}:`, error)
+    return {} as Preferences
+  }
+}
+
+export async function updatePatientPreferences(
   patientId: string,
-  consentType: string,
+  consent_pk: number,
   granted: boolean,
 ): Promise<ConsentRecord | null> {
   try {
     const response = await apiClient.post(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${patientId}/update_consent/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${patientId}/consents/${consent_pk}`,
       {
-        consent_type: consentType,
         granted,
       },
     )
@@ -564,26 +605,19 @@ export async function logout(): Promise<boolean> {
   return redirect('/auth/login')
 }
 
-type User = {
-  id: string
-  username: string
-  email: string
-  user_type: 'STAFF' | 'PATIENT'
-} | null
+const cache: { user?: Patient } = {}
 
-const cache: { user?: User } = {}
-
-export async function getCurrentUser(): Promise<User | null> {
+export async function getCurrentUser(): Promise<Patient | null> {
   try {
     if (cache['user']) return cache['user']
     const accessToken = (await Cookies()).get('accessToken')?.value
     if (!accessToken) return null
 
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/accounts/profile/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/`,
       { headers: { Authorization: `Bearer ${accessToken}` } },
     )
-    const user = response.data
+    const user = response.data.results[0]
     cache['user'] = user
     return user
   } catch (error) {

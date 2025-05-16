@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from campaigns.serializers import CampaignSerializer
 
 from services.ai.clustering import PatientClusteringService
 from services.proactive_identification import ProactiveIdentificationService
@@ -67,15 +68,31 @@ class PatientViewSet(viewsets.ModelViewSet):
             return Patient.objects.filter(has_active_consent=False)
         return Patient.objects.all()
 
-    @action(detail=True, methods=["get"])
-    def consents(self, request, pk=None):
+    @action(
+        detail=True,
+        methods=["get", "patch"],
+        url_path="consents(?:/(?P<consent_id>[^/.]+))?",
+    )
+    def consents(self, request, pk=None, consent_id=None):
         """
-        Return all consent records for this patient.
+        Return all consent records for this patient or a specific consent record by ID.
         """
         patient = self.get_object()
-        consent_records = patient.consent_records.all()
+        if consent_id:
+            consent_record = patient.consent_records.filter(id=consent_id).first()
+            if not consent_record:
+                return Response(
+                    {"error": "Consent record not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            granted = request.data.get("granted", consent_record.granted)
+            consent_record.granted = granted
+            consent_record.save()
+            serializer = PatientConsentRecordSerializer(consent_record, many=False)
+        else:
+            consent_records = patient.consent_records.all()
+            serializer = PatientConsentRecordSerializer(consent_records, many=True)
 
-        serializer = PatientConsentRecordSerializer(consent_records, many=True)
         return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
@@ -146,14 +163,14 @@ class PatientViewSet(viewsets.ModelViewSet):
         return Response({"status": "Deletion scheduled", "scheduled_date": deletion_date})
 
     @action(detail=True, methods=["post"])
-    def record_consent(self, request, pk=None):
+    def record_consent(self, request, pk=None, granted=True):
         """Record a new consent decision for this patient"""
         patient = self.get_object()
 
         serializer = PatientConsentRecordSerializer(data=request.data)
         if serializer.is_valid():
             consent_type = serializer.validated_data["consent_type"]
-            granted = serializer.validated_data["granted"]
+            granted = serializer.validated_data.get("granted", granted)
             metadata = serializer.validated_data.get("metadata", {})
 
             # Record the consent with IP tracking
@@ -168,7 +185,7 @@ class PatientViewSet(viewsets.ModelViewSet):
 
             return Response(
                 {
-                    "status": "Consent recorded",
+                    "status": "Consent granted" if granted else "Consent denied",
                     "consent_type": consent_type,
                     "granted": granted,
                 }

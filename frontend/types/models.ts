@@ -13,7 +13,7 @@ export interface Patient {
   postal_code?: string
   age_group?: '0-18' | '19-35' | '36-50' | '51-65' | '65+'
   language_preference?: string
-  preferred_contact_method: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
+  preferred_contact_method?: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
   contact_time_preferences?: Record<string, unknown>
   campaign_preferences: Record<string, unknown>
   engagement_score: number
@@ -85,17 +85,19 @@ export interface CommunicationLog {
   metadata: Record<string, unknown>
 }
 
+export type ConsentType =
+  | 'GENERAL'
+  | 'MARKETING'
+  | 'RESEARCH'
+  | 'THIRD_PARTY'
+  | 'SENSITIVE_DATA'
+  | 'AUTOMATED_DECISION'
+
 // Consent Record
 export interface ConsentRecord {
   pk: number
   patient: string // Patient ID
-  consent_type:
-    | 'GENERAL'
-    | 'MARKETING'
-    | 'RESEARCH'
-    | 'THIRD_PARTY'
-    | 'SENSITIVE_DATA'
-    | 'AUTOMATED_DECISION'
+  consent_type: ConsentType
   granted: boolean
   timestamp: string // ISO date string
   metadata: Record<string, unknown>
