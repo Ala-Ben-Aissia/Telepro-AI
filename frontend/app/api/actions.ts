@@ -7,8 +7,9 @@ import type {
   Campaign,
   PatientSegment,
   CommunicationLog,
-  ConsentRecord,
   DashboardData,
+  ConsentType,
+  ConsentMethod,
 } from '@/types/models'
 import { cookies, cookies as Cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -16,13 +17,13 @@ import { redirect } from 'next/navigation'
 // ----- Patient Actions -----
 
 export async function getPatients(
-  filter: 'all' | 'active' | 'inactive',
+  filter: 'all' | 'active' | 'inactive'
 ): Promise<Patient[]> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/?filter=${filter}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data.results
   } catch (error) {
@@ -32,13 +33,13 @@ export async function getPatients(
 }
 
 export async function getPatient(
-  id: string,
+  id: string
 ): Promise<Patient | null> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data
   } catch (error) {
@@ -49,12 +50,12 @@ export async function getPatient(
 
 export async function updatePatient(
   id: string,
-  data: Partial<Patient>,
+  data: Partial<Patient>
 ): Promise<Patient | null> {
   try {
     const response = await apiClient.patch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/`,
-      data,
+      data
     )
     revalidatePath(`/patients/${id}`)
     revalidatePath('/patients')
@@ -66,38 +67,38 @@ export async function updatePatient(
 }
 
 export async function getPatientCampaigns(
-  id: string,
+  id: string
 ): Promise<Campaign[]> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/campaigns/`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data
   } catch (error) {
     console.error(
       `Error fetching communications for patient ${id}:`,
-      error,
+      error
     )
     return []
   }
 }
 
 export async function getPatientCommunications(
-  id: string,
+  id: string
 ): Promise<CommunicationLog[]> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/communications/`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data
   } catch (error) {
     console.error(
       `Error fetching communications for patient ${id}:`,
-      error,
+      error
     )
     return []
   }
@@ -111,29 +112,13 @@ export type Preferences = {
 }
 
 export async function getPatientPreferences(
-  id: string,
-): Promise<Preferences[]> {
+  id: string
+): Promise<Preferences> {
   try {
     const accessToken = (await cookies()).get('accessToken')?.value
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/preferences/`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
-    )
-    return response.data
-  } catch (error) {
-    console.error(`Error fetching consents for patient ${id}:`, error)
-    return []
-  }
-}
-
-export async function getPatientConsents(
-  id: string,
-): Promise<ConsentRecord> {
-  try {
-    const accessToken = (await cookies()).get('accessToken')?.value
-    const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/preferences/`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     return response.data
   } catch (error) {
@@ -142,24 +127,51 @@ export async function getPatientConsents(
   }
 }
 
-export async function updatePatientPreferences(
-  patientId: string,
-  consent_pk: number,
-  granted: boolean,
-): Promise<ConsentRecord | null> {
+export type ActiveConsentRecord = {
+  consent_type: ConsentType
+  granted_at: string
+  granted: boolean
+  consent_method: ConsentMethod
+}
+
+export async function getPatientConsents(
+  id: string
+): Promise<ActiveConsentRecord[]> {
   try {
-    const response = await apiClient.post(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${patientId}/consents/${consent_pk}`,
-      {
-        granted,
-      },
+    const accessToken = (await cookies()).get('accessToken')?.value
+    const response = await apiClient.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${id}/active_consents/`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
-    revalidatePath(`/patients/${patientId}`)
+    return response.data
+  } catch (error) {
+    console.error(`Error fetching consents for patient ${id}:`, error)
+    return []
+  }
+}
+
+export async function updatePatientConsents(
+  patientId: string,
+  newConsents: Partial<ActiveConsentRecord>[]
+): Promise<ActiveConsentRecord[] | null> {
+  try {
+    const response = await apiClient.patch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${patientId}/active_consents/`,
+      { consents: newConsents },
+      {
+        headers: {
+          Authorization: `Bearer ${
+            (await cookies()).get('accessToken')?.value
+          }`,
+        },
+      }
+    )
+    revalidatePath(`/patient`)
     return response.data
   } catch (error) {
     console.error(
       `Error updating consent for patient ${patientId}:`,
-      error,
+      error
     )
     return null
   }
@@ -168,7 +180,7 @@ export async function updatePatientPreferences(
 // ----- Campaign Actions -----
 
 export async function getCampaigns(
-  is_active?: string,
+  is_active?: string
 ): Promise<Campaign[]> {
   try {
     const queryParam =
@@ -183,7 +195,7 @@ export async function getCampaigns(
             (await cookies()).get('accessToken')?.value
           }`,
         },
-      },
+      }
     )
     return response.data.results
   } catch (error) {
@@ -193,7 +205,7 @@ export async function getCampaigns(
 }
 
 export async function getCampaign(
-  id: number,
+  id: number
 ): Promise<Campaign | null> {
   const access = (await cookies()).get('accessToken')?.value
   if (!access) return null
@@ -204,7 +216,7 @@ export async function getCampaign(
         headers: {
           Authorization: `Bearer ${access}`,
         },
-      },
+      }
     )
     return response.data
   } catch (error) {
@@ -216,12 +228,12 @@ export async function getCampaign(
 export async function getActiveCampaigns() {}
 
 export async function createCampaign(
-  data: Partial<Campaign>,
+  data: Partial<Campaign>
 ): Promise<Campaign | null> {
   try {
     const response = await apiClient.post(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/`,
-      data,
+      data
     )
     revalidatePath('/campaigns')
     return response.data
@@ -233,12 +245,12 @@ export async function createCampaign(
 
 export async function updateCampaign(
   id: number,
-  data: Partial<Campaign>,
+  data: Partial<Campaign>
 ): Promise<Campaign | null> {
   try {
     const response = await apiClient.patch(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/${id}/`,
-      data,
+      data
     )
     revalidatePath(`/campaigns/${id}`)
     revalidatePath('/campaigns')
@@ -251,7 +263,7 @@ export async function updateCampaign(
 
 export async function sendCampaign(
   id: number,
-  segmentId?: number,
+  segmentId?: number
 ): Promise<boolean> {
   try {
     const data = segmentId ? { segment_id: segmentId } : {}
@@ -295,40 +307,40 @@ type CampaignChannelMetrics = {
 }
 
 export async function getCampaignPerformance(
-  id: number,
+  id: number
 ): Promise<CampaignPerformance | null> {
   try {
     const access = (await cookies()).get('accessToken')?.value
     if (!access) return null
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/${id}/effectiveness`,
-      { headers: { Authorization: `Bearer ${access}` } },
+      { headers: { Authorization: `Bearer ${access}` } }
     )
     return response.data
   } catch (error) {
     console.error(
       `Error fetching performance for campaign ${id}:`,
-      error,
+      error
     )
     return null
   }
 }
 
 export async function getCampaignChannelMetrics(
-  id: string,
+  id: string
 ): Promise<CampaignChannelMetrics | null> {
   try {
     const access = (await cookies()).get('accessToken')?.value
     if (!access) return null
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/analytics/channel-metrics?campaign_id=${id}`,
-      { headers: { getAuthorization: `Bearer ${access}` } },
+      { headers: { getAuthorization: `Bearer ${access}` } }
     )
     return response.data
   } catch (error) {
     console.error(
       `Error fetching channel metrics for campaign ${id}:`,
-      error,
+      error
     )
     return null
   }
@@ -348,7 +360,7 @@ export async function getSegments(): Promise<
         headers: {
           Authorization: `Bearer ${access}`,
         },
-      },
+      }
     )
     return response.data.results
   } catch (error) {
@@ -358,7 +370,7 @@ export async function getSegments(): Promise<
 }
 
 export async function getSegment(
-  id: number,
+  id: number
 ): Promise<PatientSegment | null> {
   const access = (await cookies()).get('accessToken')?.value
   if (!access) return null
@@ -367,7 +379,7 @@ export async function getSegment(
       `/api/campaigns/segments/${id}/`,
       {
         headers: { Authorization: `Bearer ${access}` },
-      },
+      }
     )
     return response.data
   } catch (error) {
@@ -377,7 +389,7 @@ export async function getSegment(
 }
 
 export async function createSegment(
-  data: Partial<PatientSegment>,
+  data: Partial<PatientSegment>
 ): Promise<PatientSegment | null> {
   try {
     const response = await apiClient.post('/api/segments/', data)
@@ -391,12 +403,12 @@ export async function createSegment(
 
 export async function updateSegment(
   id: number,
-  data: Partial<PatientSegment>,
+  data: Partial<PatientSegment>
 ): Promise<PatientSegment | null> {
   try {
     const response = await apiClient.patch(
       `/api/segments/${id}/`,
-      data,
+      data
     )
     revalidatePath(`/segments/${id}`)
     revalidatePath('/segments')
@@ -408,14 +420,14 @@ export async function updateSegment(
 }
 
 export async function getSegmentPatients(
-  id: number,
+  id: number
 ): Promise<Patient[] | null> {
   try {
     const access = (await cookies()).get('accessToken')?.value
     if (!access) return null
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/segments/${id}/patients/`,
-      { headers: { Authorization: `Bearer ${access}` } },
+      { headers: { Authorization: `Bearer ${access}` } }
     )
     return response.data.results
   } catch (error) {
@@ -466,14 +478,14 @@ type SegmentStats = {
 }
 
 export async function analyzeSegment(
-  id: number,
+  id: number
 ): Promise<SegmentStats | null> {
   try {
     const access = (await cookies()).get('accessToken')?.value
     if (!access) return null
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/segments/${id}/analyze/`,
-      { headers: { Authorization: `Bearer ${access}` } },
+      { headers: { Authorization: `Bearer ${access}` } }
     )
     return response.data
   } catch (error) {
@@ -490,7 +502,7 @@ export async function createMlSegments(params: {
   try {
     const response = await apiClient.post(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/segments/create_ml_segments/`,
-      params,
+      params
     )
     revalidatePath('/segments')
     return response.data
@@ -505,7 +517,7 @@ export async function createMlSegments(params: {
 export async function getDashboardData(): Promise<DashboardData | null> {
   try {
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/analytics/dashboard/`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/analytics/dashboard/`
     )
     return response.data
   } catch (error) {
@@ -515,11 +527,11 @@ export async function getDashboardData(): Promise<DashboardData | null> {
 }
 
 export async function getInactivePatients(
-  days: number = 90,
+  days: number = 90
 ): Promise<Patient[]> {
   try {
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/analytics/inactive_patients/?days=${days}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/analytics/inactive_patients/?days=${days}`
     )
     return response.data
   } catch (error) {
@@ -530,11 +542,11 @@ export async function getInactivePatients(
 
 export async function getEngagementTrends(
   days: number = 90,
-  interval: 'day' | 'week' | 'month' = 'week',
+  interval: 'day' | 'week' | 'month' = 'week'
 ): Promise<unknown> {
   try {
     const response = await apiClient.get(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/analytics/engagement_trends/?days=${days}&interval=${interval}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/analytics/engagement_trends/?days=${days}&interval=${interval}`
     )
     return response.data
   } catch (error) {
@@ -551,7 +563,7 @@ export async function register(
   username: string,
   email: string,
   password: string,
-  passwordConfirm: string,
+  passwordConfirm: string
 ) {
   try {
     await apiClient.post(
@@ -561,7 +573,7 @@ export async function register(
         email,
         password,
         password_confirm: passwordConfirm,
-      },
+      }
     )
     return true
   } catch {
@@ -571,7 +583,7 @@ export async function register(
 
 export async function login(
   username: string,
-  password: string,
+  password: string
 ): Promise<{
   access: string | boolean
   username?: string
@@ -581,7 +593,7 @@ export async function login(
   try {
     const response = await apiClient.post(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/accounts/token/`,
-      { username, password },
+      { username, password }
     )
     const cookies = await Cookies()
     cookies.set('accessToken', response.data.access)
@@ -615,7 +627,7 @@ export async function getCurrentUser(): Promise<Patient | null> {
 
     const response = await apiClient.get(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/`,
-      { headers: { Authorization: `Bearer ${accessToken}` } },
+      { headers: { Authorization: `Bearer ${accessToken}` } }
     )
     const user = response.data.results[0]
     cache['user'] = user

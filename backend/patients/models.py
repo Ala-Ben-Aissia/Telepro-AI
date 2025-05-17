@@ -435,7 +435,7 @@ class Patient(models.Model):
         )
 
         # Fetch the corresponding consent records
-        active_consents = {}
+        active_consents = []
         for consent in latest_consents:
             record = self.consent_records.filter(
                 consent_type=consent["consent_type"],
@@ -443,8 +443,9 @@ class Patient(models.Model):
             ).first()
 
             if record and record.granted:
-                active_consents[record.consent_type] = record
-
+                record.granted = True
+                record.timestamp = consent["latest_timestamp"]
+                active_consents.append(record)
         return active_consents
 
     def has_consent_for(self, consent_type):
@@ -468,6 +469,9 @@ class Patient(models.Model):
     ):
         """Record a new consent decision"""
         from .models import ConsentRecord
+
+        if self.has_consent_for(consent_type):
+            return False
 
         # Update the has_active_consent field if this is the general consent
         if consent_type == "GENERAL":

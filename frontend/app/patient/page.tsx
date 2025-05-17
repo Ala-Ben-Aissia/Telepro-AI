@@ -28,7 +28,6 @@ import {
 
 export default async function PatientPage() {
   const patient = await getCurrentUser()
-  console.log({ patient })
   if (!patient) return
   const preferences = await getPatientPreferences(patient.id)
 
@@ -77,7 +76,7 @@ export default async function PatientPage() {
                       Last updated:{' '}
                       {consents &&
                         new Date(
-                          consents[0]?.timestamp || Date.now(),
+                          consents[0]?.granted_at || Date.now(),
                         ).toLocaleDateString('en-US', {
                           day: 'numeric',
                           month: 'long',
@@ -156,6 +155,7 @@ export default async function PatientPage() {
                     <ConsentForm
                       consents={consents}
                       preferences={preferences || {}}
+                      patient_id={patient.id}
                     />
                   </Suspense>
                 </CardContent>

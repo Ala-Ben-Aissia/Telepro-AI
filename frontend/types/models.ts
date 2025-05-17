@@ -104,8 +104,10 @@ export interface ConsentRecord {
   ip_address?: string
   document_version?: string
   user_agent?: string
-  consent_method: 'WEB_FORM' | 'API' | 'STAFF' | 'IMPORT'
+  consent_method: ConsentMethod
 }
+
+export type ConsentMethod = 'WEB_FORM' | 'API' | 'STAFF' | 'IMPORT'
 
 // Analytics response types
 export interface PatientAnalytics {

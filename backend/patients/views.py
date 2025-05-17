@@ -3,7 +3,6 @@ from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from campaigns.serializers import CampaignSerializer
 
 from services.ai.clustering import PatientClusteringService
 from services.proactive_identification import ProactiveIdentificationService
@@ -78,6 +77,22 @@ class PatientViewSet(viewsets.ModelViewSet):
         Return all consent records for this patient or a specific consent record by ID.
         """
         patient = self.get_object()
+        patient_consents = patient.get_active_consents()
+        if consent_id is None:
+            if request.method == "PATCH":
+                for consent in patient_consents:
+                    new_consent_data = next(
+                        (
+                            c
+                            for c in request.data.get("consents", [])
+                            if c["pk"] == consent.id
+                        ),
+                        None,
+                    )
+                    if new_consent_data:
+                        consent.granted = new_consent_data["granted"]
+                        consent.save()
+
         if consent_id:
             consent_record = patient.consent_records.filter(id=consent_id).first()
             if not consent_record:
@@ -90,8 +105,7 @@ class PatientViewSet(viewsets.ModelViewSet):
             consent_record.save()
             serializer = PatientConsentRecordSerializer(consent_record, many=False)
         else:
-            consent_records = patient.consent_records.all()
-            serializer = PatientConsentRecordSerializer(consent_records, many=True)
+            serializer = PatientConsentRecordSerializer(patient_consents, many=True)
 
         return Response(serializer.data)
 
@@ -192,23 +206,29 @@ class PatientViewSet(viewsets.ModelViewSet):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=["get"])
+    @action(detail=True, methods=["get", "patch"])
     def active_consents(self, request, pk=None):
         """Get all active consents for this patient"""
         patient = self.get_object()
         active_consents = patient.get_active_consents()
-
         # Convert to serializable format
         serializable = [
             {
-                "consent_type": consent_type,
+                "consent_type": consent.consent_type,
                 "granted_at": consent.timestamp,
-                "recorded_by": consent.recorded_by.username
-                if consent.recorded_by
-                else "Self",
+                "granted": consent.granted,
+                "consent_method": consent.consent_method,
             }
-            for consent_type, consent in active_consents.items()
+            for consent in active_consents
         ]
+
+        if request.method == "PATCH":
+            for consent in active_consents:
+                for new_consent in request.data.get("consents", []):
+                    if new_consent["consent_type"] == consent.consent_type:
+                        consent.granted = new_consent.get("granted", True)
+                        consent.save()
+                        break
 
         return Response(serializable)
 

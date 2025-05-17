@@ -1,6 +1,5 @@
 'use client'
 
-import { ConsentRecord, ConsentType } from '@/types/models'
 import { useState } from 'react'
 import { Button } from '@/components/button'
 import {
@@ -25,80 +24,79 @@ import {
   Mail,
   Clock as ClockIcon,
 } from 'lucide-react'
-import { Preferences } from '@/app/api/actions'
+import {
+  ActiveConsentRecord,
+  Preferences,
+  updatePatientConsents,
+} from '@/app/api/actions'
 
 const channels = ['EMAIL', 'SMS', 'CALL', 'NONE']
-const consentTypes: ConsentType[] = [
-  'AUTOMATED_DECISION',
-  'GENERAL',
-  'MARKETING',
-  'RESEARCH',
-  'SENSITIVE_DATA',
-  'THIRD_PARTY',
-]
 
 export default function ConsentForm({
   consents: initialConsents,
   preferences,
+  patient_id,
 }: {
-  consents: ConsentRecord[] | null
+  consents: ActiveConsentRecord[] | null
   preferences: Preferences | object
+  patient_id: string
 }) {
-  const [consents, setConsents] = useState<ConsentRecord[]>(
+  const [consents, setConsents] = useState<ActiveConsentRecord[]>(
     initialConsents || [],
   )
   const [isLoading, setIsLoading] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  // const handleCheckboxChange =
+  //   (consentType: number) => (checked: boolean) => {
+  //     setConsents((prevConsents) =>
+  //       prevConsents.map((consent) => ({
+  //         ...consent,
+  //         granted:
+  //           consent.consent_type === consentType
+  //             ? checked
+  //             : consent.granted,
+  //         metadata: {
+  //           ...consent.metadata,
+  //           [consentType]: checked,
+  //         },
+  //       })),
+  //     )
+  //     setSaveSuccess(false)
+  //   }
 
-  const handleCheckboxChange =
-    (consentType: string) => (checked: boolean) => {
-      setConsents((prevConsents) =>
-        prevConsents.map((consent) => ({
-          ...consent,
-          granted:
-            consent.consent_type === consentType
-              ? checked
-              : consent.granted,
-          metadata: {
-            ...consent.metadata,
-            [consentType]: checked,
-          },
-        })),
-      )
-      setSaveSuccess(false)
-    }
+  // const handlePrefsChange = (pref: string) => (checked: boolean) => {
+  //   setConsents((prevConsents) =>
+  //     prevConsents.map((consent) => {
+  //       const currentPrefs = Array.isArray(
+  //         consent.metadata?.communication_preferences,
+  //       )
+  //         ? consent.metadata.communication_preferences
+  //         : []
+  //       const newPrefs = checked
+  //         ? [...currentPrefs, pref]
+  //         : currentPrefs.filter((p: string) => p !== pref)
+  //       return {
+  //         ...consent,
+  //         metadata: {
+  //           ...consent.metadata,
+  //           communication_preferences: newPrefs,
+  //         },
+  //       }
+  //     }),
+  //   )
+  //   setSaveSuccess(false)
+  // }
 
-  const handlePrefsChange = (pref: string) => (checked: boolean) => {
-    setConsents((prevConsents) =>
-      prevConsents.map((consent) => {
-        const currentPrefs = Array.isArray(
-          consent.metadata?.communication_preferences,
-        )
-          ? consent.metadata.communication_preferences
-          : []
-        const newPrefs = checked
-          ? [...currentPrefs, pref]
-          : currentPrefs.filter((p: string) => p !== pref)
-        return {
-          ...consent,
-          metadata: {
-            ...consent.metadata,
-            communication_preferences: newPrefs,
-          },
-        }
-      }),
-    )
-    setSaveSuccess(false)
-  }
-
-  const saveConsent = async () => {
+  const saveConsents = async () => {
     if (consents.length === 0) return
     setIsLoading(true)
     try {
-      // In a real app, this would send data to the server
-      console.log('Consents updated:', consents)
+      const updatedConsents = await updatePatientConsents(
+        patient_id,
+        consents,
+      )
+      console.log({ updatedConsents })
       setSaveSuccess(true)
-
       // Reset success message after 3 seconds
       setTimeout(() => {
         setSaveSuccess(false)
@@ -129,14 +127,14 @@ export default function ConsentForm({
   }
 
   // Helper function to format consent type for display
-  const formatConsentType = (consentType: string) => {
-    return consentType
-      .replace('_', ' ')
-      .toLowerCase()
-      .split(' ')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
+  // const formatConsentType = (consentType: string) => {
+  //   return consentType
+  //     .replace('_', ' ')
+  //     .toLowerCase()
+  //     .split(' ')
+  //     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+  //     .join(' ')
+  // }
 
   // Helper function to get description for each consent type
   const getConsentDescription = (consentType: string) => {
@@ -169,6 +167,28 @@ export default function ConsentForm({
         return method
     }
   }
+  //
+  // const handleUpdateConsent = async function(consent_pk: number, granted: boolean) {
+  //   try {
+  //     await updatePatientConsents(patient_id, consent_pk, granted)
+  //   }
+  // }
+
+  const handleConsentUpdate = function (
+    granted: boolean,
+    consentType: string,
+  ) {
+    setConsents((prev) => {
+      return prev.map((consent) => {
+        if (consent.consent_type !== consentType) return consent
+        return {
+          ...consent,
+          granted,
+          granted_at: new Date().toISOString(),
+        }
+      })
+    })
+  }
 
   return (
     <div className="space-y-6">
@@ -183,13 +203,11 @@ export default function ConsentForm({
 
         <CardContent>
           <div className="space-y-4">
-            {consents.map((consent, index) => {
-              const isChecked = consentTypes.includes(
-                consent.consent_type,
-              )
+            {consents.map((consent) => {
+              const isChecked = consent.granted
               return (
                 <div
-                  key={index}
+                  key={Math.random()}
                   className="flex items-start p-4 rounded-lg border border-blue-100 bg-blue-50 hover:bg-blue-100/30 transition-colors"
                 >
                   <div className="mt-0.5 mr-3">
@@ -203,16 +221,22 @@ export default function ConsentForm({
                         <Checkbox
                           id={consent.consent_type}
                           checked={isChecked}
-                          onCheckedChange={handleCheckboxChange(
-                            consent.consent_type,
-                          )}
+                          onCheckedChange={(checked: boolean) => {
+                            handleConsentUpdate(
+                              checked,
+                              consent.consent_type,
+                            )
+                          }}
+                          // onCheckedChange={handleCheckboxChange(
+                          //   consent.consent_type,
+                          // )}
                           className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
                         />
                         <label
                           htmlFor={consent.consent_type}
                           className="text-sm font-medium text-blue-900 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          {formatConsentType(consent.consent_type)}
+                          {consent.consent_type}
                         </label>
                       </div>
                       <div className="flex items-center gap-2">
@@ -230,7 +254,7 @@ export default function ConsentForm({
                       <ClockIcon className="h-3 w-3" />
                       <span>
                         {new Date(
-                          consent.timestamp,
+                          consent.granted_at,
                         ).toLocaleDateString('en-US', {
                           day: 'numeric',
                           month: 'long',
@@ -279,9 +303,9 @@ export default function ConsentForm({
                             (preferences as Preferences)
                               ?.preferred_contact_method
                           }
-                          onCheckedChange={handlePrefsChange(
-                            String(index),
-                          )}
+                          // onCheckedChange={handlePrefsChange(
+                          //   String(index),
+                          // )}
                           className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
                         />
                         <label
@@ -380,7 +404,7 @@ export default function ConsentForm({
         )}
         <div className="ml-auto">
           <Button
-            onClick={saveConsent}
+            onClick={saveConsents}
             disabled={isLoading || consents.length === 0}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 shadow-sm transition-colors"
           >

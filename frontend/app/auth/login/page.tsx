@@ -31,7 +31,7 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
     defaultValues: {
       username: '',
-      password: '',
+      password: 'PatientPass123!',
       // rememberMe: false,
     },
   })
