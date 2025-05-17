@@ -13,7 +13,7 @@ Le backend de Telepro-AI a été conçu selon des standards professionnels pour 
 | Framework principal    | Django/DRF           | Flask, FastAPI         | Maturité, écosystème, sécurité   |
 | Authentification       | JWT (SimpleJWT)      | Session, OAuth2        | Stateless, mobile-friendly       |
 | Tâches asynchrones     | Celery + Redis       | RQ, Dramatiq           | Fiabilité, planification, support|
-| Base de données        | PostgreSQL           | MySQL, SQLite          | Transactions, JSON, scalabilité  |
+| Base de données        | SQLite           | MySQL, PostgreSQL          | Transactions, JSON, scalabilité  |
 | Tests                  | Pytest, DRF TestCase | Unittest, Nose         | Expressivité, plugins, coverage  |
 | CI/CD                  | GitHub Actions       | GitLab CI, Jenkins     | Intégration GitHub, simplicité   |
 
