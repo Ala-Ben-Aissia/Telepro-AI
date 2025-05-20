@@ -1,54 +1,60 @@
 # I
 
-# Dedication
+Dedication
 
-With profound appreciation and much love, I would like to thank every person who has contributed to my journey, every soul who has lifted me up, and every heart that has believed in me.
+With deep appreciation and heartfelt gratitude, I dedicate this work to all those who have supported me throughout this journey.
 
-To my family, your unconditional love, sacrifices, support and encouragement have been my foundation. Thank you for being the embodiment of love and strength. I am forever grateful for your unwavering support.
+To my family, your unwavering love, sacrifices, and constant encouragement have been my cornerstone. Your belief in me has fueled my perseverance, and for that, I am eternally grateful.
 
-To my friends and colleagues, the memories we've created and the bonds we've formed will forever hold a special place in my heart. Thank you for the endless support, the late-night study sessions, and the shared moments of joy.
+To my friends and colleagues, thank you for the shared challenges, the late-night discussions, and the moments of camaraderie that made this experience both enriching and memorable.
 
-With all my love and gratitude,
+This accomplishment is a reflection of your support and inspiration.
 
--Ala Ben Aissia
+— Alaa Ben Aissa
+
+⸻
 
 # II
 
-# Acknowledgements
+Acknowledgements
 
-I would like to express my sincere gratitude to all those who contributed to the success of this project and my growth as a professional.
+I would like to express my sincere thanks to all those who have contributed to the successful realization of this project.
 
-First, I extend my deepest appreciation to my academic supervisors for their guidance, expertise, and continuous support throughout this challenging journey. Their insights have been invaluable to the development of this project.
+Foremost, I am deeply grateful to my academic supervisors for their guidance, feedback, and continuous support. Their expertise played a vital role in shaping the quality and direction of this work.
 
-I am particularly grateful to the entire team at the University Hospital Center for providing me with this opportunity and creating an environment conducive to learning and innovation. Special thanks to Dr. Mehdi Karray, my industrial supervisor, whose mentorship and technical expertise have significantly contributed to the success of this project.
+I extend special thanks to the team at the University Hospital Center, whose collaboration provided a meaningful and practical context for this project. I am particularly indebted to Dr. Mehdi Karray, my industrial supervisor, for his mentorship, technical insight, and encouragement throughout the internship.
 
-My gratitude also extends to the medical professionals who provided domain expertise and feedback that helped shape the teleprospection system to meet real-world healthcare needs.
+I would also like to acknowledge the contributions of healthcare professionals whose domain knowledge and constructive feedback were essential in aligning the system with real-world healthcare needs.
 
-Finally, I thank the open-source community whose tools and libraries have been foundational to this project.
+Finally, I am thankful for the open-source community whose tools and libraries formed the technological foundation upon which this system was built.
+
+⸻
 
 # III
 
-# Abstract
+Abstract
 
-This report presents the implementation of an Intelligent Teleprospection System with AI, designed to revolutionize patient outreach in healthcare settings. The system combines artificial intelligence, cloud technologies, and embedded hardware to create a comprehensive solution for proactive patient communication.
+This report presents the development of an AI-Powered Teleprospection System, designed to enhance patient outreach in healthcare environments. The system integrates artificial intelligence, cloud infrastructure, and embedded hardware to deliver an efficient, proactive communication platform.
 
-The developed solution automatically segments patients based on medical history and engagement patterns, sends personalized communications through preferred channels (SMS or calls), and optimizes outreach timing for maximum effectiveness. A key innovation is the integration of hardware components (ESP32 microcontroller with SIM800L module) that enables direct telecommunication capabilities, reducing dependency on third-party services.
+The implemented solution automates patient segmentation based on medical history and behavioral patterns, enabling personalized outreach via preferred communication channels such as SMS and voice calls. Scheduling is optimized to improve response rates and operational efficiency. A notable feature is the integration of an ESP32 microcontroller and SIM800L module, providing direct telecommunication capabilities without reliance on third-party services.
 
-The system demonstrates significant improvements in patient engagement rates and operational efficiency while maintaining strict compliance with healthcare regulations and data protection standards. Through rigorous testing and validation, we confirmed the system's reliability, security, and effectiveness in real-world scenarios.
+The system has demonstrated meaningful improvements in patient engagement and administrative efficiency, while adhering to healthcare standards and data protection regulations. Through systematic testing, the solution has proven reliable, secure, and adaptable to real-world scenarios.
 
-This project contributes to the growing field of smart healthcare solutions by presenting a scalable architecture that can be adapted to various medical contexts requiring proactive patient communication.
+This project contributes to the evolution of intelligent healthcare solutions by proposing a scalable and versatile architecture for proactive patient communication in diverse medical settings.
+
+⸻
 
 # IV
 
-# Résumé
+Résumé
 
-Ce rapport présente la mise en œuvre d'un Système de Téléprospection Intelligent avec IA, conçu pour révolutionner la communication avec les patients dans le contexte médical. Le système combine l'intelligence artificielle, les technologies cloud et le matériel embarqué pour créer une solution complète pour la communication proactive avec les patients.
+Ce rapport présente le développement d’un Système de Téléprospection Intelligent alimenté par l’IA, destiné à améliorer la communication proactive avec les patients dans le cadre médical. Le système associe intelligence artificielle, technologies cloud et matériel embarqué pour offrir une plateforme efficace et innovante.
 
-La solution développée segmente automatiquement les patients en fonction de leur historique médical et de leurs habitudes d'engagement, envoie des communications personnalisées via les canaux préférés (SMS ou appels), et optimise le moment des communications pour une efficacité maximale. Une innovation clé est l'intégration de composants matériels (microcontrôleur ESP32 avec module SIM800L) qui permet des capacités de télécommunication directes, réduisant la dépendance aux services tiers.
+La solution mise en œuvre automatise la segmentation des patients en fonction de leur historique médical et de leurs comportements d’engagement, permettant des communications personnalisées via les canaux préférés (SMS ou appels vocaux). L’optimisation du moment d’envoi vise à maximiser les taux de réponse et l’efficacité opérationnelle. Une fonctionnalité remarquable est l’intégration d’un microcontrôleur ESP32 avec le module SIM800L, assurant une télécommunication directe sans dépendance à des services externes.
 
-Le système démontre des améliorations significatives dans les taux d'engagement des patients et l'efficacité opérationnelle tout en maintenant une conformité stricte avec les réglementations de santé et les normes de protection des données. Grâce à des tests et une validation rigoureux, nous avons confirmé la fiabilité, la sécurité et l'efficacité du système dans des scénarios réels.
+Le système a montré des améliorations significatives en termes d’engagement des patients et d’efficacité administrative, tout en respectant strictement les normes de confidentialité et de réglementation médicale. Les tests rigoureux ont confirmé sa fiabilité, sa sécurité et son applicabilité dans des contextes réels.
 
-Ce projet contribue au domaine croissant des solutions de santé intelligentes en présentant une architecture évolutive qui peut être adaptée à divers contextes médicaux nécessitant une communication proactive avec les patients.
+Ce projet s’inscrit dans le développement des solutions de santé intelligentes en proposant une architecture évolutive, adaptée à divers contextes médicaux nécessitant une communication proactive.
 
 # V
 
