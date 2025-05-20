@@ -1,6 +1,6 @@
 # I
 
-Dedication
+## Dedication
 
 With deep appreciation and heartfelt gratitude, I dedicate this work to all those who have supported me throughout this journey.
 
@@ -16,13 +16,13 @@ This accomplishment is a reflection of your support and inspiration.
 
 # II
 
-Acknowledgements
+## Acknowledgements
 
 I would like to express my sincere thanks to all those who have contributed to the successful realization of this project.
 
 Foremost, I am deeply grateful to my academic supervisors for their guidance, feedback, and continuous support. Their expertise played a vital role in shaping the quality and direction of this work.
 
-I extend special thanks to the team at the University Hospital Center, whose collaboration provided a meaningful and practical context for this project. I am particularly indebted to Dr. Mehdi Karray, my industrial supervisor, for his mentorship, technical insight, and encouragement throughout the internship.
+I extend special thanks to the team at the Vast New Telecom Tunisia, whose collaboration provided a meaningful and practical context for this project. I am particularly indebted to Mr. Ismail Grira, my industrial supervisor, for his mentorship, technical insight, and encouragement throughout the internship.
 
 I would also like to acknowledge the contributions of healthcare professionals whose domain knowledge and constructive feedback were essential in aligning the system with real-world healthcare needs.
 
@@ -32,11 +32,11 @@ Finally, I am thankful for the open-source community whose tools and libraries f
 
 # III
 
-Abstract
+## Abstract
 
 This report presents the development of an AI-Powered Teleprospection System, designed to enhance patient outreach in healthcare environments. The system integrates artificial intelligence, cloud infrastructure, and embedded hardware to deliver an efficient, proactive communication platform.
 
-The implemented solution automates patient segmentation based on medical history and behavioral patterns, enabling personalized outreach via preferred communication channels such as SMS and voice calls. Scheduling is optimized to improve response rates and operational efficiency. A notable feature is the integration of an ESP32 microcontroller and SIM800L module, providing direct telecommunication capabilities without reliance on third-party services.
+The implemented solution automates patient segmentation based on medical history and behavioral patterns, enabling personalized outreach via preferred communication channels such as SMS, Emails and voice calls. Scheduling is optimized to improve response rates and operational efficiency. A notable feature is the integration of an ESP32 microcontroller and SIM800L module, providing direct telecommunication capabilities without reliance on third-party services.
 
 The system has demonstrated meaningful improvements in patient engagement and administrative efficiency, while adhering to healthcare standards and data protection regulations. Through systematic testing, the solution has proven reliable, secure, and adaptable to real-world scenarios.
 
@@ -46,7 +46,7 @@ This project contributes to the evolution of intelligent healthcare solutions by
 
 # IV
 
-Résumé
+## Résumé
 
 Ce rapport présente le développement d’un Système de Téléprospection Intelligent alimenté par l’IA, destiné à améliorer la communication proactive avec les patients dans le cadre médical. Le système associe intelligence artificielle, technologies cloud et matériel embarqué pour offrir une plateforme efficace et innovante.
 
@@ -167,8 +167,6 @@ Ce projet s’inscrit dans le développement des solutions de santé intelligent
 | 3.2 | Security Measures Implementation | 43 |
 | 4.1 | Test Case Summary | 49 |
 | 4.2 | Performance Metrics | 53 |
-
-May 20, 2023
 
 ## General Introduction
 
