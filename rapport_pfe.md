@@ -3089,7 +3089,7 @@ export interface Patient {
   postal_code?: string
   age_group?: '0-18' | '19-35' | '36-50' | '51-65' | '65+'
   language_preference?: string
-  preferred_contact_method: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
+  preferred_contact_methods: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
   contact_time_preferences?: Record<string, unknown>
   campaign_preferences: Record<string, unknown>
   engagement_score: number
@@ -3164,7 +3164,7 @@ export const PatientCard: React.FC<PatientCardProps> = ({
   onEdit,
 }) => {
   // TypeScript garantit que ces propriétés existent et sont du bon type
-  const { id, email, engagement_score, preferred_contact_method } =
+  const { id, email, engagement_score, preferred_contact_methods } =
     patient
 
   return (
@@ -3174,7 +3174,7 @@ export const PatientCard: React.FC<PatientCardProps> = ({
       </h3>
       <p>Email: {email}</p>
       <p>Engagement: {engagement_score.toFixed(2)}</p>
-      <p>Contact préféré: {preferred_contact_method}</p>
+      <p>Contact préféré: {preferred_contact_methods}</p>
       <button onClick={() => onEdit(id)}>Modifier</button>
     </div>
   )

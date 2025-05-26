@@ -1,6 +1,6 @@
-"use client";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+'use client'
+import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
 import {
   Check,
   AlertTriangle,
@@ -13,90 +13,88 @@ import {
   Clock,
   Mail,
   Phone,
-} from "lucide-react";
+} from 'lucide-react'
 
 // Patient interface matching the API response from api/patients/${id}
 interface Patient {
-  id: string;
-  medical_record_number: string | null;
-  date_of_birth: string;
-  gender: string;
-  location: string;
-  postal_code: string;
-  age_group: string;
-  language_preference: string;
-  email_verified: boolean;
-  phone_verified: boolean;
-  phone_number: string | null;
-  preferred_contact_method: string;
-  has_active_consent: boolean;
-  engagement_score: number;
+  id: string
+  medical_record_number: string | null
+  date_of_birth: string
+  gender: string
+  location: string
+  postal_code: string
+  age_group: string
+  language_preference: string
+  email_verified: boolean
+  phone_verified: boolean
+  phone_number: string | null
+  preferred_contact_methods: string
+  has_active_consent: boolean
+  engagement_score: number
 }
 
 // Index signature for preferences
 interface PreferencesDictionary {
-  [key: string]: string | boolean;
+  [key: string]: string | boolean
 }
 
 // Communication interface matching the API response from api/patients/communications
 interface Communication {
-  id: number;
-  campaign: string;
-  communication_type: string;
-  status: string;
-  sent_at: string;
-  delivered_at: string | null;
-  read_at: string | null;
+  id: number
+  campaign: string
+  communication_type: string
+  status: string
+  sent_at: string
+  delivered_at: string | null
+  read_at: string | null
 }
 
 // Define types for our preferences to help with type safety
 interface PreferencesType extends PreferencesDictionary {
-  language: string;
-  preferred_contact_method: string;
-  time_of_day_preference: string;
-  receive_appointment_reminders: boolean;
-  receive_test_results: boolean;
-  receive_newsletters: boolean;
-  language_preference: string;
+  language: string
+  preferred_contact_methods: string
+  time_of_day_preference: string
+  receive_appointment_reminders: boolean
+  receive_test_results: boolean
+  receive_newsletters: boolean
+  language_preference: string
 }
 
 export default function PatientPortalPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>()
   // Patient data from api/patients/${id}
-  const [patientData, setPatientData] = useState<Patient | null>(
-    null
-  );
+  const [patientData, setPatientData] = useState<Patient | null>(null)
   // Communications data from api/patients/communications
   const [communications, setCommunications] = useState<
     Communication[]
-  >([]);
+  >([])
   // UI preferences derived from patient data
   const [preferences, setPreferences] = useState<PreferencesType>({
-    language: "English",
-    preferred_contact_method: "SMS",
-    time_of_day_preference: "morning",
+    language: 'English',
+    preferred_contact_methods: 'SMS',
+    time_of_day_preference: 'morning',
     receive_appointment_reminders: true,
     receive_test_results: true,
     receive_newsletters: false,
-    language_preference: "en",
-  });
+    language_preference: 'en',
+  })
 
   // UI state
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
   const [communicationsLoading, setCommunicationsLoading] =
-    useState(true);
-  const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
+    useState(true)
+  const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [error, setError] = useState('')
   const [showSecurityVerification, setShowSecurityVerification] =
-    useState(false);
-  const [securityCode, setSecurityCode] = useState("");
+    useState(false)
+  const [securityCode, setSecurityCode] = useState('')
 
   useEffect(() => {
     // Fetch patient data and communications
     async function fetchData() {
-      setLoading(true);
-      setCommunicationsLoading(true);
+      setLoading(true)
+      setCommunicationsLoading(true)
       // const access = (await cookies()).get("accessToken");
       try {
         // Fetch patient data from the specified API
@@ -107,120 +105,120 @@ export default function PatientPortalPage() {
               Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3NDE0ODA5LCJpYXQiOjE3NDczMjg0MDksImp0aSI6ImI3NWQ2MWVhNTQ1YTQ3OGZiZjQyYzYzMzIzNzBlYzgwIiwidXNlcl9pZCI6MSwicHdkX2NoYW5nZWQiOjE3NDU2NzYyMjEuOTE2MTk2fQ.5Tlowoq87HuAwraKk6_zlgZDOZm1V_S_zt1IWuqlo-k`,
             },
           }
-        );
+        )
 
         if (patientRes.ok) {
-          const data = await patientRes.json();
-          setPatientData(data);
+          const data = await patientRes.json()
+          setPatientData(data)
 
           // Create language mapping
           const languageMap: Record<string, string> = {
-            en: "English",
-            fr: "French",
-            es: "Spanish",
-            ar: "Arabic",
-            zh: "Chinese",
-          };
+            en: 'English',
+            fr: 'French',
+            es: 'Spanish',
+            ar: 'Arabic',
+            zh: 'Chinese',
+          }
 
           // Set derived preferences from patient data
           setPreferences({
             // Map language code to full language name
             language:
-              languageMap[data.language_preference] || "English",
+              languageMap[data.language_preference] || 'English',
             // Take contact method directly from API
-            preferred_contact_method: data.preferred_contact_method,
+            preferred_contact_methods: data.preferred_contact_methods,
             // Default time preference (can be customized by user)
-            time_of_day_preference: "morning",
+            time_of_day_preference: 'morning',
             // Default notification preferences
             receive_appointment_reminders: true,
             receive_test_results: true,
             receive_newsletters: false,
             // Keep language code for reference
             language_preference: data.language_preference,
-          });
+          })
         } else {
-          throw new Error("Failed to load patient data");
+          throw new Error('Failed to load patient data')
         }
 
         // Fetch communications data
         const communicationsRes = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/patients/communications`
-        );
+        )
         if (communicationsRes.ok) {
-          const commsData = await communicationsRes.json();
-          setCommunications(commsData);
+          const commsData = await communicationsRes.json()
+          setCommunications(commsData)
         }
       } catch (e) {
-        console.error(e);
-        setError("Failed to load data");
+        console.error(e)
+        setError('Failed to load data')
       } finally {
-        setLoading(false);
-        setCommunicationsLoading(false);
+        setLoading(false)
+        setCommunicationsLoading(false)
       }
     }
-    fetchData();
-  }, [id]);
+    fetchData()
+  }, [id])
 
   const handlePreferenceChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, value, type } = e.target
+    const checked = (e.target as HTMLInputElement).checked
 
-    setPreferences(prev => {
-      const newPrefs = { ...prev };
+    setPreferences((prev) => {
+      const newPrefs = { ...prev }
 
       // Handle different input types appropriately
-      if (type === "checkbox") {
+      if (type === 'checkbox') {
         // For checkbox inputs, use the checked boolean value
         if (
-          name === "receive_appointment_reminders" ||
-          name === "receive_test_results" ||
-          name === "receive_newsletters"
+          name === 'receive_appointment_reminders' ||
+          name === 'receive_test_results' ||
+          name === 'receive_newsletters'
         ) {
-          newPrefs[name] = checked;
+          newPrefs[name] = checked
         }
       } else {
         // For non-checkbox inputs, use the string value
         if (
-          name === "language" ||
-          name === "preferred_contact_method" ||
-          name === "time_of_day_preference"
+          name === 'language' ||
+          name === 'preferred_contact_methods' ||
+          name === 'time_of_day_preference'
         ) {
-          newPrefs[name] = value;
+          newPrefs[name] = value
         }
       }
 
       // Map language name to language code when language preference changes
-      if (name === "language") {
+      if (name === 'language') {
         const langCodeMap: Record<string, string> = {
-          English: "en",
-          French: "fr",
-          Spanish: "es",
-          Arabic: "ar",
-          Chinese: "zh",
-        };
-        newPrefs.language_preference = langCodeMap[value] || "en";
+          English: 'en',
+          French: 'fr',
+          Spanish: 'es',
+          Arabic: 'ar',
+          Chinese: 'zh',
+        }
+        newPrefs.language_preference = langCodeMap[value] || 'en'
       }
 
-      return newPrefs;
-    });
-  };
+      return newPrefs
+    })
+  }
 
   const handleMainConsentToggle = () => {
-    setShowSecurityVerification(true);
-  };
+    setShowSecurityVerification(true)
+  }
 
   const verifyAndUpdateConsent = async () => {
     // Validate security code
     if (securityCode.length < 4) {
-      setError("Please enter a valid security code");
-      return;
+      setError('Please enter a valid security code')
+      return
     }
 
     if (!patientData) {
-      setError("Patient data not loaded");
-      return;
+      setError('Patient data not loaded')
+      return
     }
 
     try {
@@ -229,88 +227,88 @@ export default function PatientPortalPage() {
 
       // Update the consent status
       const response = await fetch(`/api/patients/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           has_active_consent: !patientData.has_active_consent,
         }),
-      });
+      })
 
       if (response.ok) {
         // Update local patient data
-        setPatientData(prevData => {
-          if (!prevData) return null;
+        setPatientData((prevData) => {
+          if (!prevData) return null
           return {
             ...prevData,
             has_active_consent: !prevData.has_active_consent,
-          };
-        });
+          }
+        })
 
         setSuccess(
           `Successfully ${
-            patientData.has_active_consent ? "withdrawn" : "granted"
+            patientData.has_active_consent ? 'withdrawn' : 'granted'
           } consent`
-        );
-        setShowSecurityVerification(false);
-        setSecurityCode("");
+        )
+        setShowSecurityVerification(false)
+        setSecurityCode('')
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Consent update failed");
+        const errorData = await response.json()
+        setError(errorData.message || 'Consent update failed')
       }
     } catch (e) {
-      console.error(e);
-      setError("Failed to update consent status");
+      console.error(e)
+      setError('Failed to update consent status')
     }
-  };
+  }
 
   const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setSuccess("");
-    setError("");
+    e.preventDefault()
+    setSaving(true)
+    setSuccess('')
+    setError('')
 
     if (!patientData) {
-      setError("Patient data not loaded");
-      setSaving(false);
-      return;
+      setError('Patient data not loaded')
+      setSaving(false)
+      return
     }
 
     try {
       // Update patient preferences
       const updateData = {
         language_preference: preferences.language_preference,
-        preferred_contact_method:
-          preferences.preferred_contact_method,
-      };
+        preferred_contact_methods:
+          preferences.preferred_contact_methods,
+      }
 
       const response = await fetch(`/api/patients/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updateData),
-      });
+      })
 
       if (response.ok) {
         // Update local patient data with new preferences
-        setPatientData(prevData => {
-          if (!prevData) return null;
+        setPatientData((prevData) => {
+          if (!prevData) return null
           return {
             ...prevData,
             language_preference: preferences.language_preference,
-            preferred_contact_method:
-              preferences.preferred_contact_method,
-          };
-        });
+            preferred_contact_methods:
+              preferences.preferred_contact_methods,
+          }
+        })
 
-        setSuccess("Preferences saved successfully!");
+        setSuccess('Preferences saved successfully!')
       } else {
-        setError("Failed to save preferences");
+        setError('Failed to save preferences')
       }
     } catch (e) {
-      console.error(e);
-      setError("Failed to save preferences");
+      console.error(e)
+      setError('Failed to save preferences')
     }
-    setSaving(false);
-  };
+    setSaving(false)
+  }
 
   return (
     <div className="max-w-4xl mx-auto bg-white p-6 md:p-10 rounded-xl shadow-lg space-y-8 mt-6 md:mt-10">
@@ -327,8 +325,8 @@ export default function PatientPortalPage() {
           <div
             className={`px-4 py-2 rounded-full flex items-center gap-2 ${
               patientData.has_active_consent
-                ? "bg-green-100 text-green-800"
-                : "bg-amber-100 text-amber-800"
+                ? 'bg-green-100 text-green-800'
+                : 'bg-amber-100 text-amber-800'
             }`}
           >
             {patientData.has_active_consent ? (
@@ -338,8 +336,8 @@ export default function PatientPortalPage() {
             )}
             <span className="font-medium">
               {patientData.has_active_consent
-                ? "Active Consent"
-                : "Consent Required"}
+                ? 'Active Consent'
+                : 'Consent Required'}
             </span>
           </div>
         )}
@@ -378,13 +376,13 @@ export default function PatientPortalPage() {
                   onClick={handleMainConsentToggle}
                   className={`px-5 py-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                     patientData.has_active_consent
-                      ? "bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500"
-                      : "bg-green-100 text-green-700 hover:bg-green-200 focus:ring-green-500"
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200 focus:ring-red-500'
+                      : 'bg-green-100 text-green-700 hover:bg-green-200 focus:ring-green-500'
                   }`}
                 >
                   {patientData.has_active_consent
-                    ? "Withdraw Consent"
-                    : "Give Consent"}
+                    ? 'Withdraw Consent'
+                    : 'Give Consent'}
                 </button>
               </div>
             )}
@@ -398,10 +396,10 @@ export default function PatientPortalPage() {
                     Verify Your Identity
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    To{" "}
+                    To{' '}
                     {patientData.has_active_consent
-                      ? "withdraw"
-                      : "give"}{" "}
+                      ? 'withdraw'
+                      : 'give'}{' '}
                     consent, please enter the security code sent to
                     your registered contact method.
                   </p>
@@ -414,7 +412,9 @@ export default function PatientPortalPage() {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Enter code"
                       value={securityCode}
-                      onChange={e => setSecurityCode(e.target.value)}
+                      onChange={(e) =>
+                        setSecurityCode(e.target.value)
+                      }
                     />
                   </div>
                   <div className="flex gap-3 justify-end">
@@ -422,8 +422,8 @@ export default function PatientPortalPage() {
                       type="button"
                       className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                       onClick={() => {
-                        setShowSecurityVerification(false);
-                        setSecurityCode("");
+                        setShowSecurityVerification(false)
+                        setSecurityCode('')
                       }}
                     >
                       Cancel
@@ -494,17 +494,17 @@ export default function PatientPortalPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                      {communications.slice(0, 5).map(comm => (
+                      {communications.slice(0, 5).map((comm) => (
                         <tr key={comm.id}>
                           <td className="py-4 px-3 text-sm">
                             {comm.campaign}
                           </td>
                           <td className="py-4 px-3 text-sm">
                             <span className="inline-flex items-center gap-1">
-                              {comm.communication_type === "EMAIL" ? (
+                              {comm.communication_type === 'EMAIL' ? (
                                 <Mail className="h-4 w-4 text-blue-600" />
                               ) : comm.communication_type ===
-                                "SMS" ? (
+                                'SMS' ? (
                                 <Phone className="h-4 w-4 text-green-600" />
                               ) : (
                                 <Bell className="h-4 w-4 text-orange-600" />
@@ -515,17 +515,17 @@ export default function PatientPortalPage() {
                           <td className="py-4 px-3 text-sm">
                             <span
                               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                comm.status === "DELIVERED"
-                                  ? "bg-green-100 text-green-800"
-                                  : comm.status === "SENT"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : comm.status === "RESPONDED"
-                                  ? "bg-purple-100 text-purple-800"
-                                  : comm.status === "READ"
-                                  ? "bg-indigo-100 text-indigo-800"
-                                  : comm.status === "FAILED"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-gray-100 text-gray-800"
+                                comm.status === 'DELIVERED'
+                                  ? 'bg-green-100 text-green-800'
+                                  : comm.status === 'SENT'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : comm.status === 'RESPONDED'
+                                  ? 'bg-purple-100 text-purple-800'
+                                  : comm.status === 'READ'
+                                  ? 'bg-indigo-100 text-indigo-800'
+                                  : comm.status === 'FAILED'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-gray-100 text-gray-800'
                               }`}
                             >
                               {comm.status}
@@ -613,8 +613,8 @@ export default function PatientPortalPage() {
                     <Bell className="h-5 w-5 text-gray-400" />
                   </div>
                   <select
-                    name="preferred_contact_method"
-                    value={preferences.preferred_contact_method}
+                    name="preferred_contact_methods"
+                    value={preferences.preferred_contact_methods}
                     onChange={handlePreferenceChange}
                     className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   >
@@ -665,13 +665,13 @@ export default function PatientPortalPage() {
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
                         patientData.email_verified
-                          ? "bg-green-100 text-green-800"
-                          : "bg-amber-100 text-amber-800"
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-amber-100 text-amber-800'
                       }`}
                     >
                       {patientData.email_verified
-                        ? "Verified"
-                        : "Not Verified"}
+                        ? 'Verified'
+                        : 'Not Verified'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -684,13 +684,13 @@ export default function PatientPortalPage() {
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
                         patientData.phone_verified
-                          ? "bg-green-100 text-green-800"
-                          : "bg-amber-100 text-amber-800"
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-amber-100 text-amber-800'
                       }`}
                     >
                       {patientData.phone_verified
-                        ? "Verified"
-                        : "Not Verified"}
+                        ? 'Verified'
+                        : 'Not Verified'}
                     </span>
                   </div>
                 </div>
@@ -790,12 +790,12 @@ export default function PatientPortalPage() {
                   Saving...
                 </span>
               ) : (
-                "Save Preferences"
+                'Save Preferences'
               )}
             </button>
           </div>
         </form>
       )}
     </div>
-  );
+  )
 }

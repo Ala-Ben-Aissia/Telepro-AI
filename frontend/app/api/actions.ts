@@ -143,7 +143,7 @@ export async function getPatientCommunications(
 }
 
 export type Preferences = {
-  preferred_contact_method: Channel | null
+  preferred_contact_methods: Channel | null
   contact_time_preferences: Record<string, unknown>
   campaign_preferences: number[]
   language_preference: string
@@ -235,7 +235,9 @@ export async function updatePatientPreferences(
       {
         method: 'PATCH',
         headers,
-        body: JSON.stringify(prefs),
+        body: JSON.stringify({
+          preferred_contact_methods: prefs.preferred_contact_methods,
+        }),
       }
     )
     const result = await handleResponse<Preferences>(response)

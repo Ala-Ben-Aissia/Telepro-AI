@@ -13,7 +13,7 @@ export interface Patient {
   postal_code?: string
   age_group?: '0-18' | '19-35' | '36-50' | '51-65' | '65+'
   language_preference?: string
-  preferred_contact_method?: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
+  preferred_contact_methods?: 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
   contact_time_preferences?: Record<string, unknown>
   campaign_preferences: Record<string, unknown>
   engagement_score: number

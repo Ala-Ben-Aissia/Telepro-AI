@@ -230,9 +230,9 @@ class PatientResponseTrainer:
                 if patient.has_active_consent not in [True, False]:
                     valid = False
                     reasons.append("Missing has_active_consent")
-                if not patient.preferred_contact_method:
+                if not patient.preferred_contact_methods:
                     valid = False
-                    reasons.append("Missing preferred_contact_method")
+                    reasons.append("Missing preferred_contact_methods")
                 if not valid:
                     logger.warning(
                         f"Skipping patient {patient.id} in training data: {', '.join(reasons)}"
@@ -245,7 +245,7 @@ class PatientResponseTrainer:
                     "gender": patient.gender or np.nan,
                     "language_preference": patient.language_preference or np.nan,
                     "location": patient.location or np.nan,
-                    "preferred_contact_method": patient.preferred_contact_method
+                    "preferred_contact_methods": patient.preferred_contact_methods
                     or np.nan,
                 }
 
@@ -314,11 +314,11 @@ class PatientResponseTrainer:
                         "method_match": int(
                             (
                                 campaign.email_template
-                                and patient.preferred_contact_method == "EMAIL"
+                                and patient.preferred_contact_methods == "EMAIL"
                             )
                             or (
                                 campaign.sms_template
-                                and patient.preferred_contact_method == "SMS"
+                                and patient.preferred_contact_methods == "SMS"
                             )
                         ),
                     }
@@ -427,7 +427,7 @@ class PatientResponseTrainer:
             "gender",
             "language_preference",
             "location",
-            "preferred_contact_method",
+            "preferred_contact_methods",
             "campaign_category",
         ]
         df_encoded = pd.get_dummies(

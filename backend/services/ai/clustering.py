@@ -184,9 +184,9 @@ class PatientClusteringService:
 
             # Contact method preference
             contact_counts = dict(
-                cluster_patients.values("preferred_contact_method")
+                cluster_patients.values("preferred_contact_methods")
                 .annotate(count=Count("id"))
-                .values_list("preferred_contact_method", "count")
+                .values_list("preferred_contact_methods", "count")
             )
 
             top_contact = (
@@ -194,7 +194,7 @@ class PatientClusteringService:
                 if contact_counts
                 else None
             )
-            characteristics["preferred_contact_method"] = top_contact
+            characteristics["preferred_contact_methods"] = top_contact
 
             # Average engagement score
             avg_engagement = (
@@ -348,9 +348,9 @@ class PatientClusteringService:
 
             # Contact method preference
             contact_counts = dict(
-                cluster_patients.values("preferred_contact_method")
+                cluster_patients.values("preferred_contact_methods")
                 .annotate(count=Count("id"))
-                .values_list("preferred_contact_method", "count")
+                .values_list("preferred_contact_methods", "count")
             )
 
             top_contact = (
@@ -358,7 +358,7 @@ class PatientClusteringService:
                 if contact_counts
                 else None
             )
-            characteristics["preferred_contact_method"] = top_contact
+            characteristics["preferred_contact_methods"] = top_contact
 
             # Average engagement score
             avg_engagement = (

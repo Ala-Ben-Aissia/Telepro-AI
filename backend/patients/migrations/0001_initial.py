@@ -7,55 +7,304 @@ import uuid
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('campaigns', '0001_initial'),
+        ("campaigns", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Patient',
+            name="Patient",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, help_text='Unique identifier for the patient', primary_key=True, serialize=False)),
-                ('medical_record_number', models.CharField(blank=True, help_text='Medical record number or other external identifier', max_length=100, null=True, unique=True)),
-                ('date_of_birth', models.CharField(blank=True, help_text="Patient's date of birth", max_length=10, null=True)),
-                ('gender', models.CharField(blank=True, choices=[('M', 'Male'), ('F', 'Female'), ('O', 'Other'), ('N', 'Prefer not to say')], help_text="Patient's gender for demographic segmentation", max_length=10, null=True)),
-                ('location', models.CharField(blank=True, help_text='General location for geographic targeting', max_length=100, null=True)),
-                ('postal_code', models.CharField(blank=True, help_text='Postal code for geographic segmentation', max_length=20, null=True)),
-                ('age_group', models.CharField(blank=True, choices=[('0-18', '0-18'), ('19-35', '19-35'), ('36-50', '36-50'), ('51-65', '51-65'), ('65+', '65+')], help_text='Age group for demographic segmentation', max_length=10, null=True)),
-                ('language_preference', models.CharField(blank=True, choices=[('ar', 'Arabic'), ('fr', 'French'), ('en', 'English'), ('es', 'Spanish'), ('de', 'German'), ('it', 'Italian')], default='fr', help_text='Preferred language for communications', max_length=10, null=True)),
-                ('email', models.EmailField(help_text='Primary email for communications', max_length=50, unique=True)),
-                ('email_verified', models.BooleanField(default=False, help_text='Whether the email has been verified')),
-                ('phone_number', models.CharField(blank=True, help_text='Primary phone number for communications', max_length=20, null=True)),
-                ('phone_verified', models.BooleanField(default=False, help_text='Whether the phone number has been verified')),
-                ('preferred_contact_method', models.CharField(choices=[('EMAIL', 'Email'), ('SMS', 'SMS'), ('CALL', 'Phone Call'), ('NONE', 'No Communication')], default='NONE', help_text="Patient's preferred method of contact", max_length=10)),
-                ('contact_time_preferences', models.JSONField(default=dict, help_text='JSON containing preferred contact times')),
-                ('campaign_preferences', models.JSONField(default=dict, help_text='Patient preferences for different campaign types')),
-                ('engagement_score', models.FloatField(default=0.0, help_text="Patient's engagement score based on communication history")),
-                ('last_campaign_response', models.DateTimeField(blank=True, help_text='When the patient last responded to a campaign', null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('is_active', models.BooleanField(default=True, help_text='Whether this patient record is active')),
-                ('scheduled_deletion_date', models.DateField(blank=True, help_text='Date when this record should be automatically deleted', null=True)),
-                ('anonymized', models.BooleanField(default=False, help_text='Whether this record has been anonymized')),
-                ('has_active_consent', models.BooleanField(default=False, help_text='Whether this patient has provided active consent for data processing')),
-                ('verification_token', models.CharField(blank=True, help_text='Token used for email/phone verification or password reset', max_length=64, null=True)),
-                ('token_expiry', models.DateTimeField(blank=True, help_text='Expiration time for the verification token', null=True)),
-                ('last_contacted_at', models.DateTimeField(blank=True, help_text='When the patient was last contacted', null=True)),
-                ('contact_attempts', models.PositiveIntegerField(default=0, help_text='Number of contact attempts made')),
-                ('successful_contacts', models.PositiveIntegerField(default=0, help_text='Number of successful contacts')),
-                ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='created_patients', to=settings.AUTH_USER_MODEL)),
-                ('segments', models.ManyToManyField(blank=True, related_name='patients', to='campaigns.patientsegment')),
-                ('user', models.OneToOneField(help_text='User account for this patient', on_delete=django.db.models.deletion.CASCADE, related_name='patient_profile', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        help_text="Unique identifier for the patient",
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "medical_record_number",
+                    models.CharField(
+                        blank=True,
+                        help_text="Medical record number or other external identifier",
+                        max_length=100,
+                        null=True,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "date_of_birth",
+                    models.CharField(
+                        blank=True,
+                        help_text="Patient's date of birth",
+                        max_length=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "gender",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("M", "Male"),
+                            ("F", "Female"),
+                            ("O", "Other"),
+                            ("N", "Prefer not to say"),
+                        ],
+                        help_text="Patient's gender for demographic segmentation",
+                        max_length=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "location",
+                    models.CharField(
+                        blank=True,
+                        help_text="General location for geographic targeting",
+                        max_length=100,
+                        null=True,
+                    ),
+                ),
+                (
+                    "postal_code",
+                    models.CharField(
+                        blank=True,
+                        help_text="Postal code for geographic segmentation",
+                        max_length=20,
+                        null=True,
+                    ),
+                ),
+                (
+                    "age_group",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("0-18", "0-18"),
+                            ("19-35", "19-35"),
+                            ("36-50", "36-50"),
+                            ("51-65", "51-65"),
+                            ("65+", "65+"),
+                        ],
+                        help_text="Age group for demographic segmentation",
+                        max_length=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "language_preference",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("ar", "Arabic"),
+                            ("fr", "French"),
+                            ("en", "English"),
+                            ("es", "Spanish"),
+                            ("de", "German"),
+                            ("it", "Italian"),
+                        ],
+                        default="fr",
+                        help_text="Preferred language for communications",
+                        max_length=10,
+                        null=True,
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        help_text="Primary email for communications",
+                        max_length=50,
+                        unique=True,
+                    ),
+                ),
+                (
+                    "email_verified",
+                    models.BooleanField(
+                        default=False, help_text="Whether the email has been verified"
+                    ),
+                ),
+                (
+                    "phone_number",
+                    models.CharField(
+                        blank=True,
+                        help_text="Primary phone number for communications",
+                        max_length=20,
+                        null=True,
+                    ),
+                ),
+                (
+                    "phone_verified",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Whether the phone number has been verified",
+                    ),
+                ),
+                (
+                    "preferred_contact_methods",
+                    models.CharField(
+                        choices=[
+                            ("EMAIL", "Email"),
+                            ("SMS", "SMS"),
+                            ("CALL", "Phone Call"),
+                            ("NONE", "No Communication"),
+                        ],
+                        default="NONE",
+                        help_text="Patient's preferred method of contact",
+                        max_length=10,
+                    ),
+                ),
+                (
+                    "contact_time_preferences",
+                    models.JSONField(
+                        default=dict, help_text="JSON containing preferred contact times"
+                    ),
+                ),
+                (
+                    "campaign_preferences",
+                    models.JSONField(
+                        default=dict,
+                        help_text="Patient preferences for different campaign types",
+                    ),
+                ),
+                (
+                    "engagement_score",
+                    models.FloatField(
+                        default=0.0,
+                        help_text="Patient's engagement score based on communication history",
+                    ),
+                ),
+                (
+                    "last_campaign_response",
+                    models.DateTimeField(
+                        blank=True,
+                        help_text="When the patient last responded to a campaign",
+                        null=True,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True, help_text="Whether this patient record is active"
+                    ),
+                ),
+                (
+                    "scheduled_deletion_date",
+                    models.DateField(
+                        blank=True,
+                        help_text="Date when this record should be automatically deleted",
+                        null=True,
+                    ),
+                ),
+                (
+                    "anonymized",
+                    models.BooleanField(
+                        default=False, help_text="Whether this record has been anonymized"
+                    ),
+                ),
+                (
+                    "has_active_consent",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Whether this patient has provided active consent for data processing",
+                    ),
+                ),
+                (
+                    "verification_token",
+                    models.CharField(
+                        blank=True,
+                        help_text="Token used for email/phone verification or password reset",
+                        max_length=64,
+                        null=True,
+                    ),
+                ),
+                (
+                    "token_expiry",
+                    models.DateTimeField(
+                        blank=True,
+                        help_text="Expiration time for the verification token",
+                        null=True,
+                    ),
+                ),
+                (
+                    "last_contacted_at",
+                    models.DateTimeField(
+                        blank=True,
+                        help_text="When the patient was last contacted",
+                        null=True,
+                    ),
+                ),
+                (
+                    "contact_attempts",
+                    models.PositiveIntegerField(
+                        default=0, help_text="Number of contact attempts made"
+                    ),
+                ),
+                (
+                    "successful_contacts",
+                    models.PositiveIntegerField(
+                        default=0, help_text="Number of successful contacts"
+                    ),
+                ),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="created_patients",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "segments",
+                    models.ManyToManyField(
+                        blank=True, related_name="patients", to="campaigns.patientsegment"
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        help_text="User account for this patient",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="patient_profile",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Patient',
-                'verbose_name_plural': 'Patients',
-                'permissions': [('view_sensitive_data', 'Can view sensitive patient data'), ('export_patient_data', 'Can export patient data'), ('anonymize_patient', 'Can anonymize patient data'), ('contact_patient', 'Can contact patient directly')],
-                'indexes': [models.Index(fields=['is_active'], name='patients_pa_is_acti_54ba9f_idx'), models.Index(fields=['has_active_consent'], name='patients_pa_has_act_3dedc4_idx'), models.Index(fields=['email_verified'], name='patients_pa_email_v_aeb8a2_idx'), models.Index(fields=['phone_verified'], name='patients_pa_phone_v_580e95_idx'), models.Index(fields=['last_contacted_at'], name='patients_pa_last_co_f0a2b6_idx')],
+                "verbose_name": "Patient",
+                "verbose_name_plural": "Patients",
+                "permissions": [
+                    ("view_sensitive_data", "Can view sensitive patient data"),
+                    ("export_patient_data", "Can export patient data"),
+                    ("anonymize_patient", "Can anonymize patient data"),
+                    ("contact_patient", "Can contact patient directly"),
+                ],
+                "indexes": [
+                    models.Index(
+                        fields=["is_active"], name="patients_pa_is_acti_54ba9f_idx"
+                    ),
+                    models.Index(
+                        fields=["has_active_consent"],
+                        name="patients_pa_has_act_3dedc4_idx",
+                    ),
+                    models.Index(
+                        fields=["email_verified"], name="patients_pa_email_v_aeb8a2_idx"
+                    ),
+                    models.Index(
+                        fields=["phone_verified"], name="patients_pa_phone_v_580e95_idx"
+                    ),
+                    models.Index(
+                        fields=["last_contacted_at"],
+                        name="patients_pa_last_co_f0a2b6_idx",
+                    ),
+                ],
             },
         ),
     ]

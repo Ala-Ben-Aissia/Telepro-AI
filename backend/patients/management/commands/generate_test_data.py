@@ -100,31 +100,39 @@ class Command(BaseCommand):
 
             # --- Generate Patient Segments ---
             from campaigns.models import PatientSegment
+
             segments = [
                 {
                     "name": "Young Urban Adults",
                     "description": "Patients aged 19-35 living in major cities.",
-                    "criteria": {"age_group": ["19-35"], "location": ["Paris", "Montreal", "Toulouse"]}
+                    "criteria": {
+                        "age_group": ["19-35"],
+                        "location": ["Paris", "Montreal", "Toulouse"],
+                    },
                 },
                 {
                     "name": "Seniors",
                     "description": "Patients aged 65+.",
-                    "criteria": {"age_group": ["65+"]}
+                    "criteria": {"age_group": ["65+"]},
                 },
                 {
                     "name": "Engaged Patients",
                     "description": "Patients with engagement_score > 0.5.",
-                    "criteria": {"engagement_score__gt": 0.5}
+                    "criteria": {"engagement_score__gt": 0.5},
                 },
                 {
                     "name": "Consent-Active",
                     "description": "Patients with active consent for marketing.",
-                    "criteria": {"has_active_consent": True}
+                    "criteria": {"has_active_consent": True},
                 },
             ]
             for seg in segments:
                 PatientSegment.objects.create(**seg)
-            self.stdout.write(self.style.SUCCESS(f"Created {len(segments)} patient segments with realistic criteria."))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Created {len(segments)} patient segments with realistic criteria."
+                )
+            )
 
             # Create communication logs with realistic response patterns
             self.create_communication_logs(num_communications, campaigns, patients)
@@ -430,7 +438,7 @@ class Command(BaseCommand):
             patient.language_preference = language
             patient.location = location
             patient.postal_code = postal_code
-            patient.preferred_contact_method = (
+            patient.preferred_contact_methods = (
                 contact_method if (email_verified or phone_verified) else "NONE"
             )
             patient.has_active_consent = has_consent
@@ -500,30 +508,57 @@ class Command(BaseCommand):
             errors = []
             if not patient.gender or patient.gender not in ["M", "F", "O", "N"]:
                 errors.append("Invalid or missing gender")
-            if not patient.age_group or patient.age_group not in ["0-18", "19-35", "36-50", "51-65", "65+"]:
+            if not patient.age_group or patient.age_group not in [
+                "0-18",
+                "19-35",
+                "36-50",
+                "51-65",
+                "65+",
+            ]:
                 errors.append("Invalid or missing age_group")
             if not patient.location:
                 errors.append("Missing location")
-            if not patient.language_preference or patient.language_preference not in ["fr", "en", "es", "ar", "de"]:
+            if not patient.language_preference or patient.language_preference not in [
+                "fr",
+                "en",
+                "es",
+                "ar",
+                "de",
+            ]:
                 errors.append("Invalid or missing language_preference")
-            if patient.engagement_score is None or not (0 <= patient.engagement_score <= 1):
+            if patient.engagement_score is None or not (
+                0 <= patient.engagement_score <= 1
+            ):
                 errors.append("Invalid or missing engagement_score")
             if patient.has_active_consent not in [True, False]:
                 errors.append("Missing has_active_consent")
-            if not patient.preferred_contact_method:
-                errors.append("Missing preferred_contact_method")
+            if not patient.preferred_contact_methods:
+                errors.append("Missing preferred_contact_methods")
             if errors:
                 invalid_patients.append((patient, errors))
             else:
                 valid_patients.append(patient)
         if invalid_patients:
             from django.core.management.base import CommandError
-            self.stdout.write(self.style.WARNING(f"Validation: {len(invalid_patients)} invalid patient records found."))
+
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Validation: {len(invalid_patients)} invalid patient records found."
+                )
+            )
             for patient, errs in invalid_patients[:5]:
-                self.stdout.write(self.style.WARNING(f"  - Patient ID {patient.id}: {', '.join(errs)}"))
+                self.stdout.write(
+                    self.style.WARNING(f"  - Patient ID {patient.id}: {', '.join(errs)}")
+                )
             if len(invalid_patients) > 5:
-                self.stdout.write(self.style.WARNING(f"  ...and {len(invalid_patients)-5} more."))
-        self.stdout.write(self.style.SUCCESS(f"Validation: {len(valid_patients)} valid patient records generated."))
+                self.stdout.write(
+                    self.style.WARNING(f"  ...and {len(invalid_patients) - 5} more.")
+                )
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Validation: {len(valid_patients)} valid patient records generated."
+            )
+        )
         return valid_patients
 
     def create_realistic_consent_records(self, patient, staff_users, cohort_data):
@@ -621,10 +656,10 @@ class Command(BaseCommand):
             cohort_data = self.cohorts[cohort]
 
             # Determine communication type based on patient preference
-            if patient.preferred_contact_method == "NONE":
+            if patient.preferred_contact_methods == "NONE":
                 comm_type = random.choice(["EMAIL", "SMS"])
             else:
-                comm_type = patient.preferred_contact_method
+                comm_type = patient.preferred_contact_methods
 
             # Influence outcome based on patient cohort and campaign match
             base_response_rate = cohort_data["base_response_rate"]
@@ -926,7 +961,12 @@ class Command(BaseCommand):
         self.stdout.write("Clearing existing data...")
 
         # Delete related objects first to avoid ProtectedError
-        from campaigns.models import Campaign, CampaignCategory, CommunicationLog, PatientSegment
+        from campaigns.models import (
+            Campaign,
+            CampaignCategory,
+            CommunicationLog,
+            PatientSegment,
+        )
         from patients.models import Patient, ConsentRecord
 
         CommunicationLog.objects.all().delete()

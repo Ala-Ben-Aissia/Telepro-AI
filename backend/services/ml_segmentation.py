@@ -135,10 +135,10 @@ class MLSegmentationService:
 
         # Calculate communication preferences
         communication_prefs = {
-            "email": patients.filter(preferred_contact_method="EMAIL").count(),
-            "sms": patients.filter(preferred_contact_method="SMS").count(),
-            "call": patients.filter(preferred_contact_method="CALL").count(),
-            "none": patients.filter(preferred_contact_method="NONE").count(),
+            "email": patients.filter(preferred_contact_methods="EMAIL").count(),
+            "sms": patients.filter(preferred_contact_methods="SMS").count(),
+            "call": patients.filter(preferred_contact_methods="CALL").count(),
+            "none": patients.filter(preferred_contact_methods="NONE").count(),
         }
 
         # Get campaign response history if available
@@ -345,7 +345,7 @@ class MLSegmentationService:
                     "location": patient.location,
                     "language": patient.language_preference,
                     "engagement_score": patient.engagement_score,
-                    "preferred_contact": patient.preferred_contact_method,
+                    "preferred_contact": patient.preferred_contact_methods,
                     "email_verified": patient.email_verified,
                     "phone_verified": patient.phone_verified,
                     "has_consent": patient.has_active_consent,

@@ -150,7 +150,7 @@ class DataPreprocessingService:
             "gender",
             "age_group",
             "location",
-            "preferred_contact_method",
+            "preferred_contact_methods",
             "language_preference",
             "postal_region",
         ]
@@ -252,8 +252,8 @@ class DataPreprocessingService:
             patient_data["gender"] = patient.gender or "N"
             patient_data["age_group"] = patient.age_group or "UNKNOWN"
             patient_data["location"] = patient.location or "UNKNOWN"
-            patient_data["preferred_contact_method"] = getattr(
-                patient, "preferred_contact_method", None
+            patient_data["preferred_contact_methods"] = getattr(
+                patient, "preferred_contact_methods", None
             )
             patient_data["language_preference"] = getattr(
                 patient, "language_preference", "fr"
@@ -545,9 +545,9 @@ class DataPreprocessingService:
 
         # Contact preferences
         contact_method_distribution = dict(
-            patients.values("preferred_contact_method")
+            patients.values("preferred_contact_methods")
             .annotate(count=Count("id"))
-            .values_list("preferred_contact_method", "count")
+            .values_list("preferred_contact_methods", "count")
         )
 
         # Language preferences

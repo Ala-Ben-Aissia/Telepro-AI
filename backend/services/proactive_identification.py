@@ -126,7 +126,7 @@ class ProactiveIdentificationService:
                         "last_contacted_at": patient.last_contacted_at.isoformat()
                         if patient.last_contacted_at
                         else None,
-                        "preferred_contact_method": patient.preferred_contact_method,
+                        "preferred_contact_methods": patient.preferred_contact_methods,
                         "risk_level": "high" if engagement_drop >= 0.4 else "medium",
                     }
                 )
@@ -206,7 +206,7 @@ class ProactiveIdentificationService:
                     if patient.last_contacted_at
                     else None,
                     "engagement_score": patient.engagement_score,
-                    "preferred_contact_method": patient.preferred_contact_method,
+                    "preferred_contact_methods": patient.preferred_contact_methods,
                     "priority_score": priority_score,
                     "priority_level": "high"
                     if priority_score >= 0.7
@@ -270,7 +270,7 @@ class ProactiveIdentificationService:
                 }
 
         # Determine best contact method
-        best_method = patient.preferred_contact_method
+        best_method = patient.preferred_contact_methods
         best_rate = 0
 
         for method, stats in contact_method_stats.items():
@@ -303,7 +303,7 @@ class ProactiveIdentificationService:
         recommendations = []
 
         # Contact method recommendation
-        if best_method != patient.preferred_contact_method and best_rate > 0:
+        if best_method != patient.preferred_contact_methods and best_rate > 0:
             recommendations.append(
                 f"Consider using {best_method} for communications (response rate: {best_rate:.1%})"
             )
@@ -345,7 +345,7 @@ class ProactiveIdentificationService:
             "last_contacted_at": patient.last_contacted_at.isoformat()
             if patient.last_contacted_at
             else None,
-            "preferred_contact_method": patient.preferred_contact_method,
+            "preferred_contact_methods": patient.preferred_contact_methods,
             "best_contact_method": best_method,
             "best_contact_time": best_time,
             "contact_method_stats": contact_method_stats,

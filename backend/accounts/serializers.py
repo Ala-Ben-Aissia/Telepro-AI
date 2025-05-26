@@ -14,8 +14,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     Serializer for user profile viewing and updating
     """
 
-    preferred_contact_method = serializers.CharField(
-        source="patient_profile.preferred_contact_method", read_only=True
+    preferred_contact_methods = serializers.CharField(
+        source="patient_profile.preferred_contact_methods", read_only=True
     )
 
     class Meta:
@@ -30,7 +30,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "user_type",
             "date_joined",
             "last_login",
-            "preferred_contact_method",
+            "preferred_contact_methods",
         ]
         read_only_fields = [
             "id",

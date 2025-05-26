@@ -25,7 +25,7 @@ class PatientFilter(django_filters.FilterSet):
     age_group = django_filters.CharFilter(lookup_expr="exact")
     location = django_filters.CharFilter(lookup_expr="icontains")
     gender = django_filters.CharFilter(lookup_expr="exact")
-    preferred_contact_method = django_filters.CharFilter(lookup_expr="exact")
+    preferred_contact_methods = django_filters.CharFilter(lookup_expr="exact")
     has_active_consent = django_filters.BooleanFilter()
     created_at_after = django_filters.DateTimeFilter(
         field_name="created_at", lookup_expr="gte"
@@ -41,7 +41,7 @@ class PatientFilter(django_filters.FilterSet):
             "age_group",
             "location",
             "gender",
-            "preferred_contact_method",
+            "preferred_contact_methods",
             "has_active_consent",
             "created_at_after",
             "created_at_before",
@@ -141,12 +141,38 @@ class PatientViewSet(viewsets.ModelViewSet):
             serializer = PatientPreferencesSerializer(patient)
             return Response(serializer.data, status=200)
         else:
+            print(request.data)
+            # Handle empty values and convert to appropriate types
+            if "preferred_contact_methods" in request.data:
+                contact_methods = request.data["preferred_contact_methods"]
+                if isinstance(contact_methods, str):
+                    request.data["preferred_contact_methods"] = [contact_methods]
+                elif not isinstance(contact_methods, list):
+                    return Response(
+                        {"error": "preferred_contact_methods must be a string or list"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+
+            if (
+                "contact_time_preferences" in request.data
+                and request.data["contact_time_preferences"] is None
+            ):
+                request.data["contact_time_preferences"] = {}
+
+            if (
+                "campaign_preferences" in request.data
+                and request.data["campaign_preferences"] is None
+            ):
+                request.data["campaign_preferences"] = []
+
             serializer = PatientPreferencesSerializer(
                 patient, data=request.data, partial=True
             )
             if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
+                updated_patient = serializer.save()
+                # Re-serialize to get the updated data
+                return_serializer = PatientPreferencesSerializer(updated_patient)
+                return Response(return_serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=["get", "patch"])

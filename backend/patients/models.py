@@ -385,7 +385,7 @@ class Patient(models.Model):
         self.phone_verified = False
 
         # Clear communication preferences
-        self.preferred_contact_method = "NONE"
+        self.preferred_contact_methods = "NONE"
         self.contact_time_preferences = {}
 
         # Save changes
@@ -402,7 +402,7 @@ class Patient(models.Model):
             "has_active_consent",
             "email_verified",
             "phone_verified",
-            "preferred_contact_method",
+            "preferred_contact_methods",
             "contact_time_preferences",
             "updated_at",
         ]

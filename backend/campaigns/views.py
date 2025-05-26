@@ -101,7 +101,7 @@ class CampaignViewSet(viewsets.ModelViewSet):
         communication_logs = []
         for patient in patients:
             # Determine communication type based on patient preferences
-            comm_type = patient.preferred_contact_method
+            comm_type = patient.preferred_contact_methods
             if comm_type == "NONE":
                 continue  # Skip patients who don't want to be contacted
 

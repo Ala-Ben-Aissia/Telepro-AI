@@ -60,30 +60,30 @@ Ce projet s’inscrit dans le développement des solutions de santé intelligent
 
 # List of abbreviations and acronyms
 
-| Abbreviation | Definition |
-|--------------|------------|
-| AI | Artificial Intelligence |
-| API | Application Programming Interface |
-| CRUD | Create, Read, Update, Delete |
-| GDPR | General Data Protection Regulation |
-| HTTP | HyperText Transfer Protocol |
-| IoT | Internet of Things |
-| JSON | JavaScript Object Notation |
-| ML | Machine Learning |
-| REST | Representational State Transfer |
-| RGPD | Règlement Général sur la Protection des Données |
-| SMS | Short Message Service |
-| UI | User Interface |
-| UX | User Experience |
-| JWT | JSON Web Token |
-| ESP32 | Espressif Systems Microcontroller |
-| SIM800L | GSM/GPRS Module for Cellular Communication |
-| GPIO | General Purpose Input/Output |
-| UART | Universal Asynchronous Receiver/Transmitter |
-| API | Application Programming Interface |
-| HTML | HyperText Markup Language |
-| CSS | Cascading Style Sheets |
-| SQL | Structured Query Language |
+| Abbreviation | Definition                                      |
+| ------------ | ----------------------------------------------- |
+| AI           | Artificial Intelligence                         |
+| API          | Application Programming Interface               |
+| CRUD         | Create, Read, Update, Delete                    |
+| GDPR         | General Data Protection Regulation              |
+| HTTP         | HyperText Transfer Protocol                     |
+| IoT          | Internet of Things                              |
+| JSON         | JavaScript Object Notation                      |
+| ML           | Machine Learning                                |
+| REST         | Representational State Transfer                 |
+| RGPD         | Règlement Général sur la Protection des Données |
+| SMS          | Short Message Service                           |
+| UI           | User Interface                                  |
+| UX           | User Experience                                 |
+| JWT          | JSON Web Token                                  |
+| ESP32        | Espressif Systems Microcontroller               |
+| SIM800L      | GSM/GPRS Module for Cellular Communication      |
+| GPIO         | General Purpose Input/Output                    |
+| UART         | Universal Asynchronous Receiver/Transmitter     |
+| API          | Application Programming Interface               |
+| HTML         | HyperText Markup Language                       |
+| CSS          | Cascading Style Sheets                          |
+| SQL          | Structured Query Language                       |
 
 # VI
 
@@ -138,35 +138,35 @@ Ce projet s’inscrit dans le développement des solutions de santé intelligent
 
 ## List of Figures
 
-| Figure | Title | Page |
-|--------|-------|------|
-| 1.1 | Project Context Overview | 5 |
-| 1.2 | Teleprospection System Workflow | 7 |
-| 1.3 | Project Timeline Gantt Chart | 12 |
-| 2.1 | System Architecture Diagram | 15 |
-| 2.2 | Database Entity Relationship Diagram | 18 |
-| 2.3 | Patient Segmentation Model | 22 |
-| 2.4 | User Interface Wireframes | 25 |
-| 3.1 | ESP32 with SIM800L Hardware Setup | 35 |
-| 3.2 | SMS Communication Flow Diagram | 38 |
-| 3.3 | Authentication and Authorization Flow | 42 |
-| 4.1 | Testing Environment Setup | 48 |
-| 4.2 | Performance Test Results | 52 |
-| 4.3 | User Satisfaction Metrics | 55 |
+| Figure | Title                                 | Page |
+| ------ | ------------------------------------- | ---- |
+| 1.1    | Project Context Overview              | 5    |
+| 1.2    | Teleprospection System Workflow       | 7    |
+| 1.3    | Project Timeline Gantt Chart          | 12   |
+| 2.1    | System Architecture Diagram           | 15   |
+| 2.2    | Database Entity Relationship Diagram  | 18   |
+| 2.3    | Patient Segmentation Model            | 22   |
+| 2.4    | User Interface Wireframes             | 25   |
+| 3.1    | ESP32 with SIM800L Hardware Setup     | 35   |
+| 3.2    | SMS Communication Flow Diagram        | 38   |
+| 3.3    | Authentication and Authorization Flow | 42   |
+| 4.1    | Testing Environment Setup             | 48   |
+| 4.2    | Performance Test Results              | 52   |
+| 4.3    | User Satisfaction Metrics             | 55   |
 
 # VIII
 
 ## List of Tables
 
-| Table | Title | Page |
-|-------|-------|------|
-| 1.1 | Comparison of Existing Solutions | 9 |
-| 2.1 | Technology Stack Selection Criteria | 16 |
-| 2.2 | API Endpoints Documentation | 20 |
-| 3.1 | Hardware Components Specifications | 36 |
-| 3.2 | Security Measures Implementation | 43 |
-| 4.1 | Test Case Summary | 49 |
-| 4.2 | Performance Metrics | 53 |
+| Table | Title                               | Page |
+| ----- | ----------------------------------- | ---- |
+| 1.1   | Comparison of Existing Solutions    | 9    |
+| 2.1   | Technology Stack Selection Criteria | 16   |
+| 2.2   | API Endpoints Documentation         | 20   |
+| 3.1   | Hardware Components Specifications  | 36   |
+| 3.2   | Security Measures Implementation    | 43   |
+| 4.1   | Test Case Summary                   | 49   |
+| 4.2   | Performance Metrics                 | 53   |
 
 ## General Introduction
 
@@ -353,12 +353,14 @@ This methodology allowed for flexibility in responding to evolving requirements 
 The project was executed over a 6-month period, structured into the following phases:
 
 1. **Discovery and requirements gathering (1 month)**:
+
    - Stakeholder interviews and needs assessment
    - Regulatory compliance requirements analysis
    - Technical feasibility studies
    - Initial architecture planning
 
 2. **Design and prototype development (1.5 months)**:
+
    - System architecture finalization
    - Database schema design
    - User interface prototyping
@@ -366,6 +368,7 @@ The project was executed over a 6-month period, structured into the following ph
    - Initial AI model development
 
 3. **Core development (2.5 months)**:
+
    - Backend implementation
    - Frontend development
    - Hardware component construction and programming
@@ -373,6 +376,7 @@ The project was executed over a 6-month period, structured into the following ph
    - AI model training and integration
 
 4. **Testing and validation (0.5 months)**:
+
    - Unit and integration testing
    - Security and compliance auditing
    - Performance testing
@@ -548,6 +552,7 @@ This chapter has outlined the comprehensive design of the Intelligent Teleprospe
 The multi-layered architecture separates concerns while providing clear interfaces between components, enabling independent development and testing. The backend design focuses on secure data management, efficient API interactions, and intelligent patient segmentation. The frontend prioritizes intuitive user experiences for both healthcare administrators and patients. The hardware component design ensures reliable telecommunication capabilities with appropriate security and error handling mechanisms.
 
 This design provides the foundation for the implementation described in the following chapter, where these concepts are transformed into functional code and physical components.
+
 # Chapter 3
 
 # Implementation and Development
@@ -590,7 +595,7 @@ class Patient(models.Model):
         help_text="Unique identifier for the patient",
     )
     # Communication preferences
-    preferred_contact_method = models.CharField(
+    preferred_contact_methods = models.CharField(
         max_length=10,
         choices=COMMUNICATION_TYPES,
         default="EMAIL",
@@ -627,17 +632,17 @@ def cluster_with_kmeans(features, patient_ids, feature_names, n_clusters=3):
     # Initialize and fit K-means model
     kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
     kmeans.fit(features)
-    
+
     # Get cluster assignments and centroids
     labels = kmeans.labels_
     centroids = kmeans.cluster_centers_
-    
+
     # Organize results by cluster
     clusters = {}
     for i in range(n_clusters):
         cluster_indices = np.where(labels == i)[0]
         cluster_patients = [patient_ids[idx] for idx in cluster_indices]
-        
+
         clusters[f"Cluster {i+1}"] = {
             "patient_ids": cluster_patients,
             "count": len(cluster_patients),
@@ -721,39 +726,39 @@ The ESP32 firmware is implemented with these key components:
 // Example from debug-modem.ino
 bool sendSMS(const char *number, const char *message) {
   SerialMon.println("Sending SMS...");
-  
+
   // Set SMS mode to text
   modem.sendAT(GF("AT+CMGF=1"));
   if (modem.waitResponse() != 1) {
     SerialMon.println("Error setting SMS mode");
     return false;
   }
-  
+
   // Set GSM encoding
   modem.sendAT(GF("AT+CSCS=\"GSM\""));
   if (modem.waitResponse() != 1) {
     SerialMon.println("Error setting GSM encoding");
     return false;
   }
-  
+
   // Send SMS command with recipient number
   modem.sendAT(GF("AT+CMGS=\""), number, GF("\""));
   if (modem.waitResponse(GF(">")) != 1) {
     SerialMon.println("Error sending SMS command");
     return false;
   }
-  
+
   // Send message content and termination character
   modem.print(message);
   modem.write(0x1A);
   modem.println();
-  
+
   // Wait for response
   if (modem.waitResponse(60000L) != 1) {
     SerialMon.println("Error sending SMS content");
     return false;
   }
-  
+
   SerialMon.println("SMS sent successfully");
   return true;
 }
@@ -841,10 +846,10 @@ def test_kmeans_clustering():
     ])
     patient_ids = ["p1", "p2", "p3", "p4", "p5"]
     feature_names = ["age", "visits", "engagement"]
-    
+
     # Execute clustering
     result = cluster_with_kmeans(features, patient_ids, feature_names, n_clusters=2)
-    
+
     # Verify results
     assert len(result) == 2  # Two clusters
     assert sum(len(cluster["patient_ids"]) for cluster in result.values()) == 5  # All patients assigned

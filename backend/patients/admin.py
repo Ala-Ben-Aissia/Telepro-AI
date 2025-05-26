@@ -50,7 +50,7 @@ class PatientAdmin(admin.ModelAdmin):
                     "phone_number",
                     "email_verified",
                     "phone_verified",
-                    "preferred_contact_method",
+                    "preferred_contact_methods",
                     "contact_time_preferences",
                 )
             },

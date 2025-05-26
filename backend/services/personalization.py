@@ -56,7 +56,7 @@ class PersonalizationService:
             "age_group": patient.age_group or "Not specified",
             "location": patient.location or "Not specified",
             "language": patient.language_preference or "Not specified",
-            "preferred_contact": patient.preferred_contact_method,
+            "preferred_contact": patient.preferred_contact_methods,
             "gender": patient.get_gender_display() if patient.gender else "Not specified",
             "current_date": timezone.now().strftime("%Y-%m-%d"),
             "current_time": timezone.now().strftime("%H:%M"),

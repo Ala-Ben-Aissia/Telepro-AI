@@ -8,17 +8,16 @@ Le backend de Telepro-AI a été conçu selon des standards professionnels pour 
 
 ### 1.1. Tableau comparatif des choix technologiques backend
 
-| Critère                | Solution retenue      | Alternatives           | Justification principale         |
-|------------------------|----------------------|------------------------|----------------------------------|
-| Framework principal    | Django/DRF           | Flask, FastAPI         | Maturité, écosystème, sécurité   |
-| Authentification       | JWT (SimpleJWT)      | Session, OAuth2        | Stateless, mobile-friendly       |
-| Tâches asynchrones     | Celery + Redis       | RQ, Dramatiq           | Fiabilité, planification, support|
-| Base de données        | PostgreSQL           | MySQL, SQLite          | Transactions, JSON, scalabilité  |
-| Tests                  | Pytest, DRF TestCase | Unittest, Nose         | Expressivité, plugins, coverage  |
-| CI/CD                  | GitHub Actions       | GitLab CI, Jenkins     | Intégration GitHub, simplicité   |
+| Critère             | Solution retenue     | Alternatives       | Justification principale          |
+| ------------------- | -------------------- | ------------------ | --------------------------------- |
+| Framework principal | Django/DRF           | Flask, FastAPI     | Maturité, écosystème, sécurité    |
+| Authentification    | JWT (SimpleJWT)      | Session, OAuth2    | Stateless, mobile-friendly        |
+| Tâches asynchrones  | Celery + Redis       | RQ, Dramatiq       | Fiabilité, planification, support |
+| Base de données     | PostgreSQL           | MySQL, SQLite      | Transactions, JSON, scalabilité   |
+| Tests               | Pytest, DRF TestCase | Unittest, Nose     | Expressivité, plugins, coverage   |
+| CI/CD               | GitHub Actions       | GitLab CI, Jenkins | Intégration GitHub, simplicité    |
 
 ---
-
 
 Le backend de Telepro-AI repose sur Django 5.1 et Django REST Framework (DRF). Il gère la logique métier, la persistance des données, l’authentification, la gestion des utilisateurs, des patients, des campagnes, l’automatisation (Celery), et intègre une couche IA/ML avancée pour l’analyse et la personnalisation.
 
@@ -169,14 +168,16 @@ class CampaignViewSet(viewsets.ModelViewSet):
 ## 5. Sécurité, permissions et conformité
 
 :::tip Bonnes pratiques — Sécurité backend
+
 - Toujours utiliser des variables d’environnement pour les secrets et clés d’API (jamais en dur dans le code).
 - Appliquer le principe du moindre privilège sur les permissions (RBAC).
 - Activer le logging et l’audit sur toutes les actions sensibles (connexion, modification, suppression).
 - Mettre à jour régulièrement les dépendances (pip, Django, DRF) pour éviter les vulnérabilités connues.
 - Documenter les politiques de gestion des incidents et des violations de sécurité.
-:::
+  :::
 
 ### 5.1. Approche professionnelle de la sécurité
+
 - Authentification JWT sécurisée (djangorestframework_simplejwt), rotation des tokens, blacklist des refresh tokens.
 - Permissions DRF personnalisées (staff, patient, admin), policy-based access control.
 - Chiffrement des données sensibles (django-cryptography), gestion des secrets par variables d’environnement.
@@ -184,13 +185,14 @@ class CampaignViewSet(viewsets.ModelViewSet):
 - Protection contre les injections SQL, XSS, CSRF, brute-force (limiteurs, validation stricte).
 
 ### 5.2. Tableau de synthèse sécurité backend
-| Aspect             | Implémentation         | Points forts                     | Limites/Perspectives        |
-|--------------------|-----------------------|----------------------------------|-----------------------------|
-| Authentification   | JWT, refresh, blacklist | Stateless, scalable             | Nécessite gestion du token  |
-| Permissions        | DRF, custom classes   | Granularité, extensible          | Complexité croissante       |
-| Chiffrement        | django-cryptography   | RGPD, sécurité au repos          | Overhead possible           |
-| Audit/Logs         | Mixins, Sentry        | Traçabilité, alertes             | Analyse avancée à renforcer |
-| Throttling         | DRF, custom           | Protection DoS, brute-force      | Ajustement fin              |
+
+| Aspect           | Implémentation          | Points forts                | Limites/Perspectives        |
+| ---------------- | ----------------------- | --------------------------- | --------------------------- |
+| Authentification | JWT, refresh, blacklist | Stateless, scalable         | Nécessite gestion du token  |
+| Permissions      | DRF, custom classes     | Granularité, extensible     | Complexité croissante       |
+| Chiffrement      | django-cryptography     | RGPD, sécurité au repos     | Overhead possible           |
+| Audit/Logs       | Mixins, Sentry          | Traçabilité, alertes        | Analyse avancée à renforcer |
+| Throttling       | DRF, custom             | Protection DoS, brute-force | Ajustement fin              |
 
 ---
 
@@ -284,13 +286,13 @@ class CampaignPredictionService:
 
 - **Exemple de top features** :
 
-| Rang | Variable                 | Importance (%) |
-| ---- | ------------------------ | -------------- |
-| 1    | engagement_score         | 26             |
-| 2    | recent_response_rate     | 17             |
-| 3    | age_group                | 13             |
-| 4    | preferred_contact_method | 10             |
-| 5    | matches_language         | 8              |
+| Rang | Variable                  | Importance (%) |
+| ---- | ------------------------- | -------------- |
+| 1    | engagement_score          | 26             |
+| 2    | recent_response_rate      | 17             |
+| 3    | age_group                 | 13             |
+| 4    | preferred_contact_methods | 10             |
+| 5    | matches_language          | 8              |
 
 ---
 
@@ -350,28 +352,33 @@ class CampaignPredictionService:
 ## 9. Robustesse, tests et CI/CD backend
 
 :::tip Bonnes pratiques — Robustesse & Tests backend
+
 - Rédiger des tests unitaires pour chaque modèle, vue, service métier.
 - Couvrir les cas d’erreur et de bord dans les tests (inputs invalides, permissions, exceptions).
 - Utiliser le mocking pour isoler les dépendances externes (APIs, tâches Celery).
 - Maintenir une couverture de code >80% pour garantir la fiabilité.
 - Intégrer les tests dans le pipeline CI/CD pour éviter toute régression en production.
-:::
+  :::
 
 ### 9.1. Stratégie de robustesse
+
 - Gestion centralisée des exceptions (custom exception handlers)
 - Validation stricte des entrées (serializers, schémas)
 - Monitoring (Sentry, logs structurés)
 - Rollback automatique en cas d’échec critique
 
 ### 9.2. Tests automatisés
+
 - Couverture élevée via Pytest et DRF TestCase
 - Tests unitaires sur modèles, vues, services
 - Tests d’intégration sur endpoints critiques
 - Mocking des tâches Celery et des appels externes
 
 ### 9.3. CI/CD
+
 - Pipeline GitHub Actions : lint (flake8), tests, build, migrations, déploiement staging/prod
 - Déploiement automatisé sur serveur sécurisé (Docker, Gunicorn, Nginx)
+
 ## 10. Schémas et diagrammes (placeholders)
 
 - MCD/MLD (patients, users, campaigns, logs…)
@@ -386,12 +393,13 @@ _La section backend est ainsi couverte de manière exhaustive, avec un accent pa
 # Chapitre VI : Implémentation détaillée — Partie Frontend
 
 :::tip Bonnes pratiques — Développement frontend
+
 - Utiliser des composants réutilisables et typés (TypeScript) pour limiter la duplication.
 - Privilégier la composition (props.children, hooks) à l’héritage.
 - Factoriser la logique métier côté client dans des hooks personnalisés (`/hooks`).
 - Documenter les composants complexes avec des exemples d’utilisation (Storybook recommandé).
 - Organiser le code selon l’atomic design pour la maintenabilité.
-:::
+  :::
 
 ## 1. Présentation générale du frontend
 
@@ -401,18 +409,17 @@ Le frontend de Telepro-AI est pensé selon les standards modernes : modularit�
 
 ### 1.1. Tableau comparatif des choix technologiques frontend
 
-| Critère                | Solution retenue     | Alternatives           | Justification principale         |
-|------------------------|---------------------|------------------------|----------------------------------|
-| Framework principal    | Next.js 15          | CRA, Gatsby, Nuxt      | SSR/CSR, performance, DX         |
-| UI & styles            | Tailwind CSS, Radix | Chakra, MUI, Styled    | Rapidité, accessibilité, thème   |
-| Icons                  | Lucide React        | Heroicons, FontAwesome | Cohérence, modernité             |
-| State/API              | SWR, React Context  | Redux, React Query     | Simplicité, perf, SSR            |
-| Validation             | Zod, React Hook Form| Yup, Formik            | Typescript natif, robustesse     |
-| Tests                  | Jest, RTL, Cypress  | Vitest, Playwright     | Complémentarité, maturité        |
-| CI/CD                  | Vercel, GitHub Actions | Netlify, Jenkins    | Intégration Next.js, preview     |
+| Critère             | Solution retenue       | Alternatives           | Justification principale       |
+| ------------------- | ---------------------- | ---------------------- | ------------------------------ |
+| Framework principal | Next.js 15             | CRA, Gatsby, Nuxt      | SSR/CSR, performance, DX       |
+| UI & styles         | Tailwind CSS, Radix    | Chakra, MUI, Styled    | Rapidité, accessibilité, thème |
+| Icons               | Lucide React           | Heroicons, FontAwesome | Cohérence, modernité           |
+| State/API           | SWR, React Context     | Redux, React Query     | Simplicité, perf, SSR          |
+| Validation          | Zod, React Hook Form   | Yup, Formik            | Typescript natif, robustesse   |
+| Tests               | Jest, RTL, Cypress     | Vitest, Playwright     | Complémentarité, maturité      |
+| CI/CD               | Vercel, GitHub Actions | Netlify, Jenkins       | Intégration Next.js, preview   |
 
 ---
-
 
 Le frontend de Telepro-AI est développé avec Next.js 15 et React 19, en TypeScript. Il offre une expérience utilisateur moderne, responsive et sécurisée, adaptée aux besoins des patients comme des professionnels de santé. L’interface met l’accent sur la gestion des consentements, la personnalisation, l’accessibilité et la cohérence visuelle.
 
@@ -493,22 +500,22 @@ Le frontend de Telepro-AI est développé avec Next.js 15 et React 19, en TypeSc
 ### a. Hook personnalisé pour l’intégration API
 
 ```tsx
-import useSWR from "swr";
-import { fetcher } from "@/lib/fetcher";
+import useSWR from 'swr'
+import { fetcher } from '@/lib/fetcher'
 
 export function usePatientData(patientId: string) {
   const { data, error, isLoading } = useSWR(
     `/api/patients/${patientId}/`,
     fetcher
-  );
-  return { data, error, isLoading };
+  )
+  return { data, error, isLoading }
 }
 ```
 
 ### b. Validation avancée de formulaire
 
 ```tsx
-import { z } from "zod";
+import { z } from 'zod'
 
 export const ConsentFormSchema = z.object({
   has_active_consent: z.boolean(),
@@ -522,22 +529,22 @@ export const ConsentFormSchema = z.object({
       in_app: z.boolean(),
     }),
   }),
-});
+})
 ```
 
 ### c. Exemple d’état de chargement et de feedback utilisateur
 
 ```tsx
-<Button disabled={isLoading}>
-  {isLoading ? <LoaderIcon /> : "Enregistrer"}
-</Button>;
+;<Button disabled={isLoading}>
+  {isLoading ? <LoaderIcon /> : 'Enregistrer'}
+</Button>
 {
   success && (
     <Alert
       type="success"
       message="Préférences enregistrées avec succès"
     />
-  );
+  )
 }
 ```
 
@@ -546,24 +553,28 @@ export const ConsentFormSchema = z.object({
 ## 8. Robustesse, sécurité et tests frontend
 
 :::tip Bonnes pratiques — Robustesse & Sécurité frontend
+
 - Toujours valider les données côté client (Zod, RHF) avant envoi à l’API.
 - Afficher des messages d’erreur clairs et contextualisés à l’utilisateur.
 - Utiliser des ErrorBoundary pour éviter les crashs globaux de l’application.
 - Ne jamais exposer de données sensibles dans le code ou le stockage local.
 - Vérifier systématiquement l’authentification et les droits d’accès sur chaque page.
-:::
+  :::
 
 ### 8.1. Robustesse et gestion des erreurs
+
 - Gestion centralisée des erreurs via ErrorBoundary et hooks personnalisés (useErrorHandler)
 - Feedback utilisateur systématique (loaders, alertes, toasts)
 - Validation stricte des formulaires (Zod, React Hook Form)
 
 ### 8.2. Sécurité côté interface
+
 - Vérification du JWT et des rôles à chaque navigation sensible (guards, context)
 - Protection XSS/CSRF (sanitization, cookies httpOnly, headers sécurisés)
 - Masquage des informations sensibles côté client
 
 ### 8.3. Tests et CI/CD
+
 - Tests unitaires (Jest, React Testing Library) sur composants, hooks, pages
 - Tests end-to-end (Cypress) sur parcours critiques (consentement, profil, campagnes)
 - Pipeline CI/CD Vercel : lint, build, preview, déploiement automatique
@@ -573,34 +584,37 @@ export const ConsentFormSchema = z.object({
 ## 9. Architecture avancée, UX et évolutivité
 
 :::tip Bonnes pratiques — UX & Accessibilité
+
 - Respecter les contrastes couleurs (AA/AAA) et la hiérarchie visuelle.
 - Rendre tous les éléments interactifs accessibles au clavier et aux lecteurs d’écran.
 - Fournir un feedback immédiat lors des actions utilisateur (chargement, succès, erreur).
 - Tester l’interface sur plusieurs tailles d’écran et appareils.
 - Utiliser les icônes et couleurs de façon cohérente pour guider l’utilisateur.
-:::
+  :::
 
 ### 9.1. Architecture scalable
+
 - Découpage atomic design (atoms, molecules, organisms)
 - Utilisation de context providers pour la gestion globale (auth, thème, notifications)
 - Lazy loading, code splitting, optimisation SSR/ISR
 
 ### 9.2. Expérience utilisateur professionnelle
+
 - Parcours utilisateurs testés (personas, wireframes, tests UX)
 - Accessibilité renforcée (navigation clavier, ARIA, contrastes, focus visibles)
 - Personnalisation dynamique (affichage selon rôle, préférences, langue)
 
 ### 9.3. Tableau comparatif patterns frontend
-| Aspect           | Implémentation Telepro-AI | Alternatives            | Avantages principaux         |
-|------------------|--------------------------|-------------------------|-----------------------------|
-| State/API        | SWR, Context, hooks      | Redux, MobX, React Query| Simplicité, perf, SSR       |
-| UI/Design        | Tailwind, Radix, Lucide  | MUI, AntD, Styled       | Accessibilité, custom facile |
-| Validation       | Zod, React Hook Form     | Yup, Formik             | Typesafe, DX, robustesse    |
-| Tests            | Jest, RTL, Cypress       | Playwright, Vitest      | Complémentarité, rapidité   |
-| Auth/Guards      | Context, hooks, guards   | HOC, Redux middleware   | Granularité, flexibilité    |
+
+| Aspect      | Implémentation Telepro-AI | Alternatives             | Avantages principaux         |
+| ----------- | ------------------------- | ------------------------ | ---------------------------- |
+| State/API   | SWR, Context, hooks       | Redux, MobX, React Query | Simplicité, perf, SSR        |
+| UI/Design   | Tailwind, Radix, Lucide   | MUI, AntD, Styled        | Accessibilité, custom facile |
+| Validation  | Zod, React Hook Form      | Yup, Formik              | Typesafe, DX, robustesse     |
+| Tests       | Jest, RTL, Cypress        | Playwright, Vitest       | Complémentarité, rapidité    |
+| Auth/Guards | Context, hooks, guards    | HOC, Redux middleware    | Granularité, flexibilité     |
 
 ---
-
 
 - Amélioration continue de l’accessibilité et de l’UX
 - Ajout de fonctionnalités temps réel (WebSocket, notifications push)
@@ -615,6 +629,7 @@ export const ConsentFormSchema = z.object({
 ## 1. Objectif et intégration dans la solution Telepro-AI
 
 Ce prototype matériel a été conçu pour servir de passerelle IoT entre la plateforme Telepro-AI et les patients, notamment ceux ne disposant pas de smartphone ou d’accès Internet fiable. Il permet :
+
 - L’envoi de SMS personnalisés (rappels, notifications santé)
 - La réalisation d’appels automatisés (fonctionnalité de base déjà opérationnelle, extension future prévue avec NLP pour répondeur intelligent)
 - La validation terrain de la chaîne de communication patient (hardware + API)
@@ -634,6 +649,7 @@ Ce prototype matériel a été conçu pour servir de passerelle IoT entre la pla
   - Structure Patient pour personnalisation des messages
 
 **Schéma d’architecture simplifié :**
+
 ```
 [Telepro-AI API] <---WiFi---> [ESP32 TTGO T-Call] <---GSM---> [Patient]
                                         |
@@ -648,7 +664,7 @@ struct Patient {
   String password;
   String phone_number;
   String uuid;
-  String preferred_contact_method;
+  String preferred_contact_methods;
 };
 
 String contactPatient(const String &authToken, const String &recipientNumber, const String &contactMethod) {
@@ -671,30 +687,31 @@ String contactPatient(const String &authToken, const String &recipientNumber, co
 
 ## 6. Schémas, composants et photos (placeholders)
 
-- **Schéma de câblage** : *(placeholder — à insérer)*
-- **Liste des composants** : *(placeholder — à compléter)*
-- **Photos du montage réel** : *(placeholder — à insérer)*
+- **Schéma de câblage** : _(placeholder — à insérer)_
+- **Liste des composants** : _(placeholder — à compléter)_
+- **Photos du montage réel** : _(placeholder — à insérer)_
 
 ## 7. Tableau comparatif — TTGO T-Call vs ESP32 + SIM800L séparés
 
-| Critère                  | TTGO T-Call (ESP32 + SIM800L intégré) | ESP32 + SIM800L séparés        |
-|-------------------------|:-------------------------------------:|:------------------------------:|
-| Intégration matérielle  | Tout-en-un, compact                   | Modules séparés, câblage manuel|
-| Facilité de prototypage | Très simple, moins d’erreurs           | Plus complexe, risques de faux contacts|
-| Consommation énergie    | Optimisée (alimentation partagée)      | Variable selon montage         |
-| Stabilité               | Bonne (moins de fils)                  | Peut être moins stable         |
-| Coût                    | Légèrement supérieur                   | Parfois moins cher             |
-| Disponibilité           | Très répandue                          | Modules parfois plus faciles à trouver|
-| Support communauté      | Large (doc, tutos spécifiques)         | Large (plus généraliste)       |
-| Évolutivité             | Limitée à la carte                     | Plus flexible (choix composants)|
+| Critère                 | TTGO T-Call (ESP32 + SIM800L intégré) |         ESP32 + SIM800L séparés         |
+| ----------------------- | :-----------------------------------: | :-------------------------------------: |
+| Intégration matérielle  |          Tout-en-un, compact          |     Modules séparés, câblage manuel     |
+| Facilité de prototypage |     Très simple, moins d’erreurs      | Plus complexe, risques de faux contacts |
+| Consommation énergie    |   Optimisée (alimentation partagée)   |         Variable selon montage          |
+| Stabilité               |         Bonne (moins de fils)         |         Peut être moins stable          |
+| Coût                    |         Légèrement supérieur          |           Parfois moins cher            |
+| Disponibilité           |             Très répandue             | Modules parfois plus faciles à trouver  |
+| Support communauté      |    Large (doc, tutos spécifiques)     |        Large (plus généraliste)         |
+| Évolutivité             |          Limitée à la carte           |    Plus flexible (choix composants)     |
 
 :::tip Bonnes pratiques — Prototypage IoT santé
+
 - Séparer la logique de communication (GSM) et la logique applicative (API, gestion patient)
 - Prévoir des timeouts/retries pour la connectivité réseau
 - Protéger les informations sensibles (numéros, tokens) en mémoire et sur le réseau
 - Utiliser un feedback utilisateur clair (buzzer, LED, logs) pour chaque étape critique
 - Prévoir l’évolutivité (OTA, logs distants, diagnostics)
-:::
+  :::
 
 ---
 

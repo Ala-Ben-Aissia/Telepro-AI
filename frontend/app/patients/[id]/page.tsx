@@ -142,16 +142,16 @@ export default async function PatientDetailPage({
               <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                 <span
                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    patient.preferred_contact_method === 'EMAIL'
+                    patient.preferred_contact_methods === 'EMAIL'
                       ? 'bg-blue-100 text-blue-800'
-                      : patient.preferred_contact_method === 'SMS'
-                        ? 'bg-green-100 text-green-800'
-                        : patient.preferred_contact_method === 'CALL'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
+                      : patient.preferred_contact_methods === 'SMS'
+                      ? 'bg-green-100 text-green-800'
+                      : patient.preferred_contact_methods === 'CALL'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-gray-100 text-gray-800'
                   }`}
                 >
-                  {patient.preferred_contact_method}
+                  {patient.preferred_contact_methods}
                 </span>
 
                 {patient.contact_time_preferences &&
@@ -163,7 +163,7 @@ export default async function PatientDetailPage({
                       </span>
                       <div className="text-sm">
                         {JSON.stringify(
-                          patient.contact_time_preferences,
+                          patient.contact_time_preferences
                         )}
                       </div>
                     </div>
@@ -182,8 +182,8 @@ export default async function PatientDetailPage({
                         patient.engagement_score < 0.3
                           ? 'bg-red-600'
                           : patient.engagement_score < 0.7
-                            ? 'bg-yellow-400'
-                            : 'bg-green-600'
+                          ? 'bg-yellow-400'
+                          : 'bg-green-600'
                       }`}
                       style={{
                         width: `${patient.engagement_score * 100}%`,
@@ -202,7 +202,7 @@ export default async function PatientDetailPage({
                   <span>
                     {patient.last_campaign_response
                       ? new Date(
-                          patient.last_campaign_response,
+                          patient.last_campaign_response
                         ).toLocaleDateString()
                       : 'Never'}
                   </span>
@@ -274,7 +274,7 @@ export default async function PatientDetailPage({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(
-                        consent.timestamp,
+                        consent.timestamp
                       ).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -356,10 +356,10 @@ export default async function PatientDetailPage({
                           comm.communication_type === 'EMAIL'
                             ? 'bg-blue-100 text-blue-800'
                             : comm.communication_type === 'SMS'
-                              ? 'bg-green-100 text-green-800'
-                              : comm.communication_type === 'CALL'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-gray-100 text-gray-800'
+                            ? 'bg-green-100 text-green-800'
+                            : comm.communication_type === 'CALL'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
                         }`}
                       >
                         {comm.communication_type}
@@ -373,8 +373,8 @@ export default async function PatientDetailPage({
                           comm.status === 'RESPONDED'
                             ? 'bg-green-100 text-green-800'
                             : comm.status === 'FAILED'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
                         }`}
                       >
                         {comm.status}

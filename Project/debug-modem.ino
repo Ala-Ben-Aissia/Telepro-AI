@@ -55,7 +55,7 @@ struct Patient
   String password;
   String phone_number;
   String uuid;
-  String preferred_contact_method;
+  String preferred_contact_methods;
 };
 
 // Patient instances
@@ -207,7 +207,7 @@ void loop()
       hasBeenContacted = true;
 
       // Contact patient according to their preferred method
-      if (currentPatient.preferred_contact_method == "SMS")
+      if (currentPatient.preferred_contact_methods == "SMS")
       {
         SerialMon.println("Contacting patient via SMS as per preference");
         String contactResult = contactPatient(authToken, currentPatient.phone_number, "SMS");
@@ -222,7 +222,7 @@ void loop()
           playErrorTone();
         }
       }
-      else if (currentPatient.preferred_contact_method == "CALL")
+      else if (currentPatient.preferred_contact_methods == "CALL")
       {
         SerialMon.println("Contacting patient via call as per preference");
         // First log the call to the server

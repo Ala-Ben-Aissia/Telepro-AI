@@ -87,7 +87,7 @@ export default function ConsentForm({
         patient_id,
         prefs
       )
-      console.log({ updatedPrefs })
+      setPrefs(updatedPrefs!)
       setSaveSuccess(true)
       // Reset success message after 3 seconds
       setTimeout(() => {
@@ -166,40 +166,40 @@ export default function ConsentForm({
   //   }
   // }
 
-  const handleChannelUpdate = async (
-    name: string,
-    value: string | boolean
-  ) => {
-    console.log('handleChannelUpdate called with:', { name, value })
-    setSaveSuccess(false)
-    try {
-      console.log('Attempting to update preference:', { name, value })
-      // Simulate preference update logic here
-      // For example: await updatePreference(name, value);
-      console.log('Update successful')
-      setSaveSuccess(true)
-    } catch (error) {
-      console.error('Error updating preference:', error)
-      setSaveSuccess(false)
-    }
-  }
-
-  // const handleConsentUpdate = function (
-  //   granted: boolean,
-  //   consentType: string
-  // ) {
-  //   setConsents((prevConsents) => {
-  //     const newConsents = prevConsents.map((consent) => {
-  //       if (consent.consent_type !== consentType) return consent
-  //       return {
-  //         ...consent,
-  //         granted,
-  //         granted_at: new Date().toISOString(),
-  //       }
-  //     })
-  //     return newConsents
-  //   })
+  // const handleChannelUpdate = async (
+  //   name: string,
+  //   value: string | boolean
+  // ) => {
+  //   console.log('handleChannelUpdate called with:', { name, value })
+  //   setSaveSuccess(false)
+  //   try {
+  //     console.log('Attempting to update preference:', { name, value })
+  //     // Simulate preference update logic here
+  //     // For example: await updatePreference(name, value);
+  //     console.log('Update successful')
+  //     setSaveSuccess(true)
+  //   } catch (error) {
+  //     console.error('Error updating preference:', error)
+  //     setSaveSuccess(false)
+  //   }
   // }
+
+  const handleConsentUpdate = function (
+    granted: boolean,
+    consentType: string
+  ) {
+    setConsents((prevConsents) => {
+      const newConsents = prevConsents.map((consent) => {
+        if (consent.consent_type !== consentType) return consent
+        return {
+          ...consent,
+          granted,
+          granted_at: new Date().toISOString(),
+        }
+      })
+      return newConsents
+    })
+  }
 
   return (
     <div className="space-y-6">
@@ -305,7 +305,7 @@ export default function ConsentForm({
                 {channels.map((channel, index) => {
                   const isChecked =
                     channels[index] ===
-                    prefs?.preferred_contact_method
+                    prefs?.preferred_contact_methods
                   return (
                     <div
                       key={index}
@@ -318,7 +318,7 @@ export default function ConsentForm({
                             checked={isChecked}
                             onCheckedChange={(checked: boolean) => {
                               handlePrefUpdate(
-                                'preferred_contact_method',
+                                'preferred_contact_methods',
                                 checked ? channel : 'NONE'
                               )
                             }}

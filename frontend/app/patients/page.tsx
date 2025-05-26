@@ -175,18 +175,19 @@ export default async function PatientsPage({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <span
                         className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          patient.preferred_contact_method === 'EMAIL'
+                          patient.preferred_contact_methods ===
+                          'EMAIL'
                             ? 'bg-blue-100 text-blue-800'
-                            : patient.preferred_contact_method ===
+                            : patient.preferred_contact_methods ===
                               'SMS'
                             ? 'bg-green-100 text-green-800'
-                            : patient.preferred_contact_method ===
+                            : patient.preferred_contact_methods ===
                               'CALL'
                             ? 'bg-yellow-100 text-yellow-800'
                             : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {patient.preferred_contact_method}
+                        {patient.preferred_contact_methods}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

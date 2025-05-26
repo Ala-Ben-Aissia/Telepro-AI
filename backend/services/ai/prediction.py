@@ -164,7 +164,7 @@ class CampaignPredictionService:
                     "gender": patient.gender or "Unknown",
                     "language_preference": patient.language_preference or "Unknown",
                     "location": patient.location or "Unknown",
-                    "preferred_contact_method": patient.preferred_contact_method,
+                    "preferred_contact_methods": patient.preferred_contact_methods,
                 }
             )
 
@@ -210,11 +210,11 @@ class CampaignPredictionService:
                     "method_match": int(
                         (
                             campaign.email_template
-                            and patient.preferred_contact_method == "EMAIL"
+                            and patient.preferred_contact_methods == "EMAIL"
                         )
                         or (
                             campaign.sms_template
-                            and patient.preferred_contact_method == "SMS"
+                            and patient.preferred_contact_methods == "SMS"
                         )
                     ),
                 }
@@ -248,7 +248,7 @@ class CampaignPredictionService:
                 "gender",
                 "language_preference",
                 "location",
-                "preferred_contact_method",
+                "preferred_contact_methods",
                 "campaign_category",
             ]
             df_encoded = pd.get_dummies(df, columns=categorical_cols, drop_first=False)
@@ -358,9 +358,9 @@ class CampaignPredictionService:
 
         # Communication preference match (0-1)
         method_match = 0
-        if campaign.email_template and patient.preferred_contact_method == "EMAIL":
+        if campaign.email_template and patient.preferred_contact_methods == "EMAIL":
             method_match = 1
-        elif campaign.sms_template and patient.preferred_contact_method == "SMS":
+        elif campaign.sms_template and patient.preferred_contact_methods == "SMS":
             method_match = 1
 
         # Recent activity (recency effect)
@@ -428,9 +428,9 @@ class CampaignPredictionService:
             key_factors.append("Low historical engagement")
 
         method_match = 0
-        if campaign.email_template and patient.preferred_contact_method == "EMAIL":
+        if campaign.email_template and patient.preferred_contact_methods == "EMAIL":
             method_match = 1
-        elif campaign.sms_template and patient.preferred_contact_method == "SMS":
+        elif campaign.sms_template and patient.preferred_contact_methods == "SMS":
             method_match = 1
 
         if method_match > 0:

@@ -35,7 +35,7 @@ class GDPRService:
 
         # Communication preferences
         writer.writerow(["Communication Preferences"])
-        writer.writerow(["Contact Method", patient.preferred_contact_method])
+        writer.writerow(["Contact Method", patient.preferred_contact_methods])
         writer.writerow(["Email Verified", "Yes" if patient.email_verified else "No"])
         writer.writerow(["Phone Verified", "Yes" if patient.phone_verified else "No"])
         writer.writerow(["Has Consent", "Yes" if patient.has_active_consent else "No"])
