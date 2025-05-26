@@ -197,6 +197,7 @@ export async function updatePatientConsents(
   patientId: string,
   newConsents: Partial<ActiveConsentRecord>[]
 ): Promise<ActiveConsentRecord[] | null> {
+  console.log({ newConsents })
   try {
     const headers = await getAuthHeaders()
     const response = await fetch(

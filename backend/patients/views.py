@@ -3,6 +3,7 @@ from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from patients.models import ConsentRecord
 
 from services.ai.clustering import PatientClusteringService
 from services.proactive_identification import ProactiveIdentificationService
@@ -206,29 +207,43 @@ class PatientViewSet(viewsets.ModelViewSet):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=["get", "patch"])
+    @action(detail=True, methods=["get", "patch", "post"])
     def active_consents(self, request, pk=None):
         """Get all active consents for this patient"""
         patient = self.get_object()
         active_consents = patient.get_active_consents()
         # Convert to serializable format
-        serializable = [
-            {
-                "consent_type": consent.consent_type,
-                "granted_at": consent.timestamp,
-                "granted": consent.granted,
-                "consent_method": consent.consent_method,
-            }
-            for consent in active_consents
-        ]
-
+        if request.method == "POST" and request.user.is_staff:
+            consents = request.data.get("consents", [])
+            ConsentRecord.objects.filter(patient=patient).delete()
+            for consent in consents:
+                patient.record_consent(
+                    consent_type=consent["consent_type"],
+                    granted=consent.get("granted", True),
+                    user=request.user,
+                )
+                patient.save()
+            return Response(
+                {
+                    "status": "Consents created",
+                    "consents": PatientConsentRecordSerializer(
+                        ConsentRecord.objects.filter(patient=patient), many=True
+                    ).data,
+                }
+            )
+        serializable = PatientConsentRecordSerializer(active_consents, many=True).data
         if request.method == "PATCH":
             for consent in active_consents:
                 for new_consent in request.data.get("consents", []):
                     if new_consent["consent_type"] == consent.consent_type:
-                        consent.granted = new_consent.get("granted", True)
+                        consent.granted = new_consent.get("granted", consent.granted)
+                        print(consent)
                         consent.save()
                         break
+            serialized_active_consents = PatientConsentRecordSerializer(
+                patient.get_active_consents(), many=True
+            ).data
+            return Response(serialized_active_consents)
 
         return Response(serializable)
 

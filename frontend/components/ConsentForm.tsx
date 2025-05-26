@@ -37,13 +37,12 @@ export default function ConsentForm({
   preferences,
   patient_id,
 }: {
-  consents: ActiveConsentRecord[] | null | { detail: string }
+  consents: ActiveConsentRecord[]
   preferences: Preferences | object
   patient_id: string
 }) {
-  const [consents, setConsents] = useState<ActiveConsentRecord[]>(
-    Array.isArray(initialConsents) ? initialConsents : []
-  )
+  const [consents, setConsents] =
+    useState<ActiveConsentRecord[]>(initialConsents)
   const [isLoading, setIsLoading] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   // const handleCheckboxChange =
@@ -86,16 +85,15 @@ export default function ConsentForm({
   //   )
   //   setSaveSuccess(false)
   // }
-
   const saveConsents = async () => {
     if (consents.length === 0) return
     setIsLoading(true)
     try {
-      const updatedConsents = await updatePatientConsents(
+      const updatedCts = await updatePatientConsents(
         patient_id,
         consents
       )
-      console.log({ updatedConsents })
+      setConsents(updatedCts || [])
       setSaveSuccess(true)
       // Reset success message after 3 seconds
       setTimeout(() => {
@@ -178,8 +176,8 @@ export default function ConsentForm({
     granted: boolean,
     consentType: string
   ) {
-    setConsents((prev) => {
-      return prev.map((consent) => {
+    setConsents((prevConsents) => {
+      const newConsents = prevConsents.map((consent) => {
         if (consent.consent_type !== consentType) return consent
         return {
           ...consent,
@@ -187,6 +185,7 @@ export default function ConsentForm({
           granted_at: new Date().toISOString(),
         }
       })
+      return newConsents
     })
   }
 
@@ -397,7 +396,7 @@ export default function ConsentForm({
       {/* Save Button and Success Message */}
       <div className="flex justify-between items-center">
         {saveSuccess && (
-          <div className="flex items-center gap-2 text-green-700 bg-green-50 px-4 py-2 rounded-md border border-green-200">
+          <div className="flex items-center gap-2 text-green-700 bg-green-50 px-4 py-2 rounded-md border border-green-200 animate-coin-bounce">
             <Check className="h-4 w-4" />
             <span className="text-sm">
               Your preferences have been saved successfully
