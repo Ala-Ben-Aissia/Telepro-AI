@@ -131,11 +131,9 @@ class Patient(models.Model):
         ("CALL", "Phone Call"),
         ("NONE", "No Communication"),
     ]
-    preferred_contact_method = models.CharField(
-        max_length=10,
-        choices=COMMUNICATION_PREFERENCES,
-        default="NONE",
-        help_text="Patient's preferred method of contact",
+    preferred_contact_methods = models.JSONField(
+        default=list,
+        help_text="List of patient's preferred methods of contact",
     )
 
     # Contact time preferences
@@ -293,32 +291,47 @@ class Patient(models.Model):
     # Contact and outreach methods
     def can_contact(self):
         """Check if the patient can be contacted based on preferences and verification"""
-        if self.preferred_contact_method == "NONE" or not self.has_active_consent:
+        if not self.preferred_contact_methods or not self.has_active_consent:
             return False
 
-        if self.preferred_contact_method == "EMAIL" and not self.email_verified:
-            return False
+        for method in self.preferred_contact_methods:
+            # If at least one contact method is verified, we can contact the patient
+            if method == "EMAIL" and self.email_verified:
+                return True
+            if method in ["SMS", "CALL"] and self.phone_verified:
+                return True
 
-        if self.preferred_contact_method in ["SMS", "CALL"] and not self.phone_verified:
-            return False
-
-        return True
+        return False
 
     def get_contact_info(self):
         """Get the appropriate contact information based on preferences"""
-        if self.preferred_contact_method == "EMAIL":
-            return {
-                "method": "EMAIL",
-                "value": self.email,
-                "verified": self.email_verified,
-            }
-        elif self.preferred_contact_method in ["SMS", "CALL"]:
-            return {
-                "method": self.preferred_contact_method,
-                "value": self.phone_number,
-                "verified": self.phone_verified,
-            }
-        return {"method": "NONE", "value": None, "verified": False}
+        if not self.preferred_contact_methods:
+            return {"method": "NONE", "value": None, "verified": False}
+
+        contact_info = []
+        if "EMAIL" in self.preferred_contact_methods:
+            contact_info.append(
+                {
+                    "method": "EMAIL",
+                    "value": self.email,
+                    "verified": self.email_verified,
+                }
+            )
+        if any(method in ["SMS", "CALL"] for method in self.preferred_contact_methods):
+            contact_info.append(
+                {
+                    "method": self.preferred_contact_methods[0]
+                    if self.preferred_contact_methods
+                    else "NONE",
+                    "value": self.phone_number,
+                    "verified": self.phone_verified,
+                }
+            )
+        return (
+            contact_info[0]
+            if contact_info
+            else {"method": "NONE", "value": None, "verified": False}
+        )
 
     def record_contact_attempt(self, successful=False):
         """Record a contact attempt and update counters"""

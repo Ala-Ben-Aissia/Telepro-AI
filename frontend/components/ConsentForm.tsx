@@ -28,6 +28,7 @@ import {
   ActiveConsentRecord,
   Preferences,
   updatePatientConsents,
+  updatePatientPreferences,
 } from '@/app/api/actions'
 
 const channels = ['EMAIL', 'SMS', 'CALL', 'NONE']
@@ -38,11 +39,21 @@ export default function ConsentForm({
   patient_id,
 }: {
   consents: ActiveConsentRecord[]
-  preferences: Preferences | object
+  preferences: Preferences
   patient_id: string
 }) {
   const [consents, setConsents] =
     useState<ActiveConsentRecord[]>(initialConsents)
+  const [prefs, setPrefs] = useState<Preferences>(preferences)
+  const handlePrefUpdate = (
+    name: keyof Preferences,
+    value: string | boolean
+  ) => {
+    setPrefs((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
   const [isLoading, setIsLoading] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   // const handleCheckboxChange =
@@ -63,28 +74,6 @@ export default function ConsentForm({
   //     setSaveSuccess(false)
   //   }
 
-  // const handlePrefsChange = (pref: string) => (checked: boolean) => {
-  //   setConsents((prevConsents) =>
-  //     prevConsents.map((consent) => {
-  //       const currentPrefs = Array.isArray(
-  //         consent.metadata?.communication_preferences,
-  //       )
-  //         ? consent.metadata.communication_preferences
-  //         : []
-  //       const newPrefs = checked
-  //         ? [...currentPrefs, pref]
-  //         : currentPrefs.filter((p: string) => p !== pref)
-  //       return {
-  //         ...consent,
-  //         metadata: {
-  //           ...consent.metadata,
-  //           communication_preferences: newPrefs,
-  //         },
-  //       }
-  //     }),
-  //   )
-  //   setSaveSuccess(false)
-  // }
   const saveConsents = async () => {
     if (consents.length === 0) return
     setIsLoading(true)
@@ -94,6 +83,11 @@ export default function ConsentForm({
         consents
       )
       setConsents(updatedCts || [])
+      const updatedPrefs = await updatePatientPreferences(
+        patient_id,
+        prefs
+      )
+      console.log({ updatedPrefs })
       setSaveSuccess(true)
       // Reset success message after 3 seconds
       setTimeout(() => {
@@ -172,22 +166,40 @@ export default function ConsentForm({
   //   }
   // }
 
-  const handleConsentUpdate = function (
-    granted: boolean,
-    consentType: string
-  ) {
-    setConsents((prevConsents) => {
-      const newConsents = prevConsents.map((consent) => {
-        if (consent.consent_type !== consentType) return consent
-        return {
-          ...consent,
-          granted,
-          granted_at: new Date().toISOString(),
-        }
-      })
-      return newConsents
-    })
+  const handleChannelUpdate = async (
+    name: string,
+    value: string | boolean
+  ) => {
+    console.log('handleChannelUpdate called with:', { name, value })
+    setSaveSuccess(false)
+    try {
+      console.log('Attempting to update preference:', { name, value })
+      // Simulate preference update logic here
+      // For example: await updatePreference(name, value);
+      console.log('Update successful')
+      setSaveSuccess(true)
+    } catch (error) {
+      console.error('Error updating preference:', error)
+      setSaveSuccess(false)
+    }
   }
+
+  // const handleConsentUpdate = function (
+  //   granted: boolean,
+  //   consentType: string
+  // ) {
+  //   setConsents((prevConsents) => {
+  //     const newConsents = prevConsents.map((consent) => {
+  //       if (consent.consent_type !== consentType) return consent
+  //       return {
+  //         ...consent,
+  //         granted,
+  //         granted_at: new Date().toISOString(),
+  //       }
+  //     })
+  //     return newConsents
+  //   })
+  // }
 
   return (
     <div className="space-y-6">
@@ -290,46 +302,50 @@ export default function ConsentForm({
               </h3>
 
               <div className="space-y-3">
-                {channels.map((channel, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start p-3 rounded-md border border-blue-100 bg-blue-50 hover:bg-blue-100/30 transition-colors"
-                  >
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`channel-${index}`}
-                          checked={
-                            channels[index] ===
-                            (preferences as Preferences)
-                              ?.preferred_contact_method
-                          }
-                          // onCheckedChange={handlePrefsChange(
-                          //   String(index),
-                          // )}
-                          className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-                        />
-                        <label
-                          htmlFor={`channel-${index}`}
-                          className="text-sm font-medium text-blue-900 leading-none"
-                        >
-                          {channel}
-                        </label>
+                {channels.map((channel, index) => {
+                  const isChecked =
+                    channels[index] ===
+                    prefs?.preferred_contact_method
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-start p-3 rounded-md border border-blue-100 bg-blue-50 hover:bg-blue-100/30 transition-colors"
+                    >
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`channel-${index}`}
+                            checked={isChecked}
+                            onCheckedChange={(checked: boolean) => {
+                              handlePrefUpdate(
+                                'preferred_contact_method',
+                                checked ? channel : 'NONE'
+                              )
+                            }}
+                            className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                          />
+                          <label
+                            htmlFor={`channel-${index}`}
+                            className="text-sm font-medium text-blue-900 leading-none"
+                          >
+                            {channel}
+                          </label>
+                        </div>
+                        <p className="text-sm text-gray-600 ml-6">
+                          {channel === 'CALL'
+                            ? 'Receive phone calls for important updates'
+                            : channel === 'SMS'
+                            ? 'Get text message alerts and reminders'
+                            : channel === 'EMAIL'
+                            ? 'Receive detailed information via email'
+                            : channel === 'NONE'
+                            ? 'Opt out of all communications'
+                            : ''}
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-600 ml-6">
-                        {channel === 'CALL'
-                          ? 'Receive phone calls for important updates'
-                          : channel === 'SMS'
-                          ? 'Get text message alerts and reminders'
-                          : channel === 'EMAIL'
-                          ? 'Receive detailed information via email'
-                          : channel === 'NONE'
-                          ? 'Opt out of all communications'
-                          : ''}
-                      </p>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
 

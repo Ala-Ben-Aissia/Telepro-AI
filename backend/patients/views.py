@@ -233,15 +233,27 @@ class PatientViewSet(viewsets.ModelViewSet):
             )
         serializable = PatientConsentRecordSerializer(active_consents, many=True).data
         if request.method == "PATCH":
-            for consent in active_consents:
-                for new_consent in request.data.get("consents", []):
-                    if new_consent["consent_type"] == consent.consent_type:
-                        consent.granted = new_consent.get("granted", consent.granted)
-                        print(consent)
-                        consent.save()
-                        break
+            updated_consents = []
+            for new_consent in request.data.get("consents", []):
+                consent_type = new_consent["consent_type"]
+                # Find existing consent or create new one
+                consent = next(
+                    (c for c in active_consents if c.consent_type == consent_type), None
+                )
+                if consent:
+                    consent.granted = new_consent.get("granted", consent.granted)
+                    consent.save()
+                else:
+                    # Create new consent if it doesn't exist
+                    consent = patient.record_consent(
+                        consent_type=consent_type,
+                        granted=new_consent.get("granted", True),
+                        user=request.user,
+                    )
+                updated_consents.append(consent)
+
             serialized_active_consents = PatientConsentRecordSerializer(
-                patient.get_active_consents(), many=True
+                updated_consents, many=True
             ).data
             return Response(serialized_active_consents)
 

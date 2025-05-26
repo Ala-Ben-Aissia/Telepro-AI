@@ -224,6 +224,34 @@ export async function updatePatientConsents(
   }
 }
 
+export async function updatePatientPreferences(
+  patientId: string,
+  prefs: Partial<Preferences>
+): Promise<Preferences | null> {
+  try {
+    const headers = await getAuthHeaders()
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/patients/${patientId}/preferences/`,
+      {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify(prefs),
+      }
+    )
+    const result = await handleResponse<Preferences>(response)
+    if (result) {
+      revalidatePath(`/patient`)
+    }
+    return result
+  } catch (error) {
+    console.error(
+      `Error updating consent for patient ${patientId}:`,
+      error
+    )
+    return null
+  }
+}
+
 // ----- Campaign Actions -----
 
 export async function getCampaigns(
