@@ -33,11 +33,13 @@ export default async function PatientPage() {
 
   const consents = await getPatientConsents(patient.id)
 
-  const campaigns = preferences?.campaign_preferences.map(
+  // console.log({ consents, preferences })
+
+  const campaigns = preferences?.campaign_preferences?.map(
     async (campaignId) => {
       const campaign = await getCampaign(campaignId)
       return campaign
-    },
+    }
   )
 
   return (
@@ -76,7 +78,7 @@ export default async function PatientPage() {
                       Last updated:{' '}
                       {consents &&
                         new Date(
-                          consents[0]?.granted_at || Date.now(),
+                          consents[0]?.granted_at || Date.now()
                         ).toLocaleDateString('en-US', {
                           day: 'numeric',
                           month: 'long',
@@ -154,7 +156,7 @@ export default async function PatientPage() {
                   >
                     <ConsentForm
                       consents={consents}
-                      preferences={preferences || {}}
+                      preferences={preferences}
                       patient_id={patient.id}
                     />
                   </Suspense>

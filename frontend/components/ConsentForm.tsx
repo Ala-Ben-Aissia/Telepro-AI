@@ -37,12 +37,12 @@ export default function ConsentForm({
   preferences,
   patient_id,
 }: {
-  consents: ActiveConsentRecord[] | null
+  consents: ActiveConsentRecord[] | null | { detail: string }
   preferences: Preferences | object
   patient_id: string
 }) {
   const [consents, setConsents] = useState<ActiveConsentRecord[]>(
-    initialConsents || [],
+    Array.isArray(initialConsents) ? initialConsents : []
   )
   const [isLoading, setIsLoading] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
@@ -93,7 +93,7 @@ export default function ConsentForm({
     try {
       const updatedConsents = await updatePatientConsents(
         patient_id,
-        consents,
+        consents
       )
       console.log({ updatedConsents })
       setSaveSuccess(true)
@@ -176,7 +176,7 @@ export default function ConsentForm({
 
   const handleConsentUpdate = function (
     granted: boolean,
-    consentType: string,
+    consentType: string
   ) {
     setConsents((prev) => {
       return prev.map((consent) => {
@@ -201,73 +201,75 @@ export default function ConsentForm({
           </CardTitle>
         </CardHeader>
 
-        <CardContent>
-          <div className="space-y-4">
-            {consents.map((consent) => {
-              const isChecked = consent.granted
-              return (
-                <div
-                  key={Math.random()}
-                  className="flex items-start p-4 rounded-lg border border-blue-100 bg-blue-50 hover:bg-blue-100/30 transition-colors"
-                >
-                  <div className="mt-0.5 mr-3">
-                    <div className="p-1.5 bg-blue-100 rounded-md">
-                      {getConsentIcon(consent.consent_type)}
-                    </div>
-                  </div>
-                  <div className="flex-1 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id={consent.consent_type}
-                          checked={isChecked}
-                          onCheckedChange={(checked: boolean) => {
-                            handleConsentUpdate(
-                              checked,
-                              consent.consent_type,
-                            )
-                          }}
-                          // onCheckedChange={handleCheckboxChange(
-                          //   consent.consent_type,
-                          // )}
-                          className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
-                        />
-                        <label
-                          htmlFor={consent.consent_type}
-                          className="text-sm font-medium text-blue-900 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          {consent.consent_type}
-                        </label>
+        {consents.length > 0 && (
+          <CardContent>
+            <div className="space-y-4">
+              {consents.map((consent) => {
+                const isChecked = consent.granted
+                return (
+                  <div
+                    key={Math.random()}
+                    className="flex items-start p-4 rounded-lg border border-blue-100 bg-blue-50 hover:bg-blue-100/30 transition-colors"
+                  >
+                    <div className="mt-0.5 mr-3">
+                      <div className="p-1.5 bg-blue-100 rounded-md">
+                        {getConsentIcon(consent.consent_type)}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          {formatConsentMethod(
-                            consent.consent_method,
-                          )}
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={consent.consent_type}
+                            checked={isChecked}
+                            onCheckedChange={(checked: boolean) => {
+                              handleConsentUpdate(
+                                checked,
+                                consent.consent_type
+                              )
+                            }}
+                            // onCheckedChange={handleCheckboxChange(
+                            //   consent.consent_type,
+                            // )}
+                            className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
+                          />
+                          <label
+                            htmlFor={consent.consent_type}
+                            className="text-sm font-medium text-blue-900 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {consent.consent_type}
+                          </label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {formatConsentMethod(
+                              consent.consent_method
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 ml-6">
+                        {getConsentDescription(consent.consent_type)}
+                      </p>
+                      <div className="flex items-center gap-2 ml-6 mt-1 text-xs text-gray-500">
+                        <ClockIcon className="h-3 w-3" />
+                        <span>
+                          {new Date(
+                            consent.granted_at
+                          ).toLocaleDateString('en-US', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          })}
                         </span>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-600 ml-6">
-                      {getConsentDescription(consent.consent_type)}
-                    </p>
-                    <div className="flex items-center gap-2 ml-6 mt-1 text-xs text-gray-500">
-                      <ClockIcon className="h-3 w-3" />
-                      <span>
-                        {new Date(
-                          consent.granted_at,
-                        ).toLocaleDateString('en-US', {
-                          day: 'numeric',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                      </span>
-                    </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
-        </CardContent>
+                )
+              })}
+            </div>
+          </CardContent>
+        )}
       </Card>
 
       {/* Communication Preferences Card */}
@@ -319,12 +321,12 @@ export default function ConsentForm({
                         {channel === 'CALL'
                           ? 'Receive phone calls for important updates'
                           : channel === 'SMS'
-                            ? 'Get text message alerts and reminders'
-                            : channel === 'EMAIL'
-                              ? 'Receive detailed information via email'
-                              : channel === 'NONE'
-                                ? 'Opt out of all communications'
-                                : ''}
+                          ? 'Get text message alerts and reminders'
+                          : channel === 'EMAIL'
+                          ? 'Receive detailed information via email'
+                          : channel === 'NONE'
+                          ? 'Opt out of all communications'
+                          : ''}
                       </p>
                     </div>
                   </div>

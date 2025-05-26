@@ -58,13 +58,17 @@ export default function LoginPage() {
     //   throw new Error(errorData.message || 'Login failed')
     // }
 
-    const { access, error } = await login(
+    const { access, error, user_type } = await login(
       data.username,
-      data.password,
+      data.password
     )
     if (access) {
       // Redirect to dashboard on successful login
-      router.push('/dashboard')
+      if (user_type === 'STAFF') {
+        router.push('/dashboard')
+      } else {
+        router.push(`/patient`)
+      }
     } else {
       setError(error!)
     }
