@@ -379,7 +379,7 @@ export default function ConsentForm({
 
                               handlePrefUpdate(
                                 'preferred_contact_methods',
-                                updatedMethods
+                                updatedMethods as Channel[]
                               )
                             }}
                             className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"
