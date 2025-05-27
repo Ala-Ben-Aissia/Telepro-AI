@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/button'
 import {
   Card,
@@ -26,12 +26,13 @@ import {
 } from 'lucide-react'
 import {
   ActiveConsentRecord,
+  Channel,
   Preferences,
   updatePatientConsents,
   updatePatientPreferences,
 } from '@/app/api/actions'
 
-const channels = ['EMAIL', 'SMS', 'CALL', 'NONE']
+const channels: Channel[] = ['EMAIL', 'SMS', 'CALL', 'NONE']
 
 export default function ConsentForm({
   consents: initialConsents,
@@ -47,7 +48,7 @@ export default function ConsentForm({
   const [prefs, setPrefs] = useState<Preferences>(preferences)
   const handlePrefUpdate = (
     name: keyof Preferences,
-    value: string | boolean
+    value: Preferences[keyof Preferences]
   ) => {
     setPrefs((prev) => ({
       ...prev,
@@ -201,6 +202,17 @@ export default function ConsentForm({
     })
   }
 
+  useEffect(() => {
+    if (!Array.isArray(prefs.preferred_contact_methods)) {
+      setPrefs((prev) => ({
+        ...prev,
+        preferred_contact_methods: [
+          prefs.preferred_contact_methods as Channel,
+        ],
+      }))
+    }
+  }, [prefs.preferred_contact_methods])
+
   return (
     <div className="space-y-6">
       {/* Consent Settings Card */}
@@ -303,9 +315,20 @@ export default function ConsentForm({
 
               <div className="space-y-3">
                 {channels.map((channel, index) => {
-                  const isChecked =
-                    channels[index] ===
+                  const currentMethods = Array.isArray(
                     prefs?.preferred_contact_methods
+                  )
+                    ? prefs.preferred_contact_methods
+                    : prefs?.preferred_contact_methods
+                    ? [prefs.preferred_contact_methods]
+                    : []
+
+                  // If array is empty, default to NONE being selected
+                  const isChecked =
+                    currentMethods.length === 0 && channel === 'NONE'
+                      ? true
+                      : currentMethods.includes(channel)
+
                   return (
                     <div
                       key={index}
@@ -317,9 +340,46 @@ export default function ConsentForm({
                             id={`channel-${index}`}
                             checked={isChecked}
                             onCheckedChange={(checked: boolean) => {
+                              let updatedMethods
+
+                              if (channel === 'NONE') {
+                                // If NONE is selected, clear all other options
+                                updatedMethods = checked
+                                  ? ['NONE']
+                                  : []
+                              } else {
+                                // For other channels
+                                if (checked) {
+                                  // Remove NONE if it exists, then add the new channel
+                                  const methodsWithoutNone =
+                                    currentMethods.filter(
+                                      (method) => method !== 'NONE'
+                                    )
+                                  updatedMethods =
+                                    methodsWithoutNone.includes(
+                                      channel
+                                    )
+                                      ? methodsWithoutNone
+                                      : [
+                                          ...methodsWithoutNone,
+                                          channel,
+                                        ]
+                                } else {
+                                  // Remove the channel
+                                  updatedMethods =
+                                    currentMethods.filter(
+                                      (method) => method !== channel
+                                    )
+                                  // If no methods left, default to NONE
+                                  if (updatedMethods.length === 0) {
+                                    updatedMethods = ['NONE']
+                                  }
+                                }
+                              }
+
                               handlePrefUpdate(
                                 'preferred_contact_methods',
-                                checked ? channel : 'NONE'
+                                updatedMethods
                               )
                             }}
                             className="border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white"

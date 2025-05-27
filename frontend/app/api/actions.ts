@@ -143,7 +143,7 @@ export async function getPatientCommunications(
 }
 
 export type Preferences = {
-  preferred_contact_methods: Channel | null
+  preferred_contact_methods: Channel | null | Channel[]
   contact_time_preferences: Record<string, unknown>
   campaign_preferences: number[]
   language_preference: string
@@ -384,7 +384,7 @@ type CampaignPerformance = {
   response_rate: number
 }
 
-type Channel = 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
+export type Channel = 'EMAIL' | 'SMS' | 'CALL' | 'NONE'
 
 type ChannelMetrics = {
   total: number
