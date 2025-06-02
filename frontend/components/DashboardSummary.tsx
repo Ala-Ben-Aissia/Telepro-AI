@@ -107,9 +107,16 @@ export default function DashboardSummary() {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      const accessToken = document.cookie
+        .split('; ')
+        .find((cookie) => cookie.startsWith('accessToken='))
+        ?.split('=')[1]
+
+      console.log('Access Token:', accessToken)
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/analytics/dashboard`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/campaigns/analytics/dashboard`,
+          { headers: { Authorization: `Bearer ${accessToken}` } }
         )
         if (!response.ok)
           throw new Error('Failed to fetch dashboard data')
