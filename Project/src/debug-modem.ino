@@ -32,6 +32,7 @@
 
 #ifdef DUMP_AT_COMMANDS
 #include <StreamDebugger.h>
+#include "endpoints.h"
 StreamDebugger debugger(SerialAT, SerialMon);
 TinyGsm modem(debugger);
 #else
@@ -39,12 +40,12 @@ TinyGsm modem(SerialAT);
 #endif
 
 // Configuration
-const char *ssid = "ORANGE_9BF6";  // WiFi network name
-const char *password = "DXKTF882"; // WiFi password
+const char *ssid = "ORANGE_9BF6";
+const char *password = "DXKTF882";
 #define SMS_TARGET "+21622492052"
 #define CALL_TARGET "+21622492052"
-const char *loginUrl = "http://192.168.1.12:8000/api/accounts/token/";
-const char *smsUrl = "http://192.168.1.12:8000/api/campaigns/analytics/test-sms/";
+// #define SMS_TARGET "+21628986530"
+// #define CALL_TARGET "+21628986530"
 
 bool hasBeenContacted = false;
 
@@ -188,8 +189,8 @@ void loop()
   SerialMon.println("\n[Time: " + String(timestamp) + " ms] Starting main operation...");
 
   // Use patient9 for this run
-  Patient currentPatient = patient9; // sms
-  // Patient currentPatient = patient13; // call
+  // Patient currentPatient = patient9; // sms
+  Patient currentPatient = patient13; // call
 
   // Attempt login
   String authToken = login(currentPatient.username, currentPatient.password);
